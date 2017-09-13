@@ -1,0 +1,46 @@
+import model.Pojo;
+import org.junit.Test;
+import simplexml.SimpleXml;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class EncodingTest {
+
+    private SimpleXml simpleDefault = new SimpleXml();
+    private SimpleXml simpleEncodeUTF8 = new SimpleXml.Builder().shouldEncodeUTF8().build();
+
+    @Test
+    public void serializeWithDangerousChars() {
+        final String pojoXml = "<pojo>\n  <name>&lt;&gt;&amp; and something &quot; &apos; &apos;</name>\n</pojo>\n";
+        final Pojo pojo = new Pojo("<>& and something \" ' '");
+
+        final String xml = simpleDefault.toXml(pojo);
+
+        assertNotNull("No serialization response", xml);
+        assertEquals("Invalid serialized output", pojoXml, xml);
+    }
+
+    @Test
+    public void serializeUTF8Characters() {
+        final String pojoXml = "<pojo>\n  <name>&#401;&#415;&#416;&#388;&#480;&#530;</name>\n</pojo>\n";
+        final Pojo pojo = new Pojo("ƑƟƠƄǠȒ");
+
+        final String xml = simpleEncodeUTF8.toXml(pojo);
+
+        assertNotNull("No serialization response", xml);
+        assertEquals("Invalid serialized output", pojoXml, xml);
+    }
+
+    @Test
+    public void dontSerializeUTF8Characters() {
+        final String pojoXml = "<pojo>\n  <name>ƑƟƠƄǠȒ</name>\n</pojo>\n";
+        final Pojo pojo = new Pojo("ƑƟƠƄǠȒ");
+
+        final String xml = simpleDefault.toXml(pojo);
+
+        assertNotNull("No serialization response", xml);
+        assertEquals("Invalid serialized output", pojoXml, xml);
+    }
+
+}
