@@ -12,3 +12,5 @@ I'm sure it's possible but after spending a day wrestling with linker errors I g
 And then decided to write my own XML parser.
 
 This parser was easy to get to work because it has NO dependencies :)
+
+## How to use
