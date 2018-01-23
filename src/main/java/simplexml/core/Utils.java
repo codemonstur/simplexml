@@ -2,7 +2,9 @@ package simplexml.core;
 
 import simplexml.model.ObjectDeserializer;
 import simplexml.model.ObjectSerializer;
+import sun.reflect.ReflectionFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +24,7 @@ public enum Utils {;
         boolean shouldEncodeUTF8();
     }
 
-    public static String encodeXml(final String str, final boolean encodeUTF8) {
+    public static String escapeXml(final String str, final boolean encodeUTF8) {
         if (str == null) return null;
         if (str.isEmpty()) return str;
 
@@ -46,6 +48,37 @@ public enum Utils {;
         }
 
         return encoded.toString();
+    }
+
+    public static String unescapeXml(final String text) {
+        StringBuilder result = new StringBuilder(text.length());
+        int i = 0;
+        int n = text.length();
+        while (i < n) {
+            char charAt = text.charAt(i);
+            if (charAt != CHAR_AMPERSAND) {
+                result.append(charAt);
+                i++;
+            } else {
+                if (text.startsWith(ENCODED_AMPERSAND, i)) {
+                    result.append(CHAR_AMPERSAND);
+                    i += 5;
+                } else if (text.startsWith(ENCODED_SINGLE_QUOTE, i)) {
+                    result.append(CHAR_SINGLE_QUOTE);
+                    i += 6;
+                } else if (text.startsWith(ENCODED_DOUBLE_QUOTE, i)) {
+                    result.append(CHAR_DOUBLE_QUOTE);
+                    i += 6;
+                } else if (text.startsWith(ENCODED_LESS_THAN, i)) {
+                    result.append(CHAR_LESS_THAN);
+                    i += 4;
+                } else if (text.startsWith(ENCODED_GREATER_THAN, i)) {
+                    result.append(CHAR_GREATER_THAN);
+                    i += 4;
+                } else i++;
+            }
+        }
+        return result.toString();
     }
 
     public static boolean isSimple(final Class<?> c) {
@@ -77,4 +110,26 @@ public enum Utils {;
         return c.isAssignableFrom(Map.class);
     }
 
+    public static <T> T create(final Class<T> clazz) {
+        return create(clazz, Object.class);
+    }
+
+    public static <T> T create(final Class<T> clazz, Class<? super T> parent) {
+        try {
+            // Call the declared no-args constructor
+            final Constructor<T> constructor = clazz.getDeclaredConstructor(new Class[0]);
+            constructor.setAccessible(true);
+            return constructor.newInstance(new Object[0]);
+        } catch (Exception e) {
+            try {
+                // create a no-args empty constructor if something went wrong
+                return clazz.cast(ReflectionFactory.getReflectionFactory().newConstructorForSerialization(clazz,
+                        parent.getDeclaredConstructor()).newInstance());
+            } catch (RuntimeException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                throw new IllegalStateException("Cannot create object", ex);
+            }
+        }
+    }
 }

@@ -17,12 +17,13 @@ public final class XmlStream {
 
     public String readLine(final char end) throws IOException {
         final List<Character> chars = new LinkedList<>();
-        int data = 0;
-        while ((data = this.stream.read()) != -1) {
+        int data;
+        while ((data = stream.read()) != -1) {
             if (data == end) break;
             chars.add((char) data);
         }
         if (data == -1) return null;
+
         char[] value = new char[chars.size()];
         int i = 0;
         for (final Character c : chars) value[i++] = c;
