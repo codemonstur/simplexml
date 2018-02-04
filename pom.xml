@@ -4,6 +4,7 @@
     <groupId>codemonster</groupId>
     <artifactId>simplexml</artifactId>
     <version>1.0.0</version>
+
     <description>An XML parser</description>
     <url>https://github.com/JurgenNED/simplexml</url>
 
