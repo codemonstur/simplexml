@@ -42,13 +42,17 @@ public class SimpleXml implements XmlReader, XmlWriter {
         return shouldEncodeUTF8;
     }
 
+    public static Builder newSimpleXml() {
+        return new Builder();
+    }
+
     public static class Builder {
         private boolean shouldEncodeUTF8;
         private ObjectSerializer defaultSerializer;
         private Map<Class<?>, ObjectSerializer> serializers;
         private Map<Class<?>, ObjectDeserializer> deserializers;
 
-        public Builder() {
+        private Builder() {
             shouldEncodeUTF8 = false;
             deserializers = defaultDeserializers();
             defaultSerializer = ObjectSerializer.defaultSerializer();

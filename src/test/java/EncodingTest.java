@@ -4,11 +4,12 @@ import simplexml.SimpleXml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static simplexml.SimpleXml.newSimpleXml;
 
 public class EncodingTest {
 
     private SimpleXml simpleDefault = new SimpleXml();
-    private SimpleXml simpleEncodeUTF8 = new SimpleXml.Builder().shouldEncodeUTF8().build();
+    private SimpleXml simpleEncodeUTF8 = newSimpleXml().shouldEncodeUTF8().build();
 
     @Test
     public void serializeWithDangerousChars() {

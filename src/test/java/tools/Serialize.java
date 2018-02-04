@@ -31,7 +31,6 @@ public class Serialize {
 
         final SimpleXml simple = new SimpleXml();
         System.out.println(simple.toXml(project));
-
     }
 
 }
