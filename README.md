@@ -133,4 +133,3 @@ In no particular order:
 - Validation
 - XPath querying
 - Builders for immutable Reader, Writer and Parser
-- Builder for ElementNode
