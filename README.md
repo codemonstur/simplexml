@@ -5,6 +5,7 @@
 [![HitCount](http://hits.dwyl.com/JurgenNED/simplexml.svg)](http://hits.dwyl.com/JurgenNED/simplexml)
 [![Dependency Status](https://www.versioneye.com/user/projects/5a76d5b10fb24f17ce755df9/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5a76d5b10fb24f17ce755df9)
 [![Coverage Status](https://coveralls.io/repos/github/JurgenNED/simplexml/badge.svg?branch=master)](https://coveralls.io/github/JurgenNED/simplexml?branch=master)
+[![PDD status](http://www.0pdd.com/svg?name=JurgenNED/simplexml)](http://www.0pdd.com/p?name=JurgenNED/simplexml)
 
 # SimpleXML
 
