@@ -36,7 +36,7 @@ Other than those rules the parser is safe to use with concurrency.
 
 4. User friendly API
 
-What's with all the builders and factories and god knows what?
+What's with all the managers and contexts and factories and god knows what?
 This library is simple.
 Create an instance of SimpleXml and call toXml() or fromXml().
 
