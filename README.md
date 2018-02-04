@@ -8,12 +8,30 @@
 
 # SimpleXML
 
-Meant to be the simplest XML parser possible. 
-This project was born after trying to get XStream to work within Karaf (OSGi framework).
-I'm sure it's possible but after spending a day wrestling with linker errors I gave up.
-And then decided to write my own XML parser.
+After a number of bad experiences with XML parsing in Java I decided to write my own parser.
+The goals for this project are this:
 
-This parser was easy to get to work because it has NO dependencies :)
+1. Correct XML parsing
+
+The code must generate valid XML when (de)serializing and correctly encode/decode dangerous characters.
+  
+2. No-dependencies
+
+The code must not depend on other code. 
+And I do mean nothing, it doesn't even depend on javax.xml stuff.
+This library should be easy to include in a jigsaw project, although I haven't tried yet.
+
+3. Thread-safe
+
+Don't do crazy stuff like implement state in a custom serializer.
+Don't change the list of serializers and deserializers while you are using it.
+Other than those rules the parser is safe to use with concurrency.
+
+4. User friendly API
+
+What's with all the builders and factories and god knows what?
+This library is simple.
+Create an instance of SimpleXml and call toXml() or fromXml().
 
 ## How to use
 
@@ -22,80 +40,78 @@ There is also a small example program in `src/test/java/tools/Serialize.java` th
 
 ### Serializing
 
-Lets start with this code:
+The simplest case possible:
 
-    import simplexml.SimpleXml;
-    
-    public class Serialize {
-    
-        private static class Project {
-            public final String name;
-    
-            private Project(final String name) {
-                this.name = name;
-            }
-        }
-    
-        public static void main(final String... args) {
-            final Project project = new Project("test");
-    
-            final SimpleXml simple = new SimpleXml();
-            System.out.println(simple.toXml(project));
-    
-        }
-    
+    public class MyObject {
+        String name;
     }
+    
+    MyObject object = new MyObject();
+    object.name = "test";
 
-When run this will output:
+    final SimpleXml simple = new SimpleXml();
+    System.out.println(simple.toXml(project));
 
-    <project>
+This code will output:
+
+    <myobject>
       <name>test</name>
-    </project>
-    
-By adding the `@XmlAttribute` annotation above the name field you can turn the name tag into a name attribute.
-The output from the code will look like this:
+    </myobject>
 
-    <project name="test" />
+There are more serialization options
+- Renaming fields
+- Fields as attributes
+- Field as text node
+- Skipping fields
 
-By adding the `@XmlName("other")` annotation above the name field you can change the name of the tag or attribute.
-The output from the code will look like this:
+For more documentation on serializing look in `src/docs/serialize.md`.
 
-    <project other="test" />
+### Deserializing
 
-By adding the `@XmlTextNode` annotation you can turn a field into the textnode of its enclosing class.
-Lets add an extra field named `text` and give it this annotation.
-The code for the Project class now looks like this:
+The simplest case possible:
 
-    private static class Project {
-        @XmlAttribute
-        @XmlName("other")
-        public final String name;
-
-        @XmlTextNode
-        public final String text;
-
-        private Project(final String name, final String text) {
-            this.name = name;
-            this.text = text;
-        }
+    public class MyObject {
+        String name;
     }
 
-When we run the serializer on this class we get:
+    final SimpleXml simple = new SimpleXml();
+    final MyObject object = simple.fromXml("<myobject><name>test</name></myobject>");
+    System.out.println(object.name);
 
-    <project other="test">Just a project</project>
-    
-By adding the `@XmlNoExport` annotation you can tell the serializer to ignore a field.
-Lets add a field named `hidden` and give it this annotation.
-The added code looks like this:
+This code will output:
 
-    @XmlNoExport
-    public final String hidden;
+    test
 
-When run the class still outputs the same as before:
+The deserializer will respect the same annotations as the serializer
+- Renamed fields
+- Attributes
+- Text nodes
+- Skipped fields
 
-    <project other="test">Just a project</project>
+## How to get
 
-The serializer will encode dangerous characters correctly.
-This is the output if we instantiate Project this way `new Project("test<>&\"'", "Just a project", "invisible");`:
+I haven't put it in maven central yet.
+I'd like to but just haven't gotten to it.
+For now just clone the repo and install locally:
 
-    <project other="test&lt;&gt;&amp;&quot;&apos;">Just a project</project>
+    git clone https://github.com/JurgenNED/simplexml.git
+    cd simplexml
+    mvn install
+
+## License
+
+The MIT license. And I left out the copyright notice everywhere because I just don't care.
+
+## Future Ideas
+
+There are a bunch of features that I could add.
+In no particular order:
+- Support comments
+- Support CDATA blocks
+- XML streaming
+  - Push and Pull
+  - raw, document, object, xpath
+- Validation
+- XPath querying
+- Builders for immutable Reader, Writer and Parser
+- Builder for ElementNode
