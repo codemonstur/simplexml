@@ -102,12 +102,12 @@ I'd like to but just haven't gotten to it.
 
 You can use <a href="https://jitpack.io/#JurgenNED/simplexml/1.0.0">jitpack.io</a> to include it in your project.
 
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 	
     <dependency>
         <groupId>com.github.JurgenNED</groupId>
@@ -136,4 +136,3 @@ In no particular order:
   - raw, document, object, xpath
 - Validation
 - XPath querying
-- Builders for immutable Reader, Writer and Parser
