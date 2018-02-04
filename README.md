@@ -18,7 +18,8 @@ The goals for this project are this:
 
 1. Correct XML parsing
 
-The code must generate valid XML when (de)serializing and correctly encode/decode dangerous characters.
+The code must generate valid XML when serializing and correctly encode dangerous characters.
+The code must parse valid XML when deserializing and correctly decode encoded characters.
   
 2. No-dependencies
 
