@@ -48,7 +48,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     default void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
         writer.append(indent)
               .append(LESS_THAN).append(name).append(GREATER_THAN)
-              .append(encodeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()))
+              .append(escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()))
               .append(LESS_THAN).append(FORWARD_SLASH).append(name).append(GREATER_THAN)
               .append(NEW_LINE);
     }
@@ -121,7 +121,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             }
             else {
                 writer.append(GREATER_THAN);
-                writer.append(encodeXml(textNode.get(o).toString(), shouldEncodeUTF8()));
+                writer.append(escapeXml(textNode.get(o).toString(), shouldEncodeUTF8()));
                 writer.append(LESS_THAN);
                 writer.append(FORWARD_SLASH);
                 writer.append(name);
@@ -145,7 +145,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
         if (textNode != null) {
             writer.append(indent);
-            writer.append(encodeXml(textNode.get(o).toString(), shouldEncodeUTF8()));
+            writer.append(escapeXml(textNode.get(o).toString(), shouldEncodeUTF8()));
             writer.append(NEW_LINE);
         }
         writer.append(indent);
@@ -167,7 +167,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 attr.append(f.getName());
             attr.append(EQUALS);
             attr.append(DOUBLE_QUOTE);
-            attr.append(encodeXml(f.get(o).toString(), shouldEncodeUTF8));
+            attr.append(escapeXml(f.get(o).toString(), shouldEncodeUTF8));
             attr.append(DOUBLE_QUOTE);
         }
         return attr.toString();

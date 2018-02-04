@@ -3,22 +3,19 @@ package simplexml;
 import simplexml.core.EventParser;
 import simplexml.core.Utils.AccessDeserializers;
 import simplexml.core.XmlStream;
-import simplexml.model.ElementNode;
-import simplexml.model.ObjectDeserializer;
-import simplexml.model.XmlName;
-import simplexml.model.XmlTextNode;
+import simplexml.model.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.core.Constants.*;
+import static simplexml.core.Utils.create;
+import static simplexml.core.Utils.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
 
@@ -38,9 +35,7 @@ public interface XmlReader extends AccessDeserializers {
 
     default <T> T domToObject(final ElementNode node, final Class<T> clazz) {
         try {
-            final Constructor<T> constructor = clazz.getDeclaredConstructor(new Class[0]);
-            constructor.setAccessible(true);
-            final T o = constructor.newInstance(new Object[0]);
+            final T o = create(clazz);
 
             for (final Field f : clazz.getDeclaredFields()) {
                 f.setAccessible(true);
@@ -53,6 +48,14 @@ public interface XmlReader extends AccessDeserializers {
 
                 String name = f.getName();
                 if (f.isAnnotationPresent(XmlName.class)) name = f.getAnnotation(XmlName.class).value();
+
+                if (f.isAnnotationPresent(XmlAttribute.class)) {
+                    if (conv == null) continue;
+                    final String value = node.attributes.get(name);
+                    if (value == null) continue;
+                    f.set(o, conv.convert(value));
+                    continue;
+                }
 
                 final Class<?> type = f.getType();
                 if (Set.class.isAssignableFrom(type)) {
@@ -107,8 +110,7 @@ public interface XmlReader extends AccessDeserializers {
             }
 
             return o;
-        } catch ( InstantiationException | IllegalAccessException | NoSuchMethodException
-                | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+        } catch ( IllegalAccessException | SecurityException | IllegalArgumentException e) {
             return null;
         }
     }
@@ -129,7 +131,7 @@ public interface XmlReader extends AccessDeserializers {
     static void parse(final EventParser p, final XmlStream in) throws IOException {
         String str;
         while ((str = in.readLine(XML_TAG_START)) != null) {
-            if (!str.isEmpty()) p.someText(str.trim());
+            if (!str.isEmpty()) p.someText(unescapeXml(str.trim()));
 
             str = in.readLine(XML_TAG_END).trim();
             if (str.charAt(0) == XML_PROLOG) continue;
@@ -162,20 +164,56 @@ public interface XmlReader extends AccessDeserializers {
         }
         return tag.substring(0, offset);
     }
-    
-    static HashMap<String, String> parseAttributes(final String input) {
+
+
+    static HashMap<String, String> parseAttributes(String input) {
         final HashMap<String, String> attributes = new HashMap<>();
-        
-        final String[] attrs = input.split(SPACE);
-        for ( int i = 0; i < attrs.length; i++) {
-            if (attrs[i].isEmpty()) continue;
-            
-            final int equals = attrs[i].indexOf(CHAR_EQUALS);
-            attributes.put( attrs[i].substring(0, equals).trim()
-                          , attrs[i].substring(equals + 2, attrs[i].length()-1).trim()
-                          );
+
+        while (!input.isEmpty()) {
+            int startName = indexOfNonWhitespaceChar(input, 0);
+            if (startName == -1) break;
+            int equals = input.indexOf(CHAR_EQUALS, startName+1);
+            if (equals == -1) break;
+
+            final String name = input.substring(startName, equals).trim();
+            input = input.substring(equals+1);
+
+            int startValue = indexOfNonWhitespaceChar(input, 0);
+            if (startValue == -1) break;
+
+            int endValue; final String value;
+            if (input.charAt(startValue) == CHAR_DOUBLE_QUOTE) {
+                startValue++;
+                endValue = input.indexOf(CHAR_DOUBLE_QUOTE, startValue);
+                if (endValue == -1) endValue = input.length()-1;
+                value = input.substring(startValue, endValue).trim();
+            } else {
+                endValue = indexOfWhitespaceChar(input, startValue+1);
+                if (endValue == -1) endValue = input.length()-1;
+                value = input.substring(startValue, endValue+1).trim();
+            }
+
+            input = input.substring(endValue+1);
+
+            attributes.put(name, unescapeXml(value));
         }
 
         return attributes;
+    }
+
+    static int indexOfNonWhitespaceChar(final String input, int offset) {
+        for (int i = offset; i < input.length(); i++) {
+            char at = input.charAt(i);
+            if (at == ' ' || at == '\t' || at == '\n' || at == '\r') continue;
+            return i;
+        }
+        return -1;
+    }
+    static int indexOfWhitespaceChar(final String input, int offset) {
+        for (int i = offset; i < input.length(); i++) {
+            char at = input.charAt(i);
+            if (at == ' ' || at == '\t' || at == '\n' || at == '\r') return i;
+        }
+        return -1;
     }
 }
