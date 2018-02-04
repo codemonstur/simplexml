@@ -9,6 +9,7 @@
 [![Sputnik](https://sputnik.ci/conf/badge)](https://sputnik.ci/app#/builds/JurgenNED/simplexml)
 [![codecov](https://codecov.io/gh/JurgenNED/simplexml/branch/master/graph/badge.svg)](https://codecov.io/gh/JurgenNED/simplexml)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1621/badge)](https://bestpractices.coreinfrastructure.org/projects/1621)
 
 # SimpleXML
 
