@@ -110,11 +110,11 @@ public enum Utils {;
         return c.isAssignableFrom(Map.class);
     }
 
-    public static <T> T create(final Class<T> clazz) {
-        return create(clazz, Object.class);
+    public static <T> T newObject(final Class<T> clazz) {
+        return newObject(clazz, Object.class);
     }
 
-    public static <T> T create(final Class<T> clazz, Class<? super T> parent) {
+    public static <T> T newObject(final Class<T> clazz, Class<? super T> parent) {
         try {
             // Call the declared no-args constructor
             final Constructor<T> constructor = clazz.getDeclaredConstructor(new Class[0]);

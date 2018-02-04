@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public final class ElementNode {
-    public final ElementNode parent;
-    public final String name;
-    public final Map<String, String> attributes;
-    public final List<ElementNode> children = new LinkedList<>();
+public class ElementNode {
+    public ElementNode parent;
+    public String name;
+    public Map<String, String> attributes;
+    public List<ElementNode> children = new LinkedList<>();
     public String text;
 
     public ElementNode(final ElementNode parent, final String name,
