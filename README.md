@@ -7,6 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/JurgenNED/simplexml/badge.svg?branch=master)](https://coveralls.io/github/JurgenNED/simplexml?branch=master)
 [![PDD status](http://www.0pdd.com/svg?name=JurgenNED/simplexml)](http://www.0pdd.com/p?name=JurgenNED/simplexml)
 [![Sputnik](https://sputnik.ci/conf/badge)](https://sputnik.ci/app#/builds/JurgenNED/simplexml)
+[![](http://codescene.io/projects/2273/status.svg) Get more details at **codescene.io**.](http://codescene.io/projects/2273/jobs/latest-successful/results)
 
 # SimpleXML
 
