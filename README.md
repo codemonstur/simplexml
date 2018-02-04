@@ -3,6 +3,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/c9389fa8729d8b18e46b/test_coverage)](https://codeclimate.com/github/JurgenNED/simplexml/test_coverage)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 [![HitCount](http://hits.dwyl.com/JurgenNED/simplexml.svg)](http://hits.dwyl.com/JurgenNED/simplexml)
+[![Dependency Status](https://www.versioneye.com/user/projects/5a76d5b10fb24f17ce755df9/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5a76d5b10fb24f17ce755df9)
 
 # SimpleXML
 
