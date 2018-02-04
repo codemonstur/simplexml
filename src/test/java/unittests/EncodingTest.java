@@ -1,3 +1,5 @@
+package unittests;
+
 import model.Pojo;
 import org.junit.Test;
 import simplexml.SimpleXml;

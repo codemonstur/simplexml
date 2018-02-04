@@ -42,8 +42,8 @@ Create an instance of SimpleXml and call toXml() or fromXml().
 
 ## How to use
 
-The unit tests in `src/test/java` can give you a good idea of the capabilities of SimpleXml.
-There is also a small example program in `src/test/java/tools/Serialize.java` that shows of basic serializing.
+The unit tests in `src/test/java/unittests` can give you a good idea of the capabilities of SimpleXml.
+There are also a number of small example programs in `src/test/java/tools` that showcase various features.
 
 ### Serializing
 
