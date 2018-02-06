@@ -1,0 +1,11 @@
+plugins:
+  pmd:
+    enabled: true
+  checkstyle:
+      enabled: true
+  fixme:
+    enabled: true
+  markdownlint:
+    enabled: true
+  sonar-java:
+    enabled: true

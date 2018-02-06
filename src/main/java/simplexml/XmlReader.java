@@ -14,7 +14,7 @@ import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.core.Constants.*;
-import static simplexml.core.Utils.create;
+import static simplexml.core.Utils.newObject;
 import static simplexml.core.Utils.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
@@ -35,7 +35,7 @@ public interface XmlReader extends AccessDeserializers {
 
     default <T> T domToObject(final ElementNode node, final Class<T> clazz) {
         try {
-            final T o = create(clazz);
+            final T o = newObject(clazz);
 
             for (final Field f : clazz.getDeclaredFields()) {
                 f.setAccessible(true);

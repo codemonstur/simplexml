@@ -7,11 +7,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import static simplexml.core.Constants.*;
 import static simplexml.core.Utils.*;
@@ -192,5 +189,38 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             writeMap(writer, value, indent);
         else
             writeObject(writer, name, value, indent);
+    }
+
+    default String domToXml(final ElementNode node) {
+        final StringWriter output = new StringWriter();
+        try {
+            domToXml(node, output);
+        } catch (IOException e) {
+            // can't happen
+        }
+        return output.toString();
+    }
+    default void domToXml(final ElementNode node, final Writer writer) throws IOException {
+        if (node.text == null && node.children.isEmpty()) {
+            writer.append(LESS_THAN).append(node.name).append(attributesToXml(node.attributes, shouldEncodeUTF8()))
+                  .append(SPACE).append(FORWARD_SLASH).append(GREATER_THAN);
+        } else {
+            writer.append(LESS_THAN).append(node.name).append(attributesToXml(node.attributes, shouldEncodeUTF8())).append(GREATER_THAN);
+            for (final ElementNode child : node.children) {
+                domToXml(child, writer);
+            }
+            if (node.text != null) writer.append(escapeXml(node.text, shouldEncodeUTF8()));
+            writer.append(LESS_THAN).append(FORWARD_SLASH).append(node.name).append(GREATER_THAN);
+        }
+    }
+    static String attributesToXml(final Map<String, String> map, final boolean escapeUTF8) {
+        if (map == null || map.isEmpty()) return EMPTY;
+
+        final StringBuilder builder = new StringBuilder();
+        for (final Entry<String, String> entry : map.entrySet()) {
+            builder.append(SPACE).append(entry.getKey()).append(EQUALS).append(DOUBLE_QUOTE)
+                   .append(escapeXml(entry.getValue(), escapeUTF8)).append(DOUBLE_QUOTE);
+        }
+        return builder.toString();
     }
 }

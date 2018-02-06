@@ -42,6 +42,10 @@ public class SimpleXml implements XmlReader, XmlWriter {
         return shouldEncodeUTF8;
     }
 
+    public static Builder newSimpleXml() {
+        return new Builder();
+    }
+
     public static class Builder {
         private boolean shouldEncodeUTF8;
         private ObjectSerializer defaultSerializer;
