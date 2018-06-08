@@ -1,22 +1,30 @@
 package simplexml;
 
-import simplexml.model.*;
+import simplexml.model.ElementNode;
+import simplexml.model.XmlAttribute;
+import simplexml.model.XmlNoExport;
+import simplexml.model.XmlTextNode;
+import simplexml.utils.Accessors.AccessSerializers;
+import simplexml.utils.Accessors.ParserConfiguration;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import static simplexml.core.Constants.*;
-import static simplexml.core.Utils.*;
+import static simplexml.utils.Constants.*;
+import static simplexml.utils.Functions.*;
 
 public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
     default String toXml(final Object o) {
-        return toXml(o, o.getClass().getSimpleName().toLowerCase());
+        return toXml(o, toName(o.getClass()));
     }
 
     default String toXml(final Object o, final String name) {
@@ -32,7 +40,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     }
 
     default void toXml(final Object o, final Writer writer) throws IOException {
-        toXml(o, o.getClass().getSimpleName().toLowerCase(), writer);
+        toXml(o, toName(o.getClass()), writer);
     }
     default void toXml(final Object o, final String name, final Writer writer) throws IOException {
         try {
@@ -43,9 +51,14 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     }
 
     default void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
-        writer.append(indent)
-              .append(LESS_THAN).append(name).append(GREATER_THAN)
-              .append(escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()))
+        final String output = getSerializer(value.getClass()).convert(value);
+        writer.append(indent);
+        if (output.isEmpty()) {
+            writer.append(LESS_THAN).append(name).append(FORWARD_SLASH).append(GREATER_THAN).append(NEW_LINE);
+            return;
+        }
+        writer.append(LESS_THAN).append(name).append(GREATER_THAN)
+              .append(escapeXml(output, shouldEncodeUTF8()))
               .append(LESS_THAN).append(FORWARD_SLASH).append(name).append(GREATER_THAN)
               .append(NEW_LINE);
     }
@@ -135,10 +148,8 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writer.append(GREATER_THAN);
         writer.append(NEW_LINE);
 
-        String fieldName;
         for (final Field f : childnodes) {
-            fieldName = (f.isAnnotationPresent(XmlName.class)) ? f.getAnnotation(XmlName.class).value() : f.getName();
-            writeField(f.getType(), writer, fieldName, f.get(o), indent+INDENT);
+            writeField(f.getType(), writer, toName(f), f.get(o), indent+INDENT);
         }
         if (textNode != null) {
             writer.append(indent);
@@ -155,17 +166,14 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
     static String buildAttributes(final List<Field> fields, final Object o, final boolean shouldEncodeUTF8) throws IllegalArgumentException,
             IllegalAccessException {
-        final StringBuilder attr = new StringBuilder();
+        final StringBuilder attr = new StringBuilder(6*fields.size());
         for (final Field f : fields) {
-            attr.append(SPACE);
-            if (f.isAnnotationPresent(XmlName.class))
-                attr.append(f.getAnnotation(XmlName.class).value());
-            else
-                attr.append(f.getName());
-            attr.append(EQUALS);
-            attr.append(DOUBLE_QUOTE);
-            attr.append(escapeXml(f.get(o).toString(), shouldEncodeUTF8));
-            attr.append(DOUBLE_QUOTE);
+            attr.append(SPACE)
+                .append(toName(f))
+                .append(EQUALS)
+                .append(DOUBLE_QUOTE)
+                .append(escapeXml(f.get(o).toString(), shouldEncodeUTF8))
+                .append(DOUBLE_QUOTE);
         }
         return attr.toString();
     }

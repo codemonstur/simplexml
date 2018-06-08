@@ -1,28 +1,17 @@
-package simplexml.core;
+package simplexml.utils;
 
-import simplexml.model.ObjectDeserializer;
-import simplexml.model.ObjectSerializer;
+import simplexml.model.XmlName;
 import sun.reflect.ReflectionFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static simplexml.core.Constants.*;
+import static simplexml.utils.Constants.*;
 
-public enum Utils {;
-
-    public interface AccessSerializers {
-        boolean hasSerializer(Class<?> type);
-        ObjectSerializer getSerializer(Class<?> type);
-    }
-    public interface AccessDeserializers {
-        ObjectDeserializer getDeserializer(Class<?> type);
-    }
-    public interface ParserConfiguration {
-        boolean shouldEncodeUTF8();
-    }
+public enum Functions {;
 
     public static String escapeXml(final String str, final boolean encodeUTF8) {
         if (str == null) return null;
@@ -114,17 +103,12 @@ public enum Utils {;
         return newObject(clazz, Object.class);
     }
 
-    public static <T> T newObject(final Class<T> clazz, Class<? super T> parent) {
+    public static <T> T newObject(final Class<T> clazz, final Class<? super T> parent) {
         try {
-            // Call the declared no-args constructor
-            final Constructor<T> constructor = clazz.getDeclaredConstructor(new Class[0]);
-            constructor.setAccessible(true);
-            return constructor.newInstance(new Object[0]);
+            return toDeclaredNoArgsConstructor(clazz).newInstance();
         } catch (Exception e) {
             try {
-                // create a no-args empty constructor if something went wrong
-                return clazz.cast(ReflectionFactory.getReflectionFactory().newConstructorForSerialization(clazz,
-                        parent.getDeclaredConstructor()).newInstance());
+                return clazz.cast(newNoArgsConstructor(clazz, parent).newInstance());
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
@@ -132,4 +116,28 @@ public enum Utils {;
             }
         }
     }
+
+    public static <T> Constructor<T> toDeclaredNoArgsConstructor(final Class<T> clazz) throws NoSuchMethodException {
+        final Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        return constructor;
+    }
+    public static <T> Constructor<?> newNoArgsConstructor(final Class<T> clazz, final Class<? super T> parent) throws
+            NoSuchMethodException {
+        return ReflectionFactory.getReflectionFactory().newConstructorForSerialization(clazz,
+                parent.getDeclaredConstructor());
+    }
+
+    public static String toName(final Class<?> o) {
+        if (!o.isAnnotationPresent(XmlName.class))
+            return o.getSimpleName().toLowerCase();
+        return o.getAnnotation(XmlName.class).value();
+    }
+
+    public static String toName(final Field field) {
+        if (field.isAnnotationPresent(XmlName.class))
+            return field.getAnnotation(XmlName.class).value();
+        return field.getName();
+    }
+
 }

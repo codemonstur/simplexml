@@ -1,6 +1,4 @@
-package simplexml.core;
-
-import simplexml.model.ElementNode;
+package simplexml.model;
 
 import java.util.Map;
 
@@ -28,5 +26,6 @@ public final class EventParser {
     public ElementNode getRoot() {
         return this.root;
     }
+
 }
 

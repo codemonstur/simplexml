@@ -1,36 +1,33 @@
 package simplexml;
 
-import simplexml.core.EventParser;
-import simplexml.core.Utils.AccessDeserializers;
-import simplexml.core.XmlStream;
 import simplexml.model.*;
+import simplexml.utils.Accessors.AccessDeserializers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static simplexml.core.Constants.*;
-import static simplexml.core.Utils.newObject;
-import static simplexml.core.Utils.unescapeXml;
+import static simplexml.utils.Constants.*;
+import static simplexml.utils.Functions.*;
 
 public interface XmlReader extends AccessDeserializers {
 
     default <T> T fromXml(final String input, final Class<T> clazz) throws IOException {
         return domToObject(fromXml(input), clazz);
     }
-    default ElementNode fromXml(final InputStream stream) throws IOException {
-        final EventParser event = new EventParser();
-        parse(event, new XmlStream(stream));
-        return event.getRoot();
+    default <T> T fromXml(final InputStream in, final Class<T> clazz) throws IOException {
+        return domToObject(fromXml(in), clazz);
     }
     default ElementNode fromXml(final String input) throws IOException {
-        final EventParser event = new EventParser();
-        parse(event, new XmlStream(new ByteArrayInputStream(input.getBytes(UTF_8))));
-        return event.getRoot();
+        return fromXml(new ByteArrayInputStream(input.getBytes(UTF_8)));
+    }
+    default ElementNode fromXml(final InputStream stream) throws IOException {
+        return parse(new InputStreamReader(stream, UTF_8));
     }
 
     default <T> T domToObject(final ElementNode node, final Class<T> clazz) {
@@ -46,8 +43,7 @@ public interface XmlReader extends AccessDeserializers {
                     continue;
                 }
 
-                String name = f.getName();
-                if (f.isAnnotationPresent(XmlName.class)) name = f.getAnnotation(XmlName.class).value();
+                final String name = toName(f);
 
                 if (f.isAnnotationPresent(XmlAttribute.class)) {
                     if (conv == null) continue;
@@ -128,14 +124,16 @@ public interface XmlReader extends AccessDeserializers {
         return null;
     }
     
-    static void parse(final EventParser p, final XmlStream in) throws IOException {
+    static ElementNode parse(final InputStreamReader in) throws IOException {
+        final EventParser p = new EventParser();
+
         String str;
-        while ((str = in.readLine(XML_TAG_START)) != null) {
+        while ((str = readLine(in, XML_TAG_START)) != null) {
             if (!str.isEmpty()) p.someText(unescapeXml(str.trim()));
 
-            str = in.readLine(XML_TAG_END).trim();
+            str = readLine(in, XML_TAG_END).trim();
             if (str.charAt(0) == XML_PROLOG) continue;
-            
+
             if (str.charAt(0) == XML_SELF_CLOSING) p.endNode();
             else {
                 final String name = getNameOfTag(str);
@@ -143,7 +141,7 @@ public interface XmlReader extends AccessDeserializers {
                     p.startNode(str, new HashMap<>());
                     continue;
                 }
-                
+
                 final int beginAttr = name.length();
                 final int end = str.length();
                 if (str.endsWith(FORWARD_SLASH)) {
@@ -154,8 +152,25 @@ public interface XmlReader extends AccessDeserializers {
                 }
             }
         }
+
+        return p.getRoot();
     }
-    
+
+    static String readLine(final InputStreamReader in, final char end) throws IOException {
+        final List<Character> chars = new LinkedList<>();
+        int data;
+        while ((data = in.read()) != -1) {
+            if (data == end) break;
+            chars.add((char) data);
+        }
+        if (data == -1) return null;
+
+        char[] value = new char[chars.size()];
+        int i = 0;
+        for (final Character c : chars) value[i++] = c;
+        return new String(value);
+    }
+
     static String getNameOfTag(final String tag) {
         int offset = 0;
         for (; offset < tag.length(); offset++) {
@@ -164,7 +179,6 @@ public interface XmlReader extends AccessDeserializers {
         }
         return tag.substring(0, offset);
     }
-
 
     static HashMap<String, String> parseAttributes(String input) {
         final HashMap<String, String> attributes = new HashMap<>();

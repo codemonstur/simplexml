@@ -1,4 +1,4 @@
-package simplexml.core;
+package simplexml.utils;
 
 public enum Constants {;
 
