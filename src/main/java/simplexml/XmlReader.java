@@ -13,7 +13,9 @@ import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.utils.Constants.*;
-import static simplexml.utils.Functions.*;
+import static simplexml.utils.Reflection.newObject;
+import static simplexml.utils.Reflection.toName;
+import static simplexml.utils.XML.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
 
