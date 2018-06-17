@@ -1,45 +1,75 @@
 package simplexml;
 
+import simplexml.model.ElementNode;
 import simplexml.model.ObjectDeserializer;
 import simplexml.model.ObjectSerializer;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static simplexml.XmlReader.parseXML;
 import static simplexml.model.ObjectDeserializer.defaultDeserializers;
+import static simplexml.model.ObjectSerializer.defaultSerializer;
+import static simplexml.utils.Reflection.toName;
 
-public class SimpleXml implements XmlReader, XmlWriter {
-    private final boolean shouldEncodeUTF8;
-    private final ObjectSerializer defaultSerializer;
-    private final Map<Class<?>, ObjectSerializer> serializers;
-    private final Map<Class<?>, ObjectDeserializer> deserializers;
+public final class SimpleXml {
+    private final XmlReader reader;
+    private final XmlWriter writer;
 
     public SimpleXml() {
-        shouldEncodeUTF8 = false;
-        deserializers = defaultDeserializers();
-        defaultSerializer = ObjectSerializer.defaultSerializer();
-        serializers = new HashMap<>();
+        this(false, true, defaultSerializer(), new HashMap<>(), defaultDeserializers());
     }
 
-    private SimpleXml(final boolean shouldEncodeUTF8, final ObjectSerializer defaultSerializer,
-                      final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers) {
-        this.shouldEncodeUTF8 = shouldEncodeUTF8;
-        this.deserializers = deserializers;
-        this.serializers = serializers;
-        this.defaultSerializer = defaultSerializer;
+    private SimpleXml(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final ObjectSerializer defaultSerializer
+            , final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers) {
+        reader = deserializers::get;
+        writer = new XmlWriter() {
+            public boolean hasSerializer(final Class<?> type) {
+                return serializers.containsKey(type);
+            }
+            public ObjectSerializer getSerializer(final Class<?> type) {
+                return serializers.getOrDefault(type, defaultSerializer);
+            }
+            public boolean shouldEncodeUTF8() {
+                return shouldEncodeUTF8;
+            }
+            public boolean shouldPrettyPrint() {
+                return shouldPrettyPrint;
+            }
+        };
     }
 
-    public boolean hasSerializer(final Class<?> type) {
-        return serializers.containsKey(type);
+    public <T> T fromXml(final String input, final Class<T> clazz) throws IOException {
+        return reader.domToObject(fromXml(input), clazz);
     }
-    public ObjectSerializer getSerializer(Class<?> type) {
-        return serializers.getOrDefault(type, defaultSerializer);
+    public <T> T fromXml(final InputStream in, final Class<T> clazz) throws IOException {
+        return reader.domToObject(fromXml(in), clazz);
     }
-    public ObjectDeserializer getDeserializer(Class<?> type) {
-        return deserializers.get(type);
+    public ElementNode fromXml(final String input) throws IOException {
+        return fromXml(new ByteArrayInputStream(input.getBytes(UTF_8)));
     }
-    public boolean shouldEncodeUTF8() {
-        return shouldEncodeUTF8;
+    public ElementNode fromXml(final InputStream stream) throws IOException {
+        return parseXML(new InputStreamReader(stream, UTF_8));
+    }
+    public String toXml(final Object o) {
+        return writer.toXml(o, toName(o.getClass()));
+    }
+    public String toXml(final Object o, final String name) {
+        return writer.toXml(o, name);
+    }
+    public void toXml(final Object o, final Writer out) throws IOException {
+        writer.toXml(o, toName(o.getClass()), out);
+    }
+    public void toXml(final Object o, final String name, final Writer out) throws IOException {
+        writer.toXml(o, name, out);
+    }
+    public String domToXml(final ElementNode node) {
+        return writer.domToXml(node);
+    }
+    public void domToXml(final ElementNode node, final Writer out) throws IOException {
+        writer.domToXml(node, out);
     }
 
     public static Builder newSimpleXml() {
@@ -47,17 +77,11 @@ public class SimpleXml implements XmlReader, XmlWriter {
     }
 
     public static class Builder {
-        private boolean shouldEncodeUTF8;
-        private ObjectSerializer defaultSerializer;
-        private Map<Class<?>, ObjectSerializer> serializers;
-        private Map<Class<?>, ObjectDeserializer> deserializers;
-
-        public Builder() {
-            shouldEncodeUTF8 = false;
-            deserializers = defaultDeserializers();
-            defaultSerializer = ObjectSerializer.defaultSerializer();
-            serializers = new HashMap<>();
-        }
+        private boolean shouldEncodeUTF8 = false;
+        private boolean shouldPrettyPrint = true;
+        private ObjectSerializer defaultSerializer = ObjectSerializer.defaultSerializer();;
+        private Map<Class<?>, ObjectSerializer> serializers = new HashMap<>();
+        private Map<Class<?>, ObjectDeserializer> deserializers = defaultDeserializers();
 
         public Builder defaultSerializer(final ObjectSerializer serializer) {
             this.defaultSerializer = serializer;
@@ -71,6 +95,14 @@ public class SimpleXml implements XmlReader, XmlWriter {
             this.deserializers.put(c, deserializer);
             return this;
         }
+        public Builder shouldPrettyPrint() {
+            this.shouldPrettyPrint = true;
+            return this;
+        }
+        public Builder shouldPrettyPrint(final boolean shouldPrettyPrint) {
+            this.shouldPrettyPrint = shouldPrettyPrint;
+            return this;
+        }
         public Builder shouldEncodeUTF8() {
             this.shouldEncodeUTF8 = true;
             return this;
@@ -81,7 +113,7 @@ public class SimpleXml implements XmlReader, XmlWriter {
         }
 
         public SimpleXml build() {
-            return new SimpleXml(shouldEncodeUTF8, defaultSerializer, serializers, deserializers);
+            return new SimpleXml(shouldEncodeUTF8, shouldPrettyPrint, defaultSerializer, serializers, deserializers);
         }
     }
 }

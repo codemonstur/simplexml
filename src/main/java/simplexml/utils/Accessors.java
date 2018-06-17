@@ -18,6 +18,7 @@ public enum Accessors {;
     }
     public interface ParserConfiguration {
         boolean shouldEncodeUTF8();
+        boolean shouldPrettyPrint();
     }
 
 }

@@ -5,6 +5,9 @@ import java.util.Map;
 
 public interface ObjectDeserializer {
     Object convert(String value);
+    default <T> T convert(String value, Class<T> clazz) {
+        return clazz.cast(convert(value));
+    }
 
     static Map<Class<?>, ObjectDeserializer> defaultDeserializers() {
         final Map<Class<?>, ObjectDeserializer> deserializers = new HashMap<>();

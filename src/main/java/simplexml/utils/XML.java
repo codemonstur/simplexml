@@ -63,10 +63,19 @@ public enum XML {;
                 } else if (text.startsWith(ENCODED_GREATER_THAN, i)) {
                     result.append(CHAR_GREATER_THAN);
                     i += 4;
-                } else i++;
+                } else if (text.startsWith(ENCODED_UTF8, i)) {
+                    final int index = text.indexOf(';', i);
+                    result.append(toChar(text.substring(i+2, index)));
+                    i = index+1;
+                }
+                else i++;
             }
         }
         return result.toString();
+    }
+
+    private static char toChar(final String substring) {
+        return (char) Integer.parseInt(substring);
     }
 
     public static String attributesToXml(final List<Field> fields, final Object o, final boolean shouldEncodeUTF8) throws IllegalArgumentException,

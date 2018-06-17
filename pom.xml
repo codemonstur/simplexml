@@ -1,13 +1,13 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>codemonster</groupId>
+    <groupId>com.github.codemonstur</groupId>
     <artifactId>simplexml</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>An XML parser, serializer, and deserializer that has no dependencies.</description>
-    <url>https://github.com/JurgenNED/simplexml</url>
+    <url>https://github.com/codemonstur/simplexml</url>
 
     <licenses>
         <license>
@@ -18,14 +18,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/JurgenNED/simplexml.git</connection>
-        <developerConnection>scm:git:https://github.com/JurgenNED/simplexml.git</developerConnection>
-        <url>https://github.com/JurgenNED/simplexml</url>
+        <connection>scm:git:https://github.com/codemonstur/simplexml.git</connection>
+        <developerConnection>scm:git:https://github.com/codemonstur/simplexml.git</developerConnection>
+        <url>https://github.com/codemonstur/simplexml</url>
     </scm>
 
     <developers>
         <developer>
-            <id>JurgenNED</id>
+            <id>codemonstur</id>
             <name>Jurgen Voorneveld</name>
             <email>jegvoorneveld@gmail.com</email>
         </developer>

@@ -20,9 +20,6 @@ import static simplexml.utils.XML.*;
 
 public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
-    default String toXml(final Object o) {
-        return toXml(o, toName(o.getClass()));
-    }
     default String toXml(final Object o, final String name) {
         final StringWriter output = new StringWriter();
 
@@ -30,9 +27,6 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         catch (IllegalArgumentException | IllegalAccessException | IOException e) { /* can't happen */ }
 
         return output.toString();
-    }
-    default void toXml(final Object o, final Writer writer) throws IOException {
-        toXml(o, toName(o.getClass()), writer);
     }
     default void toXml(final Object o, final String name, final Writer writer) throws IOException {
         try { writeObject(writer, name, o, EMPTY); }
@@ -62,16 +56,17 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
 
     default void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
-        writer.append(indent);
+        writeIndent(writer, indent);
         writeTag(writer, name, escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
-        writer.append(NEW_LINE);
+        writeNewLine(writer);
     }
 
     default void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
             , final String indent) throws IOException, IllegalAccessException {
-        writer.append(indent);
-        writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()), escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
-        writer.append(NEW_LINE);
+        writeIndent(writer, indent);
+        writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()),
+                escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
+        writeNewLine(writer);
     }
 
     default void writeList(final Writer writer, final String name, final Object o, final String indent)
@@ -112,22 +107,22 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             writeSimple(writer, name, o, attributes, textNode.get(o).toString());
             return;
         }
-        
-        writer.append(indent);
+
+        writeIndent(writer, indent);
         writeOpeningTag(writer, name, attributesToXml(attributes, o, shouldEncodeUTF8()));
-        writer.append(NEW_LINE);
+        writeNewLine(writer);
 
         for (final Field f : childNodes) {
             writeField(f.getType(), writer, toName(f), f.get(o), indent+INDENT);
         }
         if (textNode != null) {
-            writer.append(indent);
+            writeIndent(writer, indent);
             writer.append(escapeXml(textNode.get(o).toString(), shouldEncodeUTF8()));
-            writer.append(NEW_LINE);
+            writeNewLine(writer);
         }
-        writer.append(indent);
+        writeIndent(writer, indent);
         writeClosingTag(writer, name);
-        writer.append(NEW_LINE);
+        writeNewLine(writer);
     }
 
     default void writeField(final Class<?> c, final Writer writer,
@@ -141,6 +136,13 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             case MAP: writeMap(writer, value, indent); break;
             default: writeObject(writer, name, value, indent); break;
         }
+    }
+
+    default void writeIndent(final Writer writer, final String indent) throws IOException {
+        if (shouldPrettyPrint()) writer.append(indent);
+    }
+    default void writeNewLine(final Writer writer) throws IOException {
+        if (shouldPrettyPrint()) writer.append(NEW_LINE);
     }
 
 }

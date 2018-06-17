@@ -3,15 +3,12 @@ package simplexml;
 import simplexml.model.*;
 import simplexml.utils.Accessors.AccessDeserializers;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.utils.Constants.*;
 import static simplexml.utils.Reflection.newObject;
 import static simplexml.utils.Reflection.toName;
@@ -19,28 +16,15 @@ import static simplexml.utils.XML.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
 
-    default <T> T fromXml(final String input, final Class<T> clazz) throws IOException {
-        return domToObject(fromXml(input), clazz);
-    }
-    default <T> T fromXml(final InputStream in, final Class<T> clazz) throws IOException {
-        return domToObject(fromXml(in), clazz);
-    }
-    default ElementNode fromXml(final String input) throws IOException {
-        return fromXml(new ByteArrayInputStream(input.getBytes(UTF_8)));
-    }
-    default ElementNode fromXml(final InputStream stream) throws IOException {
-        return parse(new InputStreamReader(stream, UTF_8));
-    }
-
     default <T> T domToObject(final ElementNode node, final Class<T> clazz) {
         try {
             final T o = newObject(clazz);
 
             for (final Field f : clazz.getDeclaredFields()) {
                 f.setAccessible(true);
-                final ObjectDeserializer conv = getDeserializer(f.getType());
 
                 if (f.isAnnotationPresent(XmlTextNode.class)) {
+                    final ObjectDeserializer conv = getDeserializer(f.getType());
                     if (conv != null) f.set(o, conv.convert(node.text));
                     continue;
                 }
@@ -48,6 +32,7 @@ public interface XmlReader extends AccessDeserializers {
                 final String name = toName(f);
 
                 if (f.isAnnotationPresent(XmlAttribute.class)) {
+                    final ObjectDeserializer conv = getDeserializer(f.getType());
                     if (conv == null) continue;
                     final String value = node.attributes.get(name);
                     if (value == null) continue;
@@ -57,10 +42,9 @@ public interface XmlReader extends AccessDeserializers {
 
                 final Class<?> type = f.getType();
                 if (Set.class.isAssignableFrom(type)) {
-                    final Set<Object> set = new HashSet<>();
-                    f.set(o, set);
-
                     final Class<?> elementType = getClassOfCollection(f);
+                    System.out.println(elementType);
+                    final Set<Object> set = new HashSet<>();
                     final ObjectDeserializer elementConv = getDeserializer(elementType);
 
                     for (final ElementNode n : node.children) {
@@ -68,15 +52,15 @@ public interface XmlReader extends AccessDeserializers {
                             if (elementConv == null)
                                 set.add(domToObject(n, elementType));
                             else
-                                set.add(conv.convert(n.text));
+                                set.add(elementConv.convert(n.text));
                         }
                     }
+
+                    f.set(o, set);
                     continue;
                 }
                 if (List.class.isAssignableFrom(type)) {
                     final List<Object> list = new LinkedList<>();
-                    f.set(o, list);
-
                     final Class<?> elementType = getClassOfCollection(f);
                     final ObjectDeserializer elementConv = getDeserializer(elementType);
 
@@ -85,20 +69,54 @@ public interface XmlReader extends AccessDeserializers {
                             if (elementConv == null)
                                 list.add(domToObject(n, elementType));
                             else
-                                list.add(conv.convert(n.text));
+                                list.add(elementConv.convert(n.text));
                         }
                     }
+
+                    f.set(o, list);
+                    continue;
+                }
+
+                if (type.isArray()) {
+                    // FIXME how to create the array and set it too?
+                    final Class<?> elementType = f.getType().getComponentType();
+                    final List<Object> list = new LinkedList<>();
+                    System.out.println(elementType);
+                    final ObjectDeserializer elementConv = getDeserializer(elementType);
+
+                    for (final ElementNode n : node.children) {
+                        if (n.name.equals(name)) {
+                            if (elementConv == null)
+                                list.add(domToObject(n, elementType));
+                            else
+                                list.add(elementConv.convert(n.text, elementType));
+                        }
+                    }
+
+                    System.out.println(list);
+                    f.set(o, type.cast(list.toArray()));
+                    continue;
+                }
+
+                if (Map.class.isAssignableFrom(type)) {
+                    final Map<Object, Object> map = new HashMap<>();
+
+                    // TODO implement me
+
+                    f.set(o, map);
                     continue;
                 }
 
                 final String value = node.attributes.get(name);
                 if (value != null) {
+                    final ObjectDeserializer conv = getDeserializer(f.getType());
                     if (conv != null) f.set(o, conv.convert(value));
                     continue;
                 }
 
                 final ElementNode child = getNodeForName(name, node.children);
                 if (child != null) {
+                    final ObjectDeserializer conv = getDeserializer(f.getType());
                     if (conv == null) {
                         f.set(o, domToObject(child, f.getType()));
                     } else {
@@ -109,6 +127,7 @@ public interface XmlReader extends AccessDeserializers {
 
             return o;
         } catch ( IllegalAccessException | SecurityException | IllegalArgumentException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -117,7 +136,7 @@ public interface XmlReader extends AccessDeserializers {
         final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
         return (Class<?>) stringListType.getActualTypeArguments()[0];
     }
-    
+
     static ElementNode getNodeForName(final String name, final List<ElementNode> nodes) {
         for (final ElementNode n : nodes) {
             if (n.name.equals(name))
@@ -126,7 +145,7 @@ public interface XmlReader extends AccessDeserializers {
         return null;
     }
     
-    static ElementNode parse(final InputStreamReader in) throws IOException {
+    static ElementNode parseXML(final InputStreamReader in) throws IOException {
         final EventParser p = new EventParser();
 
         String str;
@@ -217,17 +236,17 @@ public interface XmlReader extends AccessDeserializers {
         return attributes;
     }
 
-    static int indexOfNonWhitespaceChar(final String input, int offset) {
+    static int indexOfNonWhitespaceChar(final String input, final int offset) {
         for (int i = offset; i < input.length(); i++) {
-            char at = input.charAt(i);
+            final char at = input.charAt(i);
             if (at == ' ' || at == '\t' || at == '\n' || at == '\r') continue;
             return i;
         }
         return -1;
     }
-    static int indexOfWhitespaceChar(final String input, int offset) {
+    static int indexOfWhitespaceChar(final String input, final int offset) {
         for (int i = offset; i < input.length(); i++) {
-            char at = input.charAt(i);
+            final char at = input.charAt(i);
             if (at == ' ' || at == '\t' || at == '\n' || at == '\r') return i;
         }
         return -1;

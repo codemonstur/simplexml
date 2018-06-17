@@ -38,5 +38,6 @@ public enum Constants {;
         ENCODED_GREATER_THAN = "&gt;",
         ENCODED_SINGLE_QUOTE = "&apos;",
         ENCODED_DOUBLE_QUOTE = "&quot;",
-        ENCODED_AMPERSAND = "&amp;";
+        ENCODED_AMPERSAND = "&amp;",
+        ENCODED_UTF8 = "&#";
 }

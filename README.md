@@ -100,7 +100,7 @@ The deserializer will respect the same annotations as the serializer
 I haven't put it in maven central yet.
 I'd like to but just haven't gotten to it.
 
-You can use <a href="https://jitpack.io/#JurgenNED/simplexml/1.0.0">jitpack.io</a> to include it in your project.
+You can use <a href="https://jitpack.io/#codemonstur/simplexml/1.0.0">jitpack.io</a> to include it in your project.
 
     <repositories>
         <repository>
@@ -110,14 +110,14 @@ You can use <a href="https://jitpack.io/#JurgenNED/simplexml/1.0.0">jitpack.io</
     </repositories>
 	
     <dependency>
-        <groupId>com.github.JurgenNED</groupId>
+        <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
         <version>1.0.0</version>
     </dependency
 
 Or alternatively you can clone the repo and install locally:
 
-    git clone https://github.com/JurgenNED/simplexml.git
+    git clone https://github.com/codemonstur/simplexml.git
     cd simplexml
     mvn install
 
