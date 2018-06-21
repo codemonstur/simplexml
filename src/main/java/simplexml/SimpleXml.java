@@ -48,10 +48,18 @@ public final class SimpleXml {
     }
 
     public <T> T fromXml(final String input, final Class<T> clazz) throws IOException {
-        return reader.domToObject(fromXml(input), clazz);
+        try {
+            return reader.domToObject(fromXml(input), clazz);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
     public <T> T fromXml(final InputStream in, final Class<T> clazz) throws IOException {
-        return reader.domToObject(fromXml(in), clazz);
+        try {
+            return reader.domToObject(fromXml(in), clazz);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
     public Element fromXml(final String input) throws IOException {
         return fromXml(new ByteArrayInputStream(input.getBytes(charset)));

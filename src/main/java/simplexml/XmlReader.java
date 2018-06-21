@@ -1,6 +1,8 @@
 package simplexml;
 
-import simplexml.model.*;
+import simplexml.model.Element;
+import simplexml.model.EventParser;
+import simplexml.model.ObjectDeserializer;
 import simplexml.utils.Interfaces.AccessDeserializers;
 
 import java.io.IOException;
@@ -11,66 +13,35 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static simplexml.utils.Constants.*;
-import static simplexml.utils.Reflection.newObject;
-import static simplexml.utils.Reflection.toName;
+import static simplexml.utils.Reflection.*;
 import static simplexml.utils.XML.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
 
-    default <T> T domToObject(final Element node, final Class<T> clazz) {
+    default <T> T domToObject(final Element node, final Class<T> clazz) throws IllegalAccessException {
         if (node == null) return null;
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node.text, clazz);
 
-        try {
-            final T o = newObject(clazz);
+        final T o = newObject(clazz);
 
-            for (final Field f : clazz.getDeclaredFields()) {
-                f.setAccessible(true);
+        for (final Field f : clazz.getDeclaredFields()) {
+            f.setAccessible(true);
 
-                if (f.isAnnotationPresent(XmlTextNode.class)) {
-                    f.set(o, textNodeToValue(f.getType(), node));
-                    continue;
-                }
-
-                final String name = toName(f);
-                if (f.isAnnotationPresent(XmlAttribute.class)) {
-                    f.set(o, attributeToValue(f.getType(), name, node));
-                    continue;
-                }
-
-                final Class<?> type = f.getType();
-                if (Set.class.isAssignableFrom(type)) {
-                    f.set(o, domToSet(getClassOfCollection(f), name, node));
-                    continue;
-                }
-                if (List.class.isAssignableFrom(type)) {
-                    f.set(o, domToList(getClassOfCollection(f), name, node));
-                    continue;
-                }
-                if (type.isArray()) {
-                    f.set(o, domToArray(f.getType().getComponentType(), name, node));
-                    continue;
-                }
-
-                if (Map.class.isAssignableFrom(type)) {
-                    f.set(o, domToMap((ParameterizedType) f.getGenericType(), name, node));
-                    continue;
-                }
-
-                final String value = node.attributes.get(name);
-                if (value != null) {
-                    f.set(o, stringToValue(f.getType(), value));
-                    continue;
-                }
-
-                f.set(o, domToObject(findChildForName(name, node), f.getType()));
+            switch (toFieldType(f)) {
+                case TEXTNODE: f.set(o, textNodeToValue(f.getType(), node)); break;
+                case ANNOTATED_ATTRIBUTE: f.set(o, attributeToValue(f.getType(), toName(f), node)); break;
+                case SET: f.set(o, domToSet(toClassOfCollection(f), toName(f), node)); break;
+                case LIST: f.set(o, domToList(toClassOfCollection(f), toName(f), node)); break;
+                case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), node)); break;
+                case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), node)); break;
+                case OTHER:
+                    final String name = toName(f);
+                    final String value = node.attributes.get(name);
+                    f.set(o, (value != null) ? stringToValue(f.getType(), value) : domToObject(node.findChildForName(name, null), f.getType()));
             }
-
-            return o;
-        } catch ( IllegalAccessException | SecurityException | IllegalArgumentException e) {
-            return null;
         }
+        return o;
     }
 
 
@@ -114,7 +85,7 @@ public interface XmlReader extends AccessDeserializers {
     default Object[] domToArray(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
         final ObjectDeserializer elementConv = getDeserializer(type);
 
-        final Object[] array = (Object[]) Array.newInstance(type, numChildrenWithName(name, node));
+        final Object[] array = (Object[]) Array.newInstance(type, node.numChildrenWithName(name));
         int i = 0;
         for (final Element n : node.children) {
             if (n.name.equals(name)) {
@@ -125,38 +96,17 @@ public interface XmlReader extends AccessDeserializers {
         return array;
     }
     default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final Element node) throws IllegalAccessException {
-        final Element element = findChildForName(name, node);
+        final Element element = node.findChildForName(name, null);
         if (element == null) return null;
 
-        final ObjectDeserializer convKey = getDeserializer((Class<?>)type.getActualTypeArguments()[0]);
-        final ObjectDeserializer convVal = getDeserializer((Class<?>)type.getActualTypeArguments()[1]);
+        final ObjectDeserializer convKey = getDeserializer(toClassOfMapKey(type));
+        final ObjectDeserializer convVal = getDeserializer(toClassOfMapValue(type));
 
         final Map<Object, Object> map = new HashMap<>();
         for (final Element child : element.children) {
             map.put(convKey.convert(child.name), convVal.convert(child.text));
         }
         return map;
-    }
-
-    static Element findChildForName(final String name, final Element node) {
-        for (final Element child : node.children) {
-            if (name.equals(child.name))
-                return child;
-        }
-        return null;
-    }
-
-    static int numChildrenWithName(final String name, final Element node) {
-        int num = 0;
-        for (final Element child : node.children) {
-            if (name.equals(child.name)) num++;
-        }
-        return num;
-    }
-
-    static Class<?> getClassOfCollection(final Field f) {
-        final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
-        return (Class<?>) stringListType.getActualTypeArguments()[0];
     }
 
     static Element parseXML(final InputStreamReader in) throws IOException {

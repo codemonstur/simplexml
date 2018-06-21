@@ -27,6 +27,22 @@ public class Element {
         this.children.add(child);
     }
 
+    public Element findChildForName(final String name, final Element _default) {
+        for (final Element child : children) {
+            if (name.equals(child.name))
+                return child;
+        }
+        return _default;
+    }
+
+    public int numChildrenWithName(final String name) {
+        int num = 0;
+        for (final Element child : children) {
+            if (name.equals(child.name)) num++;
+        }
+        return num;
+    }
+
 
     public static Element element(final String name) {
         return new Element(null, name, new HashMap<>(), new ArrayList<>(), null);

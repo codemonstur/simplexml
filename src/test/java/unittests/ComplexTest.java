@@ -13,16 +13,6 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 
 public class ComplexTest {
 
-    private static ComplexPojo newDefaultComplexPojo() {
-        final List<String> list = Arrays.asList("first", "second", "monkey");
-        final Map<Integer, String> map = new HashMap<>();
-        map.put(1, "thumb");
-        final Float[] array = { 0.5f, 34.8f };
-        final Set<Double> set = new HashSet<>(Arrays.asList(45.3, 1234567.90));
-
-        return new ComplexPojo("complex", list, map, array, set);
-    }
-
     private static final ComplexPojo complex = newDefaultComplexPojo();
     private static final String complexXml = "<complexpojo>\n" +
             "  <name>complex</name>\n" +
@@ -38,6 +28,16 @@ public class ComplexTest {
             "  <set>1234567.9</set>\n" +
             "</complexpojo>\n";
 
+    private static ComplexPojo newDefaultComplexPojo() {
+        final List<String> list = Arrays.asList("first", "second", "monkey");
+        final Map<Integer, String> map = new HashMap<>();
+        map.put(1, "thumb");
+        final Float[] array = { 0.5f, 34.8f };
+        final Set<Double> set = new HashSet<>(Arrays.asList(45.3, 1234567.90));
+
+        return new ComplexPojo("complex", list, map, array, set);
+    }
+
     private SimpleXml simple = new SimpleXml();
 
     @Test
@@ -51,7 +51,6 @@ public class ComplexTest {
     @Test
     public void serialize() {
         final String xml = simple.toXml(complex);
-        System.out.println(xml);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", complexXml, xml);

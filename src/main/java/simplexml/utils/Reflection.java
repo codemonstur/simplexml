@@ -10,6 +10,7 @@ import sun.reflect.ReflectionFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,21 @@ public enum Reflection {;
                 childNodes.add(f);
         }
         return textNode;
+    }
+
+    public enum FieldType {
+        TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER
+    }
+    public static FieldType toFieldType(final Field f) {
+        if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXTNODE;
+        if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
+
+        final Class<?> type = f.getType();
+        if (Set.class.isAssignableFrom(type)) return FieldType.SET;
+        if (List.class.isAssignableFrom(type)) return FieldType.LIST;
+        if (type.isArray()) return FieldType.ARRAY;
+        if (Map.class.isAssignableFrom(type)) return FieldType.MAP;
+        return FieldType.OTHER;
     }
 
     public enum ClassType {
@@ -117,6 +133,17 @@ public enum Reflection {;
         if (field.isAnnotationPresent(XmlName.class))
             return field.getAnnotation(XmlName.class).value();
         return field.getName();
+    }
+
+    public static Class<?> toClassOfCollection(final Field f) {
+        final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
+        return (Class<?>) stringListType.getActualTypeArguments()[0];
+    }
+    public static Class<?> toClassOfMapKey(final ParameterizedType type) {
+        return (Class<?>)type.getActualTypeArguments()[0];
+    }
+    public static Class<?> toClassOfMapValue(final ParameterizedType type) {
+        return (Class<?>)type.getActualTypeArguments()[1];
     }
 
 }
