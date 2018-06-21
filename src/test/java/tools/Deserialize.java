@@ -6,18 +6,6 @@ import java.io.IOException;
 
 public final class Deserialize {
 
-    private static class Project {
-        public final String groupId;
-        public final String artifactId;
-        public final String version;
-
-        private Project(final String groupId, final String artifactId, final String version) {
-            this.groupId = groupId;
-            this.artifactId = artifactId;
-            this.version = version;
-        }
-    }
-
     private static final String POM_1 =
         "<project>" +
             "<groupId>codemonster</groupId>" +
@@ -34,6 +22,18 @@ public final class Deserialize {
             "<artifactId>simplexml</artifactId>" +
             "<version>1.0.0</version>" +
         "</project>";
+
+    private static class Project {
+        public final String groupId;
+        public final String artifactId;
+        public final String version;
+
+        private Project(final String groupId, final String artifactId, final String version) {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+        }
+    }
 
     public static void main(final String... args) throws IOException {
         final SimpleXml simple = new SimpleXml();

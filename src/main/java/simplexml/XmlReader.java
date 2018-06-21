@@ -35,10 +35,11 @@ public interface XmlReader extends AccessDeserializers {
                 case LIST: f.set(o, domToList(toClassOfCollection(f), toName(f), node)); break;
                 case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), node)); break;
                 case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), node)); break;
-                case OTHER:
+                default:
                     final String name = toName(f);
                     final String value = node.attributes.get(name);
                     f.set(o, (value != null) ? stringToValue(f.getType(), value) : domToObject(node.findChildForName(name, null), f.getType()));
+                    break;
             }
         }
         return o;

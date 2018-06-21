@@ -51,14 +51,14 @@ public final class SimpleXml {
         try {
             return reader.domToObject(fromXml(input), clazz);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
     public <T> T fromXml(final InputStream in, final Class<T> clazz) throws IOException {
         try {
             return reader.domToObject(fromXml(in), clazz);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
     public Element fromXml(final String input) throws IOException {
@@ -100,7 +100,7 @@ public final class SimpleXml {
         private boolean shouldEncodeUTF8 = false;
         private boolean shouldPrettyPrint = true;
         private Charset charset = UTF_8;
-        private ObjectSerializer defaultSerializer = ObjectSerializer.defaultSerializer();;
+        private ObjectSerializer defaultSerializer = ObjectSerializer.defaultSerializer();
         private Map<Class<?>, ObjectSerializer> serializers = new HashMap<>();
         private Map<Class<?>, ObjectDeserializer> deserializers = defaultDeserializers();
 
