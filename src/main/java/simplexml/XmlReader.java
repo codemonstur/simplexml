@@ -1,10 +1,11 @@
 package simplexml;
 
 import simplexml.model.*;
-import simplexml.utils.Accessors.AccessDeserializers;
+import simplexml.utils.Interfaces.AccessDeserializers;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
@@ -16,7 +17,11 @@ import static simplexml.utils.XML.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
 
-    default <T> T domToObject(final ElementNode node, final Class<T> clazz) {
+    default <T> T domToObject(final Element node, final Class<T> clazz) {
+        if (node == null) return null;
+        final ObjectDeserializer c = getDeserializer(clazz);
+        if (c != null) return c.convert(node.text, clazz);
+
         try {
             final T o = newObject(clazz);
 
@@ -24,128 +29,137 @@ public interface XmlReader extends AccessDeserializers {
                 f.setAccessible(true);
 
                 if (f.isAnnotationPresent(XmlTextNode.class)) {
-                    final ObjectDeserializer conv = getDeserializer(f.getType());
-                    if (conv != null) f.set(o, conv.convert(node.text));
+                    f.set(o, textNodeToValue(f.getType(), node));
                     continue;
                 }
 
                 final String name = toName(f);
-
                 if (f.isAnnotationPresent(XmlAttribute.class)) {
-                    final ObjectDeserializer conv = getDeserializer(f.getType());
-                    if (conv == null) continue;
-                    final String value = node.attributes.get(name);
-                    if (value == null) continue;
-                    f.set(o, conv.convert(value));
+                    f.set(o, attributeToValue(f.getType(), name, node));
                     continue;
                 }
 
                 final Class<?> type = f.getType();
                 if (Set.class.isAssignableFrom(type)) {
-                    final Class<?> elementType = getClassOfCollection(f);
-                    System.out.println(elementType);
-                    final Set<Object> set = new HashSet<>();
-                    final ObjectDeserializer elementConv = getDeserializer(elementType);
-
-                    for (final ElementNode n : node.children) {
-                        if (n.name.equals(name)) {
-                            if (elementConv == null)
-                                set.add(domToObject(n, elementType));
-                            else
-                                set.add(elementConv.convert(n.text));
-                        }
-                    }
-
-                    f.set(o, set);
+                    f.set(o, domToSet(getClassOfCollection(f), name, node));
                     continue;
                 }
                 if (List.class.isAssignableFrom(type)) {
-                    final List<Object> list = new LinkedList<>();
-                    final Class<?> elementType = getClassOfCollection(f);
-                    final ObjectDeserializer elementConv = getDeserializer(elementType);
-
-                    for (final ElementNode n : node.children) {
-                        if (n.name.equals(name)) {
-                            if (elementConv == null)
-                                list.add(domToObject(n, elementType));
-                            else
-                                list.add(elementConv.convert(n.text));
-                        }
-                    }
-
-                    f.set(o, list);
+                    f.set(o, domToList(getClassOfCollection(f), name, node));
                     continue;
                 }
-
                 if (type.isArray()) {
-                    // FIXME how to create the array and set it too?
-                    final Class<?> elementType = f.getType().getComponentType();
-                    final List<Object> list = new LinkedList<>();
-                    System.out.println(elementType);
-                    final ObjectDeserializer elementConv = getDeserializer(elementType);
-
-                    for (final ElementNode n : node.children) {
-                        if (n.name.equals(name)) {
-                            if (elementConv == null)
-                                list.add(domToObject(n, elementType));
-                            else
-                                list.add(elementConv.convert(n.text, elementType));
-                        }
-                    }
-
-                    System.out.println(list);
-                    f.set(o, type.cast(list.toArray()));
+                    f.set(o, domToArray(f.getType().getComponentType(), name, node));
                     continue;
                 }
 
                 if (Map.class.isAssignableFrom(type)) {
-                    final Map<Object, Object> map = new HashMap<>();
-
-                    // TODO implement me
-
-                    f.set(o, map);
+                    f.set(o, domToMap((ParameterizedType) f.getGenericType(), name, node));
                     continue;
                 }
 
                 final String value = node.attributes.get(name);
                 if (value != null) {
-                    final ObjectDeserializer conv = getDeserializer(f.getType());
-                    if (conv != null) f.set(o, conv.convert(value));
+                    f.set(o, stringToValue(f.getType(), value));
                     continue;
                 }
 
-                final ElementNode child = getNodeForName(name, node.children);
-                if (child != null) {
-                    final ObjectDeserializer conv = getDeserializer(f.getType());
-                    if (conv == null) {
-                        f.set(o, domToObject(child, f.getType()));
-                    } else {
-                        f.set(o, conv.convert(child.text));
-                    }
-                }
+                f.set(o, domToObject(findChildForName(name, node), f.getType()));
             }
 
             return o;
         } catch ( IllegalAccessException | SecurityException | IllegalArgumentException e) {
-            e.printStackTrace();
             return null;
         }
     }
-    
+
+
+    default Object textNodeToValue(final Class<?> type, final Element node) throws IllegalAccessException {
+        final ObjectDeserializer conv = getDeserializer(type);
+        return (conv != null) ? conv.convert(node.text) : null;
+    }
+    default Object attributeToValue(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        final ObjectDeserializer conv = getDeserializer(type);
+        if (conv == null) return null;
+        final String value = node.attributes.get(name);
+        if (value == null) return null;
+        return conv.convert(value);
+    }
+    default Object stringToValue(final Class<?> type, final String value) {
+        final ObjectDeserializer conv = getDeserializer(type);
+        return (conv != null) ? conv.convert(value) : null;
+    }
+    default Set<Object> domToSet(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        final ObjectDeserializer elementConv = getDeserializer(type);
+
+        final Set<Object> set = new HashSet<>();
+        for (final Element n : node.children) {
+            if (!n.name.equals(name)) continue;
+
+            set.add( (elementConv == null) ? domToObject(n, type) : elementConv.convert(n.text));
+        }
+        return set;
+    }
+    default List<Object> domToList(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        final ObjectDeserializer elementConv = getDeserializer(type);
+
+        final List<Object> list = new LinkedList<>();
+        for (final Element n : node.children) {
+            if (!n.name.equals(name)) continue;
+
+            list.add( (elementConv == null) ? domToObject(n, type) : elementConv.convert(n.text));
+        }
+        return list;
+    }
+    default Object[] domToArray(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        final ObjectDeserializer elementConv = getDeserializer(type);
+
+        final Object[] array = (Object[]) Array.newInstance(type, numChildrenWithName(name, node));
+        int i = 0;
+        for (final Element n : node.children) {
+            if (n.name.equals(name)) {
+                array[i] = (elementConv == null) ? domToObject(n, type) : elementConv.convert(n.text, type);
+                i++;
+            }
+        }
+        return array;
+    }
+    default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final Element node) throws IllegalAccessException {
+        final Element element = findChildForName(name, node);
+        if (element == null) return null;
+
+        final ObjectDeserializer convKey = getDeserializer((Class<?>)type.getActualTypeArguments()[0]);
+        final ObjectDeserializer convVal = getDeserializer((Class<?>)type.getActualTypeArguments()[1]);
+
+        final Map<Object, Object> map = new HashMap<>();
+        for (final Element child : element.children) {
+            map.put(convKey.convert(child.name), convVal.convert(child.text));
+        }
+        return map;
+    }
+
+    static Element findChildForName(final String name, final Element node) {
+        for (final Element child : node.children) {
+            if (name.equals(child.name))
+                return child;
+        }
+        return null;
+    }
+
+    static int numChildrenWithName(final String name, final Element node) {
+        int num = 0;
+        for (final Element child : node.children) {
+            if (name.equals(child.name)) num++;
+        }
+        return num;
+    }
+
     static Class<?> getClassOfCollection(final Field f) {
         final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
         return (Class<?>) stringListType.getActualTypeArguments()[0];
     }
 
-    static ElementNode getNodeForName(final String name, final List<ElementNode> nodes) {
-        for (final ElementNode n : nodes) {
-            if (n.name.equals(name))
-                return n;
-        }
-        return null;
-    }
-    
-    static ElementNode parseXML(final InputStreamReader in) throws IOException {
+    static Element parseXML(final InputStreamReader in) throws IOException {
         final EventParser p = new EventParser();
 
         String str;

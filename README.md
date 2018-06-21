@@ -97,22 +97,12 @@ The deserializer will respect the same annotations as the serializer
 
 ## How to get
 
-I haven't put it in maven central yet.
-I'd like to but just haven't gotten to it.
+Its in maven central.
 
-You can use <a href="https://jitpack.io/#codemonstur/simplexml/1.0.0">jitpack.io</a> to include it in your project.
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-	
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>1.0.0</version>
+        <version>1.3.0</version>
     </dependency
 
 Or alternatively you can clone the repo and install locally:
@@ -131,8 +121,9 @@ There are a bunch of features that I could add.
 In no particular order:
 - Support comments
 - Support CDATA blocks
+- Add an XmlWrapperTag annotation
 - XML streaming
   - Push and Pull
-  - raw, document, object, xpath
+  - object, xpath
 - Validation
 - XPath querying

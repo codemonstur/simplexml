@@ -4,7 +4,7 @@ import simplexml.SimpleXml;
 import simplexml.model.ObjectDeserializer;
 import simplexml.model.ObjectSerializer;
 
-public enum Accessors {;
+public enum Interfaces {;
 
     public interface AccessSimpleXml {
         SimpleXml getSimpleXml();
@@ -19,6 +19,10 @@ public enum Accessors {;
     public interface ParserConfiguration {
         boolean shouldEncodeUTF8();
         boolean shouldPrettyPrint();
+    }
+    public interface CheckedIterator<T> {
+        boolean hasNext() throws Exception;
+        T next() throws Exception;
     }
 
 }

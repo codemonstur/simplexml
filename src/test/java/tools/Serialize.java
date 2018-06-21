@@ -6,7 +6,7 @@ import simplexml.model.XmlName;
 import simplexml.model.XmlNoExport;
 import simplexml.model.XmlTextNode;
 
-public class Serialize {
+public final class Serialize {
 
     private static class Project {
         @XmlAttribute

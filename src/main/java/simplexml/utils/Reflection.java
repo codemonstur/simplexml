@@ -4,7 +4,7 @@ import simplexml.model.XmlAttribute;
 import simplexml.model.XmlName;
 import simplexml.model.XmlNoExport;
 import simplexml.model.XmlTextNode;
-import simplexml.utils.Accessors.AccessSerializers;
+import simplexml.utils.Interfaces.AccessSerializers;
 import sun.reflect.ReflectionFactory;
 
 import java.lang.reflect.Constructor;

@@ -4,7 +4,7 @@ import simplexml.SimpleXml;
 
 import java.io.IOException;
 
-public class Deserialize {
+public final class Deserialize {
 
     private static class Project {
         public final String groupId;

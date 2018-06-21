@@ -9,6 +9,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class ComplexTest {
 
@@ -22,46 +23,37 @@ public class ComplexTest {
         return new ComplexPojo("complex", list, map, array, set);
     }
 
+    private static final ComplexPojo complex = newDefaultComplexPojo();
+    private static final String complexXml = "<complexpojo>\n" +
+            "  <name>complex</name>\n" +
+            "  <list>first</list>\n" +
+            "  <list>second</list>\n" +
+            "  <list>monkey</list>\n" +
+            "  <map>\n" +
+            "    <1>thumb</1>\n" +
+            "  </map>\n" +
+            "  <array>0.5</array>\n" +
+            "  <array>34.8</array>\n" +
+            "  <set>45.3</set>\n" +
+            "  <set>1234567.9</set>\n" +
+            "</complexpojo>\n";
+
     private SimpleXml simple = new SimpleXml();
 
     @Test
     public void deserialize() throws IOException {
-        final String pojoXml = "<complexpojo>\n" +
-                "  <name>complex</name>\n" +
-                "  <list>first</list>\n" +
-                "  <list>second</list>\n" +
-                "  <list>monkey</list>\n" +
-                "  <1>thumb</1>\n" +
-                "  <array>0.5</array>\n" +
-                "  <array>34.8</array>\n" +
-                "  <set>45.3</set>\n" +
-                "  <set>1234567.9</set>\n" +
-                "</complexpojo>\n";
-
-        final ComplexPojo pojo = simple.fromXml(pojoXml, ComplexPojo.class);
+        final ComplexPojo pojo = simple.fromXml(complexXml, ComplexPojo.class);
 
         assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "complex", pojo.name);
+        assertReflectionEquals(pojo, newDefaultComplexPojo());
     }
 
     @Test
     public void serialize() {
-        final String pojoXml = "<complexpojo>\n" +
-                "  <name>complex</name>\n" +
-                "  <list>first</list>\n" +
-                "  <list>second</list>\n" +
-                "  <list>monkey</list>\n" +
-                "  <1>thumb</1>\n" +
-                "  <array>0.5</array>\n" +
-                "  <array>34.8</array>\n" +
-                "  <set>45.3</set>\n" +
-                "  <set>1234567.9</set>\n" +
-                "</complexpojo>\n";
-        final ComplexPojo pojo = newDefaultComplexPojo();
-
-        final String xml = simple.toXml(pojo);
+        final String xml = simple.toXml(complex);
+        System.out.println(xml);
 
         assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertEquals("Invalid serialized output", complexXml, xml);
     }
 }

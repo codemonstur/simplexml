@@ -1,15 +1,15 @@
 package tools;
 
 import simplexml.SimpleXml;
-import simplexml.model.ElementNode;
+import simplexml.model.Element;
 
-import static simplexml.model.ElementNode.element;
+import static simplexml.model.Element.element;
 
-public class Builder {
+public final class Builder {
 
     public static void main(final String... args) {
-        final ElementNode node =
-            element("name")
+        final Element node =
+            element("element")
                 .attribute("name", "value")
                 .child(element("child"))
                 .text("Some text");

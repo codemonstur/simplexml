@@ -1,8 +1,8 @@
 package simplexml;
 
-import simplexml.model.ElementNode;
-import simplexml.utils.Accessors.AccessSerializers;
-import simplexml.utils.Accessors.ParserConfiguration;
+import simplexml.model.Element;
+import simplexml.utils.Interfaces.AccessSerializers;
+import simplexml.utils.Interfaces.ParserConfiguration;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,7 +33,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         catch (IllegalArgumentException | IllegalAccessException e) { /* can't happen */ }
     }
 
-    default String domToXml(final ElementNode node) {
+    default String domToXml(final Element node) {
         final StringWriter output = new StringWriter();
 
         try { domToXml(node, output); }
@@ -41,12 +41,12 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
         return output.toString();
     }
-    default void domToXml(final ElementNode node, final Writer writer) throws IOException {
+    default void domToXml(final Element node, final Writer writer) throws IOException {
         if (node.text == null && node.children.isEmpty()) {
             writeSelfClosingTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
         } else {
             writeOpeningTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
-            for (final ElementNode child : node.children) {
+            for (final Element child : node.children) {
                 domToXml(child, writer);
             }
             if (node.text != null) writer.append(escapeXml(node.text, shouldEncodeUTF8()));
@@ -62,10 +62,10 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     }
 
     default void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
-            , final String indent) throws IOException, IllegalAccessException {
+            , final Object text, final String indent) throws IOException, IllegalAccessException {
         writeIndent(writer, indent);
         writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()),
-                escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
+                escapeXml(getSerializer(text.getClass()).convert(text), shouldEncodeUTF8()));
         writeNewLine(writer);
     }
 
@@ -90,11 +90,17 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
     }
 
-    default void writeMap(final Writer writer, final Object o, final String indent)
+    default void writeMap(final Writer writer, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
+        writeIndent(writer, indent);
+        writeOpeningTag(writer, name);
+        writeNewLine(writer);
         for (final Entry<?, ?> entry : ((Map<?,?>) o).entrySet()) {
-            writeField(entry.getValue().getClass(), writer, entry.getKey().toString(), entry.getValue(), indent);
+            writeField(entry.getValue().getClass(), writer, entry.getKey().toString(), entry.getValue(), indent+INDENT);
         }
+        writeIndent(writer, indent);
+        writeClosingTag(writer, name);
+        writeNewLine(writer);
     }
 
     default void writeObject(final Writer writer, final String name, final Object o, final String indent)
@@ -104,7 +110,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         final Field textNode = determineTypeOfFields(o.getClass(), o, attributes, childNodes);
 
         if (childNodes.isEmpty()) {
-            writeSimple(writer, name, o, attributes, textNode.get(o).toString());
+            writeSimple(writer, name, o, attributes, textNode.get(o), indent);
             return;
         }
 
@@ -133,7 +139,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             case ARRAY: writeArray(writer, name, value, indent); break;
             case LIST: writeList(writer, name, value, indent); break;
             case SET: writeSet(writer, name, value, indent); break;
-            case MAP: writeMap(writer, value, indent); break;
+            case MAP: writeMap(writer, name, value, indent); break;
             default: writeObject(writer, name, value, indent); break;
         }
     }
