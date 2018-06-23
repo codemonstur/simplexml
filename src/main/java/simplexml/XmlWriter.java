@@ -42,15 +42,30 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         return output.toString();
     }
     default void domToXml(final Element node, final Writer writer) throws IOException {
+        domToXml(node, writer, "");
+    }
+    default void domToXml(final Element node, final Writer writer, final String indent) throws IOException {
         if (node.text == null && node.children.isEmpty()) {
+            writeIndent(writer, indent);
             writeSelfClosingTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
+        } else if (node.children.isEmpty() && node.attributes.isEmpty()) {
+            writeIndent(writer, indent);
+            writeOpeningAndClosingTag(writer, node.name, node.text);
+            writeNewLine(writer);
         } else {
+            writeIndent(writer, indent);
             writeOpeningTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
+            writeNewLine(writer);
             for (final Element child : node.children) {
-                domToXml(child, writer);
+                domToXml(child, writer, INDENT+indent);
             }
-            if (node.text != null) writer.append(escapeXml(node.text, shouldEncodeUTF8()));
+            if (node.text != null) {
+                writeIndent(writer, indent);
+                writer.append(escapeXml(node.text, shouldEncodeUTF8()));
+            }
+            writeIndent(writer, indent);
             writeClosingTag(writer, node.name);
+            writeNewLine(writer);
         }
     }
 

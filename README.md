@@ -103,7 +103,7 @@ Its in maven central.
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
         <version>1.4.0</version>
-    </dependency
+    </dependency>
 
 Or alternatively you can clone the repo and install locally:
 
