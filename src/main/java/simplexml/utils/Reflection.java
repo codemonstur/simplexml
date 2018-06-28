@@ -1,9 +1,7 @@
 package simplexml.utils;
 
-import simplexml.model.XmlAttribute;
-import simplexml.model.XmlName;
-import simplexml.model.XmlNoExport;
-import simplexml.model.XmlTextNode;
+import simplexml.model.*;
+import simplexml.model.XmlAbstractClass.TypeMap;
 import simplexml.utils.Interfaces.AccessSerializers;
 import sun.reflect.ReflectionFactory;
 
@@ -11,10 +9,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import static java.lang.String.format;
 import static simplexml.utils.Reflection.ClassType.*;
 
 public enum Reflection {;
@@ -65,6 +62,15 @@ public enum Reflection {;
         return OBJECT;
     }
 
+    public static List<Field> listFields(final Class<?> type) {
+        return listFields(new ArrayList<>(), type);
+    }
+    public static List<Field> listFields(final List<Field> fields, final Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
+        if (type.getSuperclass() != null) listFields(fields, type.getSuperclass());
+        return fields;
+    }
+
     public static boolean isSimple(final Class<?> c) {
         return c.isAssignableFrom(Double.class)
             || c.isAssignableFrom(double.class)
@@ -92,6 +98,23 @@ public enum Reflection {;
     }
     public static boolean isMap(final Class<?> c) {
         return c.isAssignableFrom(Map.class);
+    }
+    public static boolean isWrapped(final Field f) {
+        return f.isAnnotationPresent(XmlWrapperTag.class);
+    }
+    public static String toWrappedName(final Field f) {
+        return f.getAnnotation(XmlWrapperTag.class).value();
+    }
+    public static boolean isAbstract(final Field f) {
+        return f.isAnnotationPresent(XmlAbstractClass.class);
+    }
+    public static Class<?> findAbstractType(final XmlAbstractClass annotation, final Element node) throws IllegalAccessException {
+        final String typeName = node.attributes.get(annotation.attribute());
+        for (final TypeMap map : annotation.types()) {
+            if (typeName.equals(map.name()))
+                return map.type();
+        }
+        throw new IllegalAccessException(format("Missing type for '%s'", typeName));
     }
 
     public static <T> T newObject(final Class<T> clazz) {

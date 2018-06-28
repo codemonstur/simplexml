@@ -42,6 +42,24 @@ public interface XmlStream {
         };
     }
 
+    default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
+            , final Class<T> clazz) {
+        return new CheckedIterator<T>() {
+            public boolean hasNext() throws Exception {
+                final Character next = readFirstNonWhiteChar(in);
+                if (next == null) return false;
+                if (next == '<') return true;
+                throw new InvalidXml();
+            }
+
+            public T next() throws Exception {
+                final String xml = readUntilCurrentTagIsClosed(in);
+                final Element element = XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
+                return reader.domToObject(element, clazz);
+            }
+        };
+    }
+
     static Character readFirstNonWhiteChar(final InputStreamReader in) throws IOException {
         int r;
         while ((r = in.read()) != -1) {

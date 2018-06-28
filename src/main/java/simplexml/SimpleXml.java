@@ -61,6 +61,13 @@ public final class SimpleXml {
             throw new IOException(e);
         }
     }
+    public <T> T fromXml(final Element element, final Class<T> clazz) throws IOException {
+        try {
+            return reader.domToObject(element, clazz);
+        } catch (IllegalAccessException e) {
+            throw new IOException(e);
+        }
+    }
     public Element fromXml(final String input) throws IOException {
         return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
     }
@@ -90,6 +97,9 @@ public final class SimpleXml {
     }
     public CheckedIterator<Element> iterateDom(final InputStream in) {
         return stream.iterateDom(new InputStreamReader(in, charset), charset);
+    }
+    public <T> CheckedIterator<T> iterateObject(final InputStream in, final Class<T> clazz) {
+        return stream.iterateObject(new InputStreamReader(in, charset), charset, reader, clazz);
     }
 
     public static Builder newSimpleXml() {

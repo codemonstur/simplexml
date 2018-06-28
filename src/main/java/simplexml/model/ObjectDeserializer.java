@@ -28,7 +28,7 @@ public interface ObjectDeserializer {
         deserializers.put(String.class, value -> value);
         deserializers.put(boolean.class, Boolean::valueOf);
         deserializers.put(Boolean.class, Boolean::valueOf);
-        deserializers.put(Object.class, value -> new Object());
+        deserializers.put(Object.class, value -> value);
         return deserializers;
     }
 

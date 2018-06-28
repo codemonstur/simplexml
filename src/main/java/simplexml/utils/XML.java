@@ -16,7 +16,7 @@ public enum XML {;
     public static String escapeXml(final String str, final boolean encodeUTF8) {
         if (isNullOrEmpty(str)) return str;
 
-        final StringBuffer encoded = new StringBuffer();
+        final StringBuilder encoded = new StringBuilder();
         for (final char c : str.toCharArray()) {
             switch (c) {
                 case CHAR_LESS_THAN:

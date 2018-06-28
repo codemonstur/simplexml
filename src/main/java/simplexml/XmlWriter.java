@@ -48,6 +48,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         if (node.text == null && node.children.isEmpty()) {
             writeIndent(writer, indent);
             writeSelfClosingTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
+            writeNewLine(writer);
         } else if (node.children.isEmpty() && node.attributes.isEmpty()) {
             writeIndent(writer, indent);
             writeOpeningAndClosingTag(writer, node.name, node.text);
@@ -134,7 +135,18 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writeNewLine(writer);
 
         for (final Field f : childNodes) {
-            writeField(f.getType(), writer, toName(f), f.get(o), indent+INDENT);
+            boolean isWrapped = isWrapped(f);
+            if (isWrapped) {
+                writeIndent(writer, indent+INDENT);
+                writeOpeningTag(writer, toWrappedName(f));
+                writeNewLine(writer);
+                writeField(f.getType(), writer, toName(f), f.get(o), indent+INDENT+INDENT);
+                writeIndent(writer, indent+INDENT);
+                writeClosingTag(writer, toWrappedName(f));
+                writeNewLine(writer);
+            } else {
+                writeField(f.getType(), writer, toName(f), f.get(o), indent+INDENT);
+            }
         }
         if (textNode != null) {
             writeIndent(writer, indent);

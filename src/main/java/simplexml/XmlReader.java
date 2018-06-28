@@ -1,8 +1,6 @@
 package simplexml;
 
-import simplexml.model.Element;
-import simplexml.model.EventParser;
-import simplexml.model.ObjectDeserializer;
+import simplexml.model.*;
 import simplexml.utils.Interfaces.AccessDeserializers;
 
 import java.io.IOException;
@@ -25,27 +23,39 @@ public interface XmlReader extends AccessDeserializers {
 
         final T o = newObject(clazz);
 
-        for (final Field f : clazz.getDeclaredFields()) {
+        for (final Field f : listFields(clazz)) {
             f.setAccessible(true);
 
             switch (toFieldType(f)) {
                 case TEXTNODE: f.set(o, textNodeToValue(f.getType(), node)); break;
-                case ANNOTATED_ATTRIBUTE: f.set(o, attributeToValue(f.getType(), toName(f), node)); break;
-                case SET: f.set(o, domToSet(toClassOfCollection(f), toName(f), node)); break;
-                case LIST: f.set(o, domToList(toClassOfCollection(f), toName(f), node)); break;
-                case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), node)); break;
-                case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), node)); break;
+                case ANNOTATED_ATTRIBUTE: f.set(o, attributeToValue(f.getType(), toName(f), deWrap(node, f))); break;
+                case SET: f.set(o, domToSet(toClassOfCollection(f), toName(f), deWrap(node, f))); break;
+                case LIST: f.set(o, domToList(toClassOfCollection(f), toName(f), deWrap(node, f))); break;
+                case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), deWrap(node, f))); break;
+                case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), deWrap(node, f))); break;
                 default:
                     final String name = toName(f);
                     final String value = node.attributes.get(name);
-                    f.set(o, (value != null) ? stringToValue(f.getType(), value) : domToObject(node.findChildForName(name, null), f.getType()));
+                    if (value != null) {
+                        f.set(o, stringToValue(f.getType(), value));
+                        break;
+                    }
+                    if (isAbstract(f)) {
+                        final Element child = node.findChildForName(name, null);
+                        f.set(o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
+                        break;
+                    }
+                    f.set(o, domToObject(deWrap(node, f).findChildForName(name, null), f.getType()));
                     break;
             }
         }
         return o;
     }
 
-
+    default Element deWrap(final Element element, final Field field) {
+        if (!isWrapped(field)) return element;
+        return element.findChildForName(toWrappedName(field), null);
+    }
     default Object textNodeToValue(final Class<?> type, final Element node) throws IllegalAccessException {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(node.text) : null;
