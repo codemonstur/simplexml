@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
+import static org.objenesis.ObjenesisHelper.newInstance;
 import static simplexml.utils.Constants.*;
 import static simplexml.utils.Reflection.*;
 import static simplexml.utils.XML.unescapeXml;
@@ -21,10 +23,11 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node.text, clazz);
 
-        final T o = newObject(clazz);
+        final T o = newInstance(clazz);
 
         for (final Field f : listFields(clazz)) {
             f.setAccessible(true);
+            if (Modifier.isStatic(f.getModifiers())) continue;
 
             switch (toFieldType(f)) {
                 case TEXTNODE: f.set(o, textNodeToValue(f.getType(), node)); break;

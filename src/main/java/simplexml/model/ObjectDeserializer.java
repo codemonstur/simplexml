@@ -3,10 +3,12 @@ package simplexml.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import static simplexml.utils.Reflection.toObjectClass;
+
 public interface ObjectDeserializer {
     Object convert(String value);
     default <T> T convert(String value, Class<T> clazz) {
-        return clazz.cast(convert(value));
+        return toObjectClass(clazz).cast(convert(value));
     }
 
     static Map<Class<?>, ObjectDeserializer> defaultDeserializers() {

@@ -11,34 +11,14 @@
 [![codecov](https://codecov.io/gh/JurgenNED/simplexml/branch/master/graph/badge.svg)](https://codecov.io/gh/JurgenNED/simplexml)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1621/badge)](https://bestpractices.coreinfrastructure.org/projects/1621)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.codemonstur/simplexml/badge.svg)](http://mvnrepository.com/artifact/com.github.codemonstur/simplexml)
 
 # SimpleXML
 
 After a number of bad experiences with XML parsing in Java I decided to write my own parser.
-The goals for this project are this:
 
-1. Correct XML parsing
-
-The code must generate valid XML when serializing and correctly encode dangerous characters.
-The code must parse valid XML when deserializing and correctly decode encoded characters.
-  
-2. No-dependencies
-
-The code must not depend on other code. 
-And I do mean nothing, it doesn't even depend on javax.xml stuff.
-This library should be easy to include in a jigsaw project, although I haven't tried yet.
-
-3. Thread-safe
-
-Don't do crazy stuff like implement state in a custom serializer.
-Don't change the list of serializers and deserializers while you are using it.
-Other than those rules the parser is safe to use with concurrency.
-
-4. User friendly API
-
-What's with all the managers and contexts and factories and god knows what?
-This library is simple.
-Create an instance of SimpleXml and call toXml() or fromXml().
+This project has the following characteristics; correct XML parsing, small, few dependencies, 
+thread-safe, user friendly API, secure.
 
 ## How to use
 

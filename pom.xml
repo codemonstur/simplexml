@@ -3,7 +3,7 @@
 
     <groupId>com.github.codemonstur</groupId>
     <artifactId>simplexml</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>An XML parser, serializer, and deserializer that has no dependencies.</description>
@@ -162,6 +162,12 @@
     </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>2.6</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
