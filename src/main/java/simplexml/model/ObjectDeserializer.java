@@ -3,6 +3,8 @@ package simplexml.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import static simplexml.utils.Reflection.toObjectClass;
+
 public interface ObjectDeserializer {
     /**
      * Used for turning attributes and tag names into objects. So XML that looks like this:
@@ -31,7 +33,7 @@ public interface ObjectDeserializer {
         return convert(element.text);
     }
     default <T> T convert(Element element, Class<T> clazz) {
-        return clazz.cast(convert(element));
+        return toObjectClass(clazz).cast(convert(element));
     }
 
     static Map<Class<?>, ObjectDeserializer> defaultDeserializers() {

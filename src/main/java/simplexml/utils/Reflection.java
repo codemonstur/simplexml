@@ -3,9 +3,7 @@ package simplexml.utils;
 import simplexml.model.*;
 import simplexml.model.XmlAbstractClass.TypeMap;
 import simplexml.utils.Interfaces.AccessSerializers;
-import sun.reflect.ReflectionFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -117,35 +115,6 @@ public enum Reflection {;
         throw new IllegalAccessException(format("Missing type for '%s'", typeName));
     }
 
-    public static <T> T newObject(final Class<T> clazz) {
-        return newObject(clazz, Object.class);
-    }
-
-    public static <T> T newObject(final Class<T> clazz, final Class<? super T> parent) {
-        try {
-            return toDeclaredNoArgsConstructor(clazz).newInstance();
-        } catch (Exception e) {
-            try {
-                return clazz.cast(newNoArgsConstructor(clazz, parent).newInstance());
-            } catch (RuntimeException ex) {
-                throw ex;
-            } catch (Exception ex) {
-                throw new IllegalStateException("Cannot create object", ex);
-            }
-        }
-    }
-
-    public static <T> Constructor<T> toDeclaredNoArgsConstructor(final Class<T> clazz) throws NoSuchMethodException {
-        final Constructor<T> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        return constructor;
-    }
-    public static <T> Constructor<?> newNoArgsConstructor(final Class<T> clazz, final Class<? super T> parent)
-            throws NoSuchMethodException {
-        return ReflectionFactory.getReflectionFactory().newConstructorForSerialization(clazz,
-                parent.getDeclaredConstructor());
-    }
-
     public static String toName(final Class<?> o) {
         if (!o.isAnnotationPresent(XmlName.class))
             return o.getSimpleName().toLowerCase();
@@ -167,6 +136,24 @@ public enum Reflection {;
     }
     public static Class<?> toClassOfMapValue(final ParameterizedType type) {
         return (Class<?>)type.getActualTypeArguments()[1];
+    }
+
+    public static final Map<Class<?>, Class<?>> PRIMITIVE_TO_OBJECT = primitiveToObject();
+    private static Map<Class<?>, Class<?>> primitiveToObject() {
+        final Map<Class<?>, Class<?>> classes = new HashMap<>();
+        classes.put(boolean.class, Boolean.class);
+        classes.put(byte.class, Byte.class);
+        classes.put(char.class, Character.class);
+        classes.put(double.class, Double.class);
+        classes.put(float.class, Float.class);
+        classes.put(int.class, Integer.class);
+        classes.put(long.class, Long.class);
+        classes.put(short.class, Short.class);
+        classes.put(void.class, Void.class);
+        return classes;
+    }
+    public static <T> Class<T> toObjectClass(final Class<T> clazz) {
+        return clazz.isPrimitive() ? (Class<T>) PRIMITIVE_TO_OBJECT.get(clazz) : clazz;
     }
 
 }
