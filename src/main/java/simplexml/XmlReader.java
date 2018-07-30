@@ -19,7 +19,7 @@ public interface XmlReader extends AccessDeserializers {
     default <T> T domToObject(final Element node, final Class<T> clazz) throws IllegalAccessException {
         if (node == null) return null;
         final ObjectDeserializer c = getDeserializer(clazz);
-        if (c != null) return c.convert(node.text, clazz);
+        if (c != null) return c.convert(node, clazz);
 
         final T o = newObject(clazz);
 
@@ -58,7 +58,7 @@ public interface XmlReader extends AccessDeserializers {
     }
     default Object textNodeToValue(final Class<?> type, final Element node) throws IllegalAccessException {
         final ObjectDeserializer conv = getDeserializer(type);
-        return (conv != null) ? conv.convert(node.text) : null;
+        return (conv != null) ? conv.convert(node) : null;
     }
     default Object attributeToValue(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
         final ObjectDeserializer conv = getDeserializer(type);
@@ -78,7 +78,7 @@ public interface XmlReader extends AccessDeserializers {
         for (final Element n : node.children) {
             if (!n.name.equals(name)) continue;
 
-            set.add( (elementConv == null) ? domToObject(n, type) : elementConv.convert(n.text));
+            set.add( (elementConv == null) ? domToObject(n, type) : elementConv.convert(n));
         }
         return set;
     }
@@ -89,7 +89,7 @@ public interface XmlReader extends AccessDeserializers {
         for (final Element n : node.children) {
             if (!n.name.equals(name)) continue;
 
-            list.add( (elementConv == null) ? domToObject(n, type) : elementConv.convert(n.text));
+            list.add( (elementConv == null) ? domToObject(n, type) : elementConv.convert(n));
         }
         return list;
     }
@@ -100,7 +100,7 @@ public interface XmlReader extends AccessDeserializers {
         int i = 0;
         for (final Element n : node.children) {
             if (n.name.equals(name)) {
-                array[i] = (elementConv == null) ? domToObject(n, type) : elementConv.convert(n.text, type);
+                array[i] = (elementConv == null) ? domToObject(n, type) : elementConv.convert(n, type);
                 i++;
             }
         }
@@ -115,7 +115,7 @@ public interface XmlReader extends AccessDeserializers {
 
         final Map<Object, Object> map = new HashMap<>();
         for (final Element child : element.children) {
-            map.put(convKey.convert(child.name), convVal.convert(child.text));
+            map.put(convKey.convert(child.name), convVal.convert(child));
         }
         return map;
     }

@@ -47,19 +47,11 @@ public final class SimpleXml {
         this.stream = new XmlStream() {};
     }
 
-    public <T> T fromXml(final String input, final Class<T> clazz) throws IOException {
-        try {
-            return reader.domToObject(fromXml(input), clazz);
-        } catch (IllegalAccessException e) {
-            throw new IOException(e);
-        }
+    public <T> T fromXml(final String xml, final Class<T> clazz) throws IOException {
+        return fromXml(fromXml(xml), clazz);
     }
-    public <T> T fromXml(final InputStream in, final Class<T> clazz) throws IOException {
-        try {
-            return reader.domToObject(fromXml(in), clazz);
-        } catch (IllegalAccessException e) {
-            throw new IOException(e);
-        }
+    public <T> T fromXml(final InputStream xmlStream, final Class<T> clazz) throws IOException {
+        return fromXml(fromXml(xmlStream), clazz);
     }
     public <T> T fromXml(final Element element, final Class<T> clazz) throws IOException {
         try {
