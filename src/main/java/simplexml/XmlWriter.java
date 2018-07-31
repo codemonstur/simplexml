@@ -126,7 +126,10 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         final Field textNode = determineTypeOfFields(o.getClass(), o, attributes, childNodes);
 
         if (childNodes.isEmpty()) {
-            writeSimple(writer, name, o, attributes, textNode.get(o), indent);
+            if (textNode == null)
+                writeSelfClosingTag(writer, name, attributesToXml(attributes, o, shouldEncodeUTF8()));
+            else
+                writeSimple(writer, name, o, attributes, textNode.get(o), indent);
             return;
         }
 

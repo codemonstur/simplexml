@@ -33,6 +33,10 @@ public class WrappedTest {
             "  </wrapper5>\n" +
             "</wrappedpojo>\n";
 
+    private static final WrappedPojo wrappedNull = new WrappedPojo(null, null, null, null, null);
+    private static final String wrappedXmlNull = "<wrappedpojo />";
+    private static final String wrappedXmlNullTwo = "<wrappedpojo><wrapper1></wrapper1></wrappedpojo>";
+
     private SimpleXml simple = new SimpleXml();
 
     @Test
@@ -51,6 +55,25 @@ public class WrappedTest {
         assertEquals("Invalid serialized output", wrappedXml, xml);
     }
 
+    @Test
+    public void deserializeNull() throws IOException {
+        final WrappedPojo pojo1 = simple.fromXml(wrappedXmlNull, WrappedPojo.class);
+        final WrappedPojo pojo2 = simple.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
+
+        assertNotNull("Pojo is null", pojo1);
+        assertNotNull("Pojo is null", pojo2);
+        assertReflectionEquals(wrappedNull, pojo1);
+        assertReflectionEquals(wrappedNull, pojo2);
+    }
+
+    @Test
+    public void serializeNull() {
+        final String xml = simple.toXml(wrappedNull);
+
+        assertNotNull("No serialization response", xml);
+        assertEquals("Invalid serialized output", wrappedXmlNull, xml);
+    }
+
     private static WrappedPojo newDefaultWrappedPojo() {
         final Map<String, String> map = new HashMap<>();
         map.put("Guybrush", "Threepwood");
@@ -58,4 +81,5 @@ public class WrappedTest {
         set.add("Mêlée Island");
         return new WrappedPojo("Hello", Arrays.asList(", world"), map, set, new String[]{"monkey"});
     }
+
 }
