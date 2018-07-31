@@ -35,6 +35,15 @@ public class Element {
         return _default;
     }
 
+    public static Element findChildForName(final Element element, final String name, final Element _default) {
+        if (element == null) return _default;
+        for (final Element child : element.children) {
+            if (name.equals(child.name))
+                return child;
+        }
+        return _default;
+    }
+
     public int numChildrenWithName(final String name) {
         int num = 0;
         for (final Element child : children) {

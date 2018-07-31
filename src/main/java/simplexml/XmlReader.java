@@ -12,6 +12,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static org.objenesis.ObjenesisHelper.newInstance;
+import static simplexml.model.Element.findChildForName;
 import static simplexml.utils.Constants.*;
 import static simplexml.utils.Reflection.*;
 import static simplexml.utils.XML.unescapeXml;
@@ -48,7 +49,7 @@ public interface XmlReader extends AccessDeserializers {
                         f.set(o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
                         break;
                     }
-                    f.set(o, domToObject(deWrap(node, f).findChildForName(name, null), f.getType()));
+                    f.set(o, domToObject(findChildForName(deWrap(node, f),name, null), f.getType()));
                     break;
             }
         }
@@ -75,6 +76,7 @@ public interface XmlReader extends AccessDeserializers {
         return (conv != null) ? conv.convert(value) : null;
     }
     default Set<Object> domToSet(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 
         final Set<Object> set = new HashSet<>();
@@ -86,6 +88,7 @@ public interface XmlReader extends AccessDeserializers {
         return set;
     }
     default List<Object> domToList(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 
         final List<Object> list = new LinkedList<>();
@@ -97,6 +100,7 @@ public interface XmlReader extends AccessDeserializers {
         return list;
     }
     default Object[] domToArray(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+        if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 
         final Object[] array = (Object[]) Array.newInstance(type, node.numChildrenWithName(name));
@@ -109,7 +113,8 @@ public interface XmlReader extends AccessDeserializers {
         }
         return array;
     }
-    default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final Element node) throws IllegalAccessException {
+    default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final Element node) {
+        if (node == null) return null;
         final Element element = node.findChildForName(name, null);
         if (element == null) return null;
 
