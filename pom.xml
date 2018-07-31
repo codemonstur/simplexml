@@ -3,7 +3,7 @@
 
     <groupId>com.github.codemonstur</groupId>
     <artifactId>simplexml</artifactId>
-    <version>1.5.2</version>
+    <version>1.5.3</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>An XML parser, serializer, and deserializer that has no dependencies.</description>
