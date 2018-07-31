@@ -8,7 +8,7 @@ public final class Deserialize {
 
     private static final String POM_1 =
         "<project>" +
-            "<groupId>codemonster</groupId>" +
+            "<groupId>codemonstur</groupId>" +
             "<artifactId>simplexml</artifactId>" +
             "<version>1.0.0</version>" +
         "</project>";
@@ -18,7 +18,7 @@ public final class Deserialize {
         "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"" +
         "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
         "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">" +
-            "<groupId>codemonster</groupId>" +
+            "<groupId>codemonstur</groupId>" +
             "<artifactId>simplexml</artifactId>" +
             "<version>1.0.0</version>" +
         "</project>";
