@@ -9,13 +9,13 @@ public interface ObjectDeserializer {
     /**
      * Used for turning attributes and tag names into objects. So XML that looks like this:
      *
-     * <tag attribute="value"></tag>
+     * &lt;tag attribute=&quot;value&quot;&gt;&lt;/tag&gt;
      *
      * and also:
      *
-     * <map>
-     *     <value>something</value>
-     * </map>
+     * &lt;map&gt;
+     *     &lt;value&gt;something&lt;/value&gt;
+     * &lt;/map&gt;
      *
      * @param value the value to convert
      * @return the object, null is allowed
