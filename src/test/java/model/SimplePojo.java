@@ -1,10 +1,7 @@
 package model;
 
-import simplexml.model.XmlWrapperTag;
-
 public final class SimplePojo {
 
-    @XmlWrapperTag("something")
     public final Integer integer;
     public final Character character;
     public final String string;

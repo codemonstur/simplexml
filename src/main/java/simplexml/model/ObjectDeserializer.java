@@ -30,7 +30,7 @@ public interface ObjectDeserializer {
      * @return the object, null is allowed
      */
     default Object convert(Element element) {
-        return convert(element.text);
+        return (element == null || element.text == null) ? null: convert(element.text);
     }
     default <T> T convert(Element element, Class<T> clazz) {
         return toObjectClass(clazz).cast(convert(element));

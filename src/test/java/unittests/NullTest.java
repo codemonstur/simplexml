@@ -28,7 +28,7 @@ public class NullTest {
 
     @Test
     public void deserializeNulls() throws IOException {
-        final String pojoXml = "<simplepojo><integers /></simplepojo>";
+        final String pojoXml = "<simplepojo><integer/></simplepojo>";
 
         final SimplePojo pojo = simple.fromXml(pojoXml, SimplePojo.class);
 
