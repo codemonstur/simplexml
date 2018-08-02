@@ -1,4 +1,4 @@
-package tools;
+package example;
 
 import simplexml.SimpleXml;
 import simplexml.model.Element;

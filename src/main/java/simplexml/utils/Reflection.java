@@ -10,6 +10,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static java.lang.String.format;
+import static simplexml.model.Element.findChildForName;
 import static simplexml.utils.Reflection.ClassType.*;
 
 public enum Reflection {;
@@ -17,7 +18,7 @@ public enum Reflection {;
     public static Field determineTypeOfFields(final Class<?> clazz, final Object o, final List<Field> attributes
             , final List<Field> childNodes) throws IllegalAccessException {
         Field textNode = null;
-        for (final Field f : clazz.getDeclaredFields()) {
+        for (final Field f : listFields(clazz)) {
             f.setAccessible(true);
             if (f.get(o) == null) continue;
             if (Modifier.isStatic(f.getModifiers())) continue;
@@ -107,12 +108,20 @@ public enum Reflection {;
         return f.isAnnotationPresent(XmlAbstractClass.class);
     }
     public static Class<?> findAbstractType(final XmlAbstractClass annotation, final Element node) throws IllegalAccessException {
-        final String typeName = node.attributes.get(annotation.attribute());
+        final String typeName = findAbstractTypeName(annotation, node);
         for (final TypeMap map : annotation.types()) {
             if (typeName.equals(map.name()))
                 return map.type();
         }
         throw new IllegalAccessException(format("Missing type for '%s'", typeName));
+    }
+    private static String findAbstractTypeName(final XmlAbstractClass annotation, final Element node) throws IllegalAccessException {
+        if (!annotation.tag().isEmpty()) {
+            final Element child = findChildForName(node, annotation.tag(), null);
+            if (child == null) throw new IllegalAccessException(format("Missing tag %s in element %s", annotation.tag(), node.name));
+            return child.text;
+        }
+        else return node.attributes.get(annotation.attribute());
     }
 
     public static String toName(final Class<?> o) {

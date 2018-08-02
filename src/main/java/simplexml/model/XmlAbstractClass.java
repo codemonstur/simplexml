@@ -16,5 +16,6 @@ public @interface XmlAbstractClass {
     }
 
     String attribute() default "class";
+    String tag() default "";
     TypeMap[] types();
 }

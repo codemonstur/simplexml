@@ -15,13 +15,31 @@ import static util.IO.resourceToString;
 public class AbstractTest {
 
     @XmlName("targetedMessage")
-    public class TargetedMessage {
+    public class TargetedMessage1 {
         String sender;
-        @XmlAbstractClass(attribute="class", types={
+        @XmlAbstractClass(types={
             @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
         })
         Payload payload;
     }
+    @XmlName("targetedMessage")
+    public class TargetedMessage2 {
+        String sender;
+        @XmlAbstractClass(attribute="type", types={
+            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
+        })
+        Payload payload;
+    }
+    @XmlName("targetedMessage")
+    public class TargetedMessage3 {
+        String sender;
+        @XmlAbstractClass(tag="class", types={
+            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
+        })
+        Payload payload;
+    }
+
+
     abstract class Payload {
         private Integer id;
         Integer getId() {
@@ -36,10 +54,36 @@ public class AbstractTest {
     private SimpleXml simple = new SimpleXml();
 
     @Test
-    public void deserialize() throws IOException {
-        final String pojoXml = resourceToString("/abstractclass.xml");
+    public void deserializeOne() throws IOException {
+        final String pojoXml = resourceToString("/abstract_class_1.xml");
 
-        final TargetedMessage pojo = simple.fromXml(pojoXml, TargetedMessage.class);
+        final TargetedMessage1 pojo = simple.fromXml(pojoXml, TargetedMessage1.class);
+
+        assertNotNull("No serialization response", pojo);
+        assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
+        assertNotNull("Missing 'payload' field", pojo.payload);
+        assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
+        assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void deserializeTwo() throws IOException {
+        final String pojoXml = resourceToString("/abstract_class_2.xml");
+
+        final TargetedMessage2 pojo = simple.fromXml(pojoXml, TargetedMessage2.class);
+
+        assertNotNull("No serialization response", pojo);
+        assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
+        assertNotNull("Missing 'payload' field", pojo.payload);
+        assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
+        assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void deserializeThree() throws IOException {
+        final String pojoXml = resourceToString("/abstract_class_3.xml");
+
+        final TargetedMessage3 pojo = simple.fromXml(pojoXml, TargetedMessage3.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);

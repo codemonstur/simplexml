@@ -1,0 +1,6 @@
+<targetedMessage>
+    <sender>external application</sender>
+    <payload type="class.path.from.external.application.Foo">
+        <id>1</id>
+    </payload>
+</targetedMessage>

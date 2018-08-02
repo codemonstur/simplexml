@@ -17,6 +17,7 @@ import static simplexml.model.ObjectSerializer.defaultSerializer;
 import static simplexml.utils.Reflection.toName;
 
 public final class SimpleXml {
+    private final XmlCompress compress;
     private final XmlReader reader;
     private final XmlWriter writer;
     private final XmlStream stream;
@@ -29,6 +30,7 @@ public final class SimpleXml {
     private SimpleXml(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final Charset charset, final ObjectSerializer defaultSerializer
             , final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers) {
         this.charset = charset;
+        this.compress = new XmlCompress() {};
         this.reader = deserializers::get;
         this.writer = new XmlWriter() {
             public boolean hasSerializer(final Class<?> type) {
@@ -45,6 +47,10 @@ public final class SimpleXml {
             }
         };
         this.stream = new XmlStream() {};
+    }
+
+    public String compressXml(final String xml) {
+        return compress.compressXml(xml);
     }
 
     public <T> T fromXml(final String xml, final Class<T> clazz) throws IOException {
