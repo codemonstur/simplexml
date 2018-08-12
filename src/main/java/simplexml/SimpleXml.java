@@ -14,7 +14,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.XmlReader.parseXML;
 import static simplexml.model.ObjectDeserializer.defaultDeserializers;
 import static simplexml.model.ObjectSerializer.defaultSerializer;
-import static simplexml.utils.Reflection.toName;
 
 public final class SimpleXml {
     private final XmlCompress compress;
@@ -66,23 +65,22 @@ public final class SimpleXml {
             throw new IOException(e);
         }
     }
-    public Element fromXml(final String input) throws IOException {
-        return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
+    public Element fromXml(final String input) {
+        try {
+            return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
+        } catch (IOException e) {
+            // Not possible
+            return null;
+        }
     }
     public Element fromXml(final InputStream stream) throws IOException {
         return parseXML(new InputStreamReader(stream, charset));
     }
     public String toXml(final Object o) {
-        return writer.toXml(o, toName(o.getClass()));
-    }
-    public String toXml(final Object o, final String name) {
-        return writer.toXml(o, name);
+        return writer.toXml(o);
     }
     public void toXml(final Object o, final Writer out) throws IOException {
-        writer.toXml(o, toName(o.getClass()), out);
-    }
-    public void toXml(final Object o, final String name, final Writer out) throws IOException {
-        writer.toXml(o, name, out);
+        writer.toXml(o, out);
     }
     public String domToXml(final Element node) {
         return writer.domToXml(node);

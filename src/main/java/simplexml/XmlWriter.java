@@ -20,16 +20,16 @@ import static simplexml.utils.XML.*;
 
 public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
-    default String toXml(final Object o, final String name) {
+    default String toXml(final Object o) {
         final StringWriter output = new StringWriter();
 
-        try { writeObject(output, name, o, EMPTY); }
+        try { writeObject(output, toName(o.getClass()), o, EMPTY); }
         catch (IllegalArgumentException | IllegalAccessException | IOException e) { /* can't happen */ }
 
         return output.toString();
     }
-    default void toXml(final Object o, final String name, final Writer writer) throws IOException {
-        try { writeObject(writer, name, o, EMPTY); }
+    default void toXml(final Object o, final Writer writer) throws IOException {
+        try { writeObject(writer, toName(o.getClass()), o, EMPTY); }
         catch (IllegalArgumentException | IllegalAccessException e) { /* can't happen */ }
     }
 
