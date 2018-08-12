@@ -2,7 +2,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/c9389fa8729d8b18e46b/maintainability)](https://codeclimate.com/github/JurgenNED/simplexml/maintainability)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 [![HitCount](http://hits.dwyl.com/JurgenNED/simplexml.svg)](http://hits.dwyl.com/JurgenNED/simplexml)
-[![Coverage Status](https://coveralls.io/repos/github/JurgenNED/simplexml/badge.svg?branch=master)](https://coveralls.io/github/JurgenNED/simplexml?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/codemonstur/simplexml/badge.svg?branch=master)](https://coveralls.io/github/codemonstur/simplexml?branch=master)
 [![PDD status](http://www.0pdd.com/svg?name=JurgenNED/simplexml)](http://www.0pdd.com/p?name=JurgenNED/simplexml)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/813d8482256b4ed88e2ff1018d53f06e)](https://www.codacy.com/app/JurgenNED/simplexml?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JurgenNED/simplexml&amp;utm_campaign=Badge_Grade)
 [![Sputnik](https://sputnik.ci/conf/badge)](https://sputnik.ci/app#/builds/JurgenNED/simplexml)
