@@ -197,5 +197,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

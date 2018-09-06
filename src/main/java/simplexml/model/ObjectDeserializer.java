@@ -7,7 +7,7 @@ import static simplexml.utils.Reflection.toObjectClass;
 
 public interface ObjectDeserializer {
     /**
-     * Used for turning attributes and tag names into objects. So XML that looks like this:
+     * Used for turning attributes and tag names into objects. XML that looks like this:
      *
      * &lt;tag attribute=&quot;value&quot;&gt;&lt;/tag&gt;
      *

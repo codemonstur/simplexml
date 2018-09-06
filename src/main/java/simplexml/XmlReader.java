@@ -141,36 +141,38 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     static Element parseXML(final InputStreamReader in) throws IOException {
-        final EventParser p = new EventParser();
+        final DomBuilder p = new DomBuilder();
+        parseXML(in, p);
+        return p.getRoot();
+    }
 
+    static void parseXML(final InputStreamReader in, final EventParser parser) throws IOException {
         String str;
         while ((str = readLine(in, XML_TAG_START)) != null) {
-            if (!str.isEmpty()) p.someText(unescapeXml(str.trim()));
+            if (!str.isEmpty()) parser.someText(unescapeXml(str.trim()));
 
             str = trim(readLine(in, XML_TAG_END));
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
             if (str.charAt(0) == XML_PROLOG) continue;
 
-            if (str.charAt(0) == XML_SELF_CLOSING) p.endNode();
+            if (str.charAt(0) == XML_SELF_CLOSING) parser.endNode();
             else {
                 final String name = getNameOfTag(str);
                 if (str.length() == name.length()) {
-                    p.startNode(str, new HashMap<>());
+                    parser.startNode(str, new HashMap<>());
                     continue;
                 }
 
                 final int beginAttr = name.length();
                 final int end = str.length();
                 if (str.endsWith(FORWARD_SLASH)) {
-                    p.startNode(name, parseAttributes(str.substring(beginAttr, end-1)));
-                    p.endNode();
+                    parser.startNode(name, parseAttributes(str.substring(beginAttr, end-1)));
+                    parser.endNode();
                 } else {
-                    p.startNode(name, parseAttributes(str.substring(beginAttr+1, end)));
+                    parser.startNode(name, parseAttributes(str.substring(beginAttr+1, end)));
                 }
             }
         }
-
-        return p.getRoot();
     }
 
 
