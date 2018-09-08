@@ -1,7 +1,7 @@
 package ideas;
 
 import simplexml.XmlReader;
-import simplexml.model.EventParser;
+import simplexml.parsing.EventParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

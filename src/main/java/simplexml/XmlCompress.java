@@ -1,6 +1,6 @@
 package simplexml;
 
-import simplexml.model.InvalidXml;
+import simplexml.error.InvalidXml;
 
 import java.io.*;
 import java.util.LinkedList;

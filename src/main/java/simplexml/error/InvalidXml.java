@@ -1,4 +1,4 @@
-package simplexml.model;
+package simplexml.error;
 
 import java.io.IOException;
 

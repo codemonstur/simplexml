@@ -1,8 +1,8 @@
 package simplexml.utils;
 
 import simplexml.SimpleXml;
-import simplexml.model.ObjectDeserializer;
-import simplexml.model.ObjectSerializer;
+import simplexml.parsing.ObjectDeserializer;
+import simplexml.parsing.ObjectSerializer;
 
 public enum Interfaces {;
 

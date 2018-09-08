@@ -40,4 +40,18 @@ public enum Constants {;
         ENCODED_DOUBLE_QUOTE = "&quot;",
         ENCODED_AMPERSAND = "&amp;",
         ENCODED_UTF8 = "&#";
+
+    public static final String
+        PREDICATE_START_SYMBOL = "[",
+        PREDICATE_END_SYMBOL = "]",
+        PREDICATE_EQUAL_SYMBOL = "=",
+        SEGMENT_EXPRESSION = "text()",
+        EXPRESSION_PATH_SEPARATOR = "/";
+
+    public static final String
+        ERROR_EQUALITY_WITHOUT_TWO_COMPONENTS = "Equality predicate must have exactly two members",
+        ERROR_EQUALITY_WITH_EMPTY_PARTS = "Equality predicate must have two non-empty members",
+        ERROR_PREDICATE_WRONG_START = "Predicate does not start with [",
+        ERROR_PREDICATE_WRONG_END = "Predicate does not end with ]",
+        ERROR_PREDICATE_WRONG_NAME = "Element name contains ]";
 }

@@ -1,7 +1,7 @@
 package simplexml;
 
 import simplexml.model.Element;
-import simplexml.model.InvalidXml;
+import simplexml.error.InvalidXml;
 import simplexml.utils.Interfaces.CheckedIterator;
 
 import java.io.ByteArrayInputStream;

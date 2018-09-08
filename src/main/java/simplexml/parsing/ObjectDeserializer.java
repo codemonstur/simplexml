@@ -1,4 +1,6 @@
-package simplexml.model;
+package simplexml.parsing;
+
+import simplexml.model.Element;
 
 import java.util.HashMap;
 import java.util.Map;

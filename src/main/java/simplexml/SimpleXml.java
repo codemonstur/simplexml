@@ -1,8 +1,8 @@
 package simplexml;
 
 import simplexml.model.Element;
-import simplexml.model.ObjectDeserializer;
-import simplexml.model.ObjectSerializer;
+import simplexml.parsing.ObjectDeserializer;
+import simplexml.parsing.ObjectSerializer;
 import simplexml.utils.Interfaces.CheckedIterator;
 
 import java.io.*;
@@ -12,8 +12,8 @@ import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.XmlReader.parseXML;
-import static simplexml.model.ObjectDeserializer.defaultDeserializers;
-import static simplexml.model.ObjectSerializer.defaultSerializer;
+import static simplexml.parsing.ObjectDeserializer.defaultDeserializers;
+import static simplexml.parsing.ObjectSerializer.defaultSerializer;
 
 public final class SimpleXml {
     private final XmlCompress compress;

@@ -1,4 +1,4 @@
-package simplexml.model;
+package simplexml.parsing;
 
 public interface ObjectSerializer {
     String convert(Object value);

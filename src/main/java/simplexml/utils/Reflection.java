@@ -1,7 +1,8 @@
 package simplexml.utils;
 
+import simplexml.annotations.*;
 import simplexml.model.*;
-import simplexml.model.XmlAbstractClass.TypeMap;
+import simplexml.annotations.XmlAbstractClass.TypeMap;
 import simplexml.utils.Interfaces.AccessSerializers;
 
 import java.lang.reflect.Field;

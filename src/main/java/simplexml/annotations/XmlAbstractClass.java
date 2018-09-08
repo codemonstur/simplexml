@@ -1,4 +1,4 @@
-package simplexml.model;
+package simplexml.annotations;
 
 import java.lang.annotation.Retention;
 

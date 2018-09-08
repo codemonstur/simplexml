@@ -1,6 +1,12 @@
 package simplexml;
 
+import simplexml.annotations.XmlAbstractClass;
+import simplexml.annotations.XmlNoImport;
+import simplexml.error.InvalidXml;
 import simplexml.model.*;
+import simplexml.parsing.DomBuilder;
+import simplexml.parsing.EventParser;
+import simplexml.parsing.ObjectDeserializer;
 import simplexml.utils.Interfaces.AccessDeserializers;
 
 import java.io.IOException;

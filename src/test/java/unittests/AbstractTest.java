@@ -2,9 +2,9 @@ package unittests;
 
 import org.junit.Test;
 import simplexml.SimpleXml;
-import simplexml.model.XmlAbstractClass;
-import simplexml.model.XmlAbstractClass.TypeMap;
-import simplexml.model.XmlName;
+import simplexml.annotations.XmlAbstractClass;
+import simplexml.annotations.XmlAbstractClass.TypeMap;
+import simplexml.annotations.XmlName;
 
 import java.io.IOException;
 

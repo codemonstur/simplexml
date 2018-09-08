@@ -1,8 +1,11 @@
-package simplexml.model;
+package simplexml.annotations;
 
 import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
-public @interface XmlTextNode { /* just a marker */ }
+public @interface XmlName {
+    String value();
+}
+

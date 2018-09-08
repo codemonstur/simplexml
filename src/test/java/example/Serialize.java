@@ -1,10 +1,10 @@
 package example;
 
 import simplexml.SimpleXml;
-import simplexml.model.XmlAttribute;
-import simplexml.model.XmlName;
-import simplexml.model.XmlNoExport;
-import simplexml.model.XmlTextNode;
+import simplexml.annotations.XmlAttribute;
+import simplexml.annotations.XmlName;
+import simplexml.annotations.XmlNoExport;
+import simplexml.annotations.XmlTextNode;
 
 public final class Serialize {
 

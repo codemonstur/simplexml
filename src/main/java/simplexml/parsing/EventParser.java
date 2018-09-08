@@ -1,4 +1,4 @@
-package simplexml.model;
+package simplexml.parsing;
 
 import java.util.Map;
 

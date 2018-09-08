@@ -1,6 +1,6 @@
 package model;
 
-import simplexml.model.XmlWrapperTag;
+import simplexml.annotations.XmlWrapperTag;
 
 import java.util.List;
 import java.util.Map;
