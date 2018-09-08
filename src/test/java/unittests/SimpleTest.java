@@ -3,14 +3,14 @@ package unittests;
 import model.Pojo;
 import org.junit.Test;
 import simplexml.SimpleXml;
-import simplexml.model.Element;
+import simplexml.model.XmlElement;
 
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static simplexml.SimpleXml.newSimpleXml;
-import static simplexml.model.Element.element;
+import static simplexml.model.XmlElement.element;
 
 public class SimpleTest {
 
@@ -51,7 +51,7 @@ public class SimpleTest {
     @Test
     public void serializeDom() {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
-        final Element dom = element("pojo").child(element("name").text("Hello"));
+        final XmlElement dom = element("pojo").child(element("name").text("Hello"));
 
         final String xml = simple.domToXml(dom);
 
@@ -73,7 +73,7 @@ public class SimpleTest {
     @Test
     public void serializeDomShort() {
         final String pojoXml = "<pojo><name>Hello</name></pojo>";
-        final Element dom = element("pojo").child(element("name").text("Hello"));
+        final XmlElement dom = element("pojo").child(element("name").text("Hello"));
 
         final String xml = simpler.domToXml(dom);
 

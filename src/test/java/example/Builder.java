@@ -1,14 +1,14 @@
 package example;
 
 import simplexml.SimpleXml;
-import simplexml.model.Element;
+import simplexml.model.XmlElement;
 
-import static simplexml.model.Element.element;
+import static simplexml.model.XmlElement.element;
 
 public final class Builder {
 
     public static void main(final String... args) {
-        final Element node =
+        final XmlElement node =
             element("element")
                 .attribute("name", "value")
                 .child(element("child"))

@@ -1,9 +1,11 @@
 package simplexml;
 
-import simplexml.model.Element;
+import simplexml.error.InvalidXPath;
+import simplexml.model.XmlElement;
 import simplexml.parsing.ObjectDeserializer;
 import simplexml.parsing.ObjectSerializer;
 import simplexml.utils.Interfaces.CheckedIterator;
+import simplexml.xpath.XPathExpression;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -14,6 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.XmlReader.parseXML;
 import static simplexml.parsing.ObjectDeserializer.defaultDeserializers;
 import static simplexml.parsing.ObjectSerializer.defaultSerializer;
+import static simplexml.xpath.XPathExpression.toXPathExpression;
 
 public final class SimpleXml {
     private final XmlCompress compress;
@@ -58,14 +61,21 @@ public final class SimpleXml {
     public <T> T fromXml(final InputStream xmlStream, final Class<T> clazz) throws IOException {
         return fromXml(fromXml(xmlStream), clazz);
     }
-    public <T> T fromXml(final Element element, final Class<T> clazz) throws IOException {
+    public <T> T fromXml(final XmlElement element, final Class<T> clazz) throws IOException {
         try {
             return reader.domToObject(element, clazz);
         } catch (IllegalAccessException e) {
             throw new IOException(e);
         }
     }
-    public Element fromXml(final String input) {
+    public <T> T fromXml(final String xml, final String xpath, final Class<T> clazz) throws InvalidXPath, IOException {
+        return fromXml(xml, toXPathExpression(xpath), clazz);
+    }
+    public <T> T fromXml(final String xml, final XPathExpression xpath, final Class<T> clazz) throws IOException {
+        return fromXml(xpath.evaluateAny(fromXml(xml)), clazz);
+    }
+
+    public XmlElement fromXml(final String input) {
         try {
             return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
         } catch (IOException e) {
@@ -73,7 +83,7 @@ public final class SimpleXml {
             return null;
         }
     }
-    public Element fromXml(final InputStream stream) throws IOException {
+    public XmlElement fromXml(final InputStream stream) throws IOException {
         return parseXML(new InputStreamReader(stream, charset));
     }
     public String toXml(final Object o) {
@@ -82,16 +92,16 @@ public final class SimpleXml {
     public void toXml(final Object o, final Writer out) throws IOException {
         writer.toXml(o, out);
     }
-    public String domToXml(final Element node) {
+    public String domToXml(final XmlElement node) {
         return writer.domToXml(node);
     }
-    public void domToXml(final Element node, final Writer out) throws IOException {
+    public void domToXml(final XmlElement node, final Writer out) throws IOException {
         writer.domToXml(node, out);
     }
     public CheckedIterator<String> iterateXml(final InputStream in) {
         return stream.iterateXml(new InputStreamReader(in, charset));
     }
-    public CheckedIterator<Element> iterateDom(final InputStream in) {
+    public CheckedIterator<XmlElement> iterateDom(final InputStream in) {
         return stream.iterateDom(new InputStreamReader(in, charset), charset);
     }
     public <T> CheckedIterator<T> iterateObject(final InputStream in, final Class<T> clazz) {

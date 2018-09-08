@@ -1,7 +1,8 @@
 package simplexml.xpath;
 
 import simplexml.error.InvalidXPath;
-import simplexml.model.Element;
+import simplexml.model.XmlElement;
+import simplexml.model.XmlElement.XmlTextElement;
 
 import java.util.*;
 
@@ -32,124 +33,115 @@ public final class XPathExpression {
 	public XPathExpression(final List<Segment> segments) {
 		this.segments = segments;
 	}
-	
-	public static XPathExpression toXPathExpression(final String s) throws InvalidXPath {
-		if (s == null) throw new InvalidXPath("Input string is null");
 
-		final List<Segment> segments = new ArrayList<>();
-		for (final String part : s.split(EXPRESSION_PATH_SEPARATOR)) {
-			segments.add(Segment.parseSegment(part));
-		}
-		return new XPathExpression(segments);
-	}
+    public static XPathExpression toXPathExpression(final String xpath) throws InvalidXPath {
+        if (xpath == null) throw new InvalidXPath("Input string is null");
 
-	public Object evaluateAny(final Element root) {
-		for (final Object e : evaluate(root)) {
-			return e;
-		}
-		return null;
-	}
+        final List<Segment> segments = new ArrayList<>();
+        for (final String part : xpath.split(EXPRESSION_PATH_SEPARATOR)) {
+            segments.add(Segment.parseSegment(part));
+        }
+        return new XPathExpression(segments);
+    }
 
-	public String evaluateAnyString(final Element root) {
-		for (final Object e : evaluate(root)) {
-			if (e instanceof String)
-				return (String) e;
-		}
-		return "";
-	}
+    public XmlElement evaluateAny(final XmlElement root) {
+        return evaluate(root).stream().findFirst().orElse(null);
+    }
 
-	public Number evaluateAnyNumber(final Element root) {
-		for (Object e : evaluate(root)) {
-			if (e instanceof String) {
-				final Number n = toNumber((String)e);
-				if (n != null) return n;
-			}
-		}
-		return null;
-	}
+    public String evaluateAnyString(final XmlElement root) {
+        for (final XmlElement e : evaluate(root)) {
+            if (e instanceof XmlTextElement)
+                return ((XmlTextElement) e).text;
+        }
+        return "";
+    }
 
-	public int evaluateAnyInt(final Element root) {
-		final Number n = evaluateAnyNumber(root);
-		return n == null ? 0 : n.intValue();
-	}
+    public Number evaluateAnyNumber(final XmlElement root) {
+        for (XmlElement e : evaluate(root)) {
+            if (e instanceof XmlTextElement) {
+                final Number n = toNumber(((XmlTextElement) e).text);
+                if (n != null) return n;
+            }
+        }
+        return null;
+    }
 
-	public float evaluateAnyFloat(final Element root) {
-		final Number n = evaluateAnyNumber(root);
-		return n == null ? 0 : n.floatValue();
-	}
+    public int evaluateAnyInt(final XmlElement root) {
+        final Number n = evaluateAnyNumber(root);
+        return n == null ? 0 : n.intValue();
+    }
 
-	public Set<String> evaluateAsStrings(final Element root) {
-		final Set<String> new_col = new HashSet<>();
-		for (final Object e : evaluate(root)) {
-			if (e instanceof String) {
-				new_col.add((String)e);
-			}
-		}
-		return new_col;
-	}
+    public float evaluateAnyFloat(final XmlElement root) {
+        final Number n = evaluateAnyNumber(root);
+        return n == null ? 0 : n.floatValue();
+    }
 
-	public Set<Number> evaluateAsNumbers(final Element root) {
-		final Set<Number> new_col = new HashSet<>();
-		for (final Object e : evaluate(root)) {
-			if (e instanceof String) {
-				final Number n = toNumber((String)e);
-				if (n != null) new_col.add(n);
-			}
-		}
-		return new_col;
-	}
+    public Set<String> evaluateAsStrings(final XmlElement root) {
+        final Set<String> new_col = new HashSet<>();
+        for (final XmlElement e : evaluate(root)) {
+            if (e instanceof XmlTextElement) {
+                new_col.add(((XmlTextElement) e).text);
+            }
+        }
+        return new_col;
+    }
+
+    public Set<Number> evaluateAsNumbers(final XmlElement root) {
+        final Set<Number> new_col = new HashSet<>();
+        for (final XmlElement e : evaluate(root)) {
+            if (e instanceof XmlTextElement) {
+                final Number n = toNumber(((XmlTextElement) e).text);
+                if (n != null) new_col.add(n);
+            }
+        }
+        return new_col;
+    }
 
 
-	public Set<Object> evaluate(final Element root) {
-		return evaluate(segments, root);
-	}
+    public Set<XmlElement> evaluate(final XmlElement root) {
+        return evaluate(segments, root);
+    }
 
-	private static Set<Object> evaluate(final List<Segment> segments, final Object root) {
-		final Set<Object> result = new HashSet<>();
+	private static Set<XmlElement> evaluate(final List<Segment> segments, final XmlElement root) {
+        final Set<XmlElement> result = new HashSet<>();
 
-		final Segment first_segment = segments.get(0);
-		if (first_segment instanceof TextSegment) {
-			if (root instanceof String) {
-				result.add(root);
-			}
-			return result;
-		}
+        final Segment first_segment = segments.get(0);
+        if (first_segment instanceof TextSegment) {
+            if (root instanceof XmlTextElement) {
+                result.add(root);
+            }
+            return result;
+        }
 
-		if (root instanceof Element) {
-			final Element r = (Element) root;
-			if (first_segment.elementName.equals(r.name)) {
-				return result;
-			}
+        if (first_segment.elementName.compareTo(root.name) != 0) {
+            return result;
+        }
 
-			final Collection<Predicate> predicates = first_segment.predicates;
-			for (final Predicate p : predicates) {
-				if (!p.evaluate(r)) {
-					// Predicate returns false: stop considering this branch
-					return result;
-				}
-			}
+        final Collection<Predicate> predicates = first_segment.predicates;
+        for (final Predicate p : predicates) {
+            if (!p.evaluate(root)) {
+                // Predicate returns false: stop considering this branch
+                return result;
+            }
+        }
 
-			// This segment is OK; remove it and continue evaluation with every
-			// child of the root
-			if (segments.size() == 1) {
-				result.add(root);
-				return result;
-			}
+        // This segment is OK; remove it and continue evaluation with every
+        // child of the root
+        if (segments.size() == 1) {
+            result.add(root);
+            return result;
+        }
 
-			final List<Segment> new_segments = segments.subList(1, segments.size());
-			if (!new_segments.isEmpty()) {
-				for (final Element child : r.children) {
-					result.addAll(evaluate(new_segments, child));
-				}
-				if (r.text != null) {
-					result.addAll(evaluate(new_segments, r.text));
-				}
-			}
-			else {
-				result.add(root);
-			}
-		}
-		return result;
+        final List<Segment> new_segments = segments.subList(1, segments.size());
+        if (!new_segments.isEmpty()) {
+            for (final XmlElement child : root.children) {
+                result.addAll(evaluate(new_segments, child));
+            }
+        }
+        else {
+            result.add(root);
+        }
+        return result;
 	}
 
 }

@@ -18,7 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 import static org.objenesis.ObjenesisHelper.newInstance;
-import static simplexml.model.Element.findChildForName;
+import static simplexml.model.XmlElement.findChildForName;
 import static simplexml.utils.Constants.*;
 import static simplexml.utils.Functions.trim;
 import static simplexml.utils.Reflection.*;
@@ -26,7 +26,7 @@ import static simplexml.utils.XML.unescapeXml;
 
 public interface XmlReader extends AccessDeserializers {
 
-    default <T> T domToObject(final Element node, final Class<T> clazz) throws IllegalAccessException {
+    default <T> T domToObject(final XmlElement node, final Class<T> clazz) throws IllegalAccessException {
         if (node == null) return null;
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node, clazz);
@@ -53,7 +53,7 @@ public interface XmlReader extends AccessDeserializers {
                         break;
                     }
                     if (isAbstract(f)) {
-                        final Element child = node.findChildForName(name, null);
+                        final XmlElement child = node.findChildForName(name, null);
                         f.set(o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
                         break;
                     }
@@ -64,15 +64,15 @@ public interface XmlReader extends AccessDeserializers {
         return o;
     }
 
-    default Element deWrap(final Element element, final Field field) {
+    default XmlElement deWrap(final XmlElement element, final Field field) {
         if (!isWrapped(field)) return element;
         return element.findChildForName(toWrappedName(field), null);
     }
-    default Object textNodeToValue(final Class<?> type, final Element node) {
+    default Object textNodeToValue(final Class<?> type, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(node) : null;
     }
-    default Object attributeToValue(final Class<?> type, final String name, final Element node) {
+    default Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         if (conv == null) return null;
         final String value = node.attributes.get(name);
@@ -83,13 +83,13 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(value) : null;
     }
-    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
         final boolean isAbstract = isAbstract(field);
 
         final Set<Object> set = new HashSet<>();
-        for (final Element n : node.children) {
+        for (final XmlElement n : node.children) {
             if (!n.name.equals(name)) continue;
             if (isAbstract) {
                 set.add(domToObject(n, findAbstractType(field.getAnnotation(XmlAbstractClass.class), n)));
@@ -100,13 +100,13 @@ public interface XmlReader extends AccessDeserializers {
         }
         return set;
     }
-    default List<Object> domToList(final Field field, final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+    default List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
         final boolean isAbstract = isAbstract(field);
 
         final List<Object> list = new LinkedList<>();
-        for (final Element n : node.children) {
+        for (final XmlElement n : node.children) {
             if (!n.name.equals(name)) continue;
             if (isAbstract) {
                 list.add(domToObject(n, findAbstractType(field.getAnnotation(XmlAbstractClass.class), n)));
@@ -117,13 +117,13 @@ public interface XmlReader extends AccessDeserializers {
         }
         return list;
     }
-    default Object[] domToArray(final Class<?> type, final String name, final Element node) throws IllegalAccessException {
+    default Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 
         final Object[] array = (Object[]) Array.newInstance(type, node.numChildrenWithName(name));
         int i = 0;
-        for (final Element n : node.children) {
+        for (final XmlElement n : node.children) {
             if (n.name.equals(name)) {
                 array[i] = (elementConv == null) ? domToObject(n, type) : elementConv.convert(n, type);
                 i++;
@@ -131,22 +131,22 @@ public interface XmlReader extends AccessDeserializers {
         }
         return array;
     }
-    default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final Element node) {
+    default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final XmlElement node) {
         if (node == null) return null;
-        final Element element = node.findChildForName(name, null);
+        final XmlElement element = node.findChildForName(name, null);
         if (element == null) return null;
 
         final ObjectDeserializer convKey = getDeserializer(toClassOfMapKey(type));
         final ObjectDeserializer convVal = getDeserializer(toClassOfMapValue(type));
 
         final Map<Object, Object> map = new HashMap<>();
-        for (final Element child : element.children) {
+        for (final XmlElement child : element.children) {
             map.put(convKey.convert(child.name), convVal.convert(child));
         }
         return map;
     }
 
-    static Element parseXML(final InputStreamReader in) throws IOException {
+    static XmlElement parseXML(final InputStreamReader in) throws IOException {
         final DomBuilder p = new DomBuilder();
         parseXML(in, p);
         return p.getRoot();

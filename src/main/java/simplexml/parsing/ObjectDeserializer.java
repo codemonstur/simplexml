@@ -1,6 +1,7 @@
 package simplexml.parsing;
 
-import simplexml.model.Element;
+import simplexml.model.XmlElement;
+import simplexml.model.XmlElement.XmlTextElement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +32,13 @@ public interface ObjectDeserializer {
      * @param element the XML element to convert
      * @return the object, null is allowed
      */
-    default Object convert(Element element) {
-        return (element == null || element.text == null) ? null: convert(element.text);
+    default Object convert(XmlElement element) {
+        if (element == null) return null;
+        final String text = element.getText();
+        if (text == null) return null;
+        return convert(text);
     }
-    default <T> T convert(Element element, Class<T> clazz) {
+    default <T> T convert(XmlElement element, Class<T> clazz) {
         return toObjectClass(clazz).cast(convert(element));
     }
 

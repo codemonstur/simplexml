@@ -1,6 +1,7 @@
 package simplexml;
 
-import simplexml.model.Element;
+import simplexml.model.XmlElement;
+import simplexml.model.XmlElement.XmlTextElement;
 import simplexml.utils.Interfaces.AccessSerializers;
 import simplexml.utils.Interfaces.ParserConfiguration;
 
@@ -33,7 +34,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         catch (IllegalArgumentException | IllegalAccessException e) { /* can't happen */ }
     }
 
-    default String domToXml(final Element node) {
+    default String domToXml(final XmlElement node) {
         final StringWriter output = new StringWriter();
 
         try { domToXml(node, output); }
@@ -41,28 +42,31 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
         return output.toString();
     }
-    default void domToXml(final Element node, final Writer writer) throws IOException {
+    default void domToXml(final XmlElement node, final Writer writer) throws IOException {
         domToXml(node, writer, "");
     }
-    default void domToXml(final Element node, final Writer writer, final String indent) throws IOException {
-        if (node.text == null && node.children.isEmpty()) {
+    default void domToXml(final XmlElement node, final Writer writer, final String indent) throws IOException {
+        final String text = node.getText();
+        if (text == null && node.children.isEmpty()) {
             writeIndent(writer, indent);
             writeSelfClosingTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
             writeNewLine(writer);
-        } else if (node.children.isEmpty() && node.attributes.isEmpty()) {
+        } else if (!node.hasNonTextChildren() && node.attributes.isEmpty()) {
             writeIndent(writer, indent);
-            writeOpeningAndClosingTag(writer, node.name, node.text);
+            writeOpeningAndClosingTag(writer, node.name, text);
             writeNewLine(writer);
         } else {
             writeIndent(writer, indent);
             writeOpeningTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
             writeNewLine(writer);
-            for (final Element child : node.children) {
+            for (final XmlElement child : node.children) {
+                if (child instanceof XmlTextElement) continue;
+
                 domToXml(child, writer, INDENT+indent);
             }
-            if (node.text != null) {
+            if (text != null) {
                 writeIndent(writer, indent);
-                writer.append(escapeXml(node.text, shouldEncodeUTF8()));
+                writer.append(escapeXml(text, shouldEncodeUTF8()));
             }
             writeIndent(writer, indent);
             writeClosingTag(writer, node.name);

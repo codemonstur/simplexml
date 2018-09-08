@@ -1,6 +1,6 @@
 package simplexml;
 
-import simplexml.model.Element;
+import simplexml.model.XmlElement;
 import simplexml.error.InvalidXml;
 import simplexml.utils.Interfaces.CheckedIterator;
 
@@ -26,8 +26,8 @@ public interface XmlStream {
         };
     }
 
-    default CheckedIterator<Element> iterateDom(final InputStreamReader in, final Charset charset) {
-        return new CheckedIterator<Element>() {
+    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset) {
+        return new CheckedIterator<XmlElement>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
                 if (next == null) return false;
@@ -35,7 +35,7 @@ public interface XmlStream {
                 throw new InvalidXml();
             }
 
-            public Element next() throws Exception {
+            public XmlElement next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
                 return XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
             }
@@ -54,7 +54,7 @@ public interface XmlStream {
 
             public T next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
-                final Element element = XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
+                final XmlElement element = XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
                 return reader.domToObject(element, clazz);
             }
         };
