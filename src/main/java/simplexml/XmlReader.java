@@ -2,8 +2,10 @@ package simplexml;
 
 import simplexml.annotations.XmlAbstractClass;
 import simplexml.annotations.XmlNoImport;
+import simplexml.annotations.XmlPath;
+import simplexml.error.InvalidXPath;
 import simplexml.error.InvalidXml;
-import simplexml.model.*;
+import simplexml.model.XmlElement;
 import simplexml.parsing.DomBuilder;
 import simplexml.parsing.EventParser;
 import simplexml.parsing.ObjectDeserializer;
@@ -23,41 +25,49 @@ import static simplexml.utils.Constants.*;
 import static simplexml.utils.Functions.trim;
 import static simplexml.utils.Reflection.*;
 import static simplexml.utils.XML.unescapeXml;
+import static simplexml.xpath.XPathExpression.newXPath;
 
 public interface XmlReader extends AccessDeserializers {
 
-    default <T> T domToObject(final XmlElement node, final Class<T> clazz) throws IllegalAccessException {
+    default <T> T domToObject(final XmlElement node, final Class<T> clazz) throws IllegalAccessException, InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node, clazz);
 
         final T o = newInstance(clazz);
 
+        final String parentName = toName(clazz);
+        XmlElement selectedNode;
         for (final Field f : listFields(clazz)) {
             f.setAccessible(true);
             if (Modifier.isStatic(f.getModifiers())) continue;
             if (f.isAnnotationPresent(XmlNoImport.class)) continue;
 
+            selectedNode = node;
+            if (f.isAnnotationPresent(XmlPath.class)) {
+                selectedNode = newXPath(parentName + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
+            }
+
             switch (toFieldType(f)) {
-                case TEXTNODE: f.set(o, textNodeToValue(f.getType(), node)); break;
-                case ANNOTATED_ATTRIBUTE: f.set(o, attributeToValue(f.getType(), toName(f), deWrap(node, f))); break;
-                case SET: f.set(o, domToSet(f, toClassOfCollection(f), toName(f), deWrap(node, f))); break;
-                case LIST: f.set(o, domToList(f, toClassOfCollection(f), toName(f), deWrap(node, f))); break;
-                case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), deWrap(node, f))); break;
-                case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), deWrap(node, f))); break;
+                case TEXTNODE: f.set(o, textNodeToValue(f.getType(), selectedNode)); break;
+                case ANNOTATED_ATTRIBUTE: f.set(o, attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f))); break;
+                case SET: f.set(o, domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
+                case LIST: f.set(o, domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
+                case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f))); break;
+                case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
                 default:
                     final String name = toName(f);
-                    final String value = node.attributes.get(name);
+                    final String value = selectedNode.attributes.get(name);
                     if (value != null) {
                         f.set(o, stringToValue(f.getType(), value));
                         break;
                     }
                     if (isAbstract(f)) {
-                        final XmlElement child = node.findChildForName(name, null);
+                        final XmlElement child = selectedNode.findChildForName(name, null);
                         f.set(o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
                         break;
                     }
-                    f.set(o, domToObject(findChildForName(deWrap(node, f),name, null), f.getType()));
+                    f.set(o, domToObject(findChildForName(deWrap(selectedNode, f),name, null), f.getType()));
                     break;
             }
         }
@@ -83,7 +93,7 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(value) : null;
     }
-    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException {
+    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException, InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
         final boolean isAbstract = isAbstract(field);
@@ -100,7 +110,7 @@ public interface XmlReader extends AccessDeserializers {
         }
         return set;
     }
-    default List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException {
+    default List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException, InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
         final boolean isAbstract = isAbstract(field);
@@ -117,7 +127,7 @@ public interface XmlReader extends AccessDeserializers {
         }
         return list;
     }
-    default Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException {
+    default Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException, InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 

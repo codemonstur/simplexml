@@ -17,7 +17,7 @@ import static simplexml.utils.Constants.EXPRESSION_PATH_SEPARATOR;
  * <li>Attributes (<tt>@att</tt>) are not supported</li>
  * <li>The only operator allowed in a predicate is equality between a path and a constant</li>
  * </ul>
- * Normal usage involves instantiating an expression from a String using the {@link #toXPathExpression(String)} method, and
+ * Normal usage involves instantiating an expression from a String using the {@link #newXPath(String)} method, and
  * then querying a document using the evaluate method.
  * <p>
  * Examples of valid queries:
@@ -34,7 +34,7 @@ public final class XPathExpression {
 		this.segments = segments;
 	}
 
-    public static XPathExpression toXPathExpression(final String xpath) throws InvalidXPath {
+    public static XPathExpression newXPath(final String xpath) throws InvalidXPath {
         if (xpath == null) throw new InvalidXPath("Input string is null");
 
         final List<Segment> segments = new ArrayList<>();

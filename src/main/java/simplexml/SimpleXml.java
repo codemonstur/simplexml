@@ -16,7 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static simplexml.XmlReader.parseXML;
 import static simplexml.parsing.ObjectDeserializer.defaultDeserializers;
 import static simplexml.parsing.ObjectSerializer.defaultSerializer;
-import static simplexml.xpath.XPathExpression.toXPathExpression;
+import static simplexml.xpath.XPathExpression.newXPath;
 
 public final class SimpleXml {
     private final XmlCompress compress;
@@ -64,12 +64,12 @@ public final class SimpleXml {
     public <T> T fromXml(final XmlElement element, final Class<T> clazz) throws IOException {
         try {
             return reader.domToObject(element, clazz);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | InvalidXPath e) {
             throw new IOException(e);
         }
     }
     public <T> T fromXml(final String xml, final String xpath, final Class<T> clazz) throws InvalidXPath, IOException {
-        return fromXml(xml, toXPathExpression(xpath), clazz);
+        return fromXml(xml, newXPath(xpath), clazz);
     }
     public <T> T fromXml(final String xml, final XPathExpression xpath, final Class<T> clazz) throws IOException {
         return fromXml(xpath.evaluateAny(fromXml(xml)), clazz);

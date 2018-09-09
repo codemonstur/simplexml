@@ -16,7 +16,7 @@ public class XPathTest {
 	@Test
 	public void testEmpty() throws InvalidXPath {
 		XmlElement doc = element("a");
-		XPathExpression xpath = XPathExpression.toXPathExpression("");
+		XPathExpression xpath = XPathExpression.newXPath("");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(0, result.size());
 	}
@@ -24,7 +24,7 @@ public class XPathTest {
 	@Test
 	public void testSingleEmptyText() throws InvalidXPath {
 		XmlElement doc = element("a");
-		XPathExpression xpath = XPathExpression.toXPathExpression("a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(0, result.size());
 	}
@@ -32,7 +32,7 @@ public class XPathTest {
 	@Test
 	public void testSingle() throws InvalidXPath {
 		XmlElement doc = element("a");
-		XPathExpression xpath = XPathExpression.toXPathExpression("a");
+		XPathExpression xpath = XPathExpression.newXPath("a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 	}
@@ -40,7 +40,7 @@ public class XPathTest {
 	@Test
 	public void testSingleValue() throws InvalidXPath {
 		XmlElement doc = element("a").text("1");
-		XPathExpression xpath = XPathExpression.toXPathExpression("a");
+		XPathExpression xpath = XPathExpression.newXPath("a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 	}
@@ -48,7 +48,7 @@ public class XPathTest {
 	@Test
 	public void testSingleValueText() throws InvalidXPath {
 		XmlElement doc = element("a").text("1");
-		XPathExpression xpath = XPathExpression.toXPathExpression("a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 		for (Object xe : result) {
@@ -59,7 +59,7 @@ public class XPathTest {
 	@Test
 	public void testtwoLevels1() throws InvalidXPath {
 		XmlElement doc = element("root").child(element("a"));
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 	}
@@ -67,7 +67,7 @@ public class XPathTest {
 	@Test
 	public void testtwoLevels2() throws InvalidXPath {
 		XmlElement doc = element("root").child(element("a").text("1"));
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 		for (Object xe : result) {
@@ -79,7 +79,7 @@ public class XPathTest {
 	public void testMultipleValues1() throws InvalidXPath {
 		XmlElement doc = element("root").child(element("a").text("1")).child(element("a").text("2"));
 //				Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(2, result.size());
 		for (Object xe : result) {
@@ -94,7 +94,7 @@ public class XPathTest {
 				.child(element("b").text("123"))
 				.child(element("a").text("2"));
 			//Element.toXmlElement("<root><a>1</a><b>123</b><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(2, result.size());
 		for (Object xe : result) {
@@ -116,7 +116,7 @@ public class XPathTest {
 				.child(element("baz")
 					.text("0")));
 //		Element doc = Element.toXmlElement("<root><foo><bar>0</bar><baz>0</baz></foo><foo><bar>1</bar><baz>0</baz></foo></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/foo[bar=0]");
+		XPathExpression xpath = XPathExpression.newXPath("root/foo[bar=0]");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 		for (Object xe : result) {
@@ -138,7 +138,7 @@ public class XPathTest {
 						.child(element("baz")
 								.text("0")));
 //		Element doc = Element.toXmlElement("<root><foo><bar>0</bar><baz>0</baz></foo><foo><bar>1</bar><baz>0</baz></foo></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/foo[zzz=0]");
+		XPathExpression xpath = XPathExpression.newXPath("root/foo[zzz=0]");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(0, result.size());
 	}
@@ -157,7 +157,7 @@ public class XPathTest {
 						.child(element("baz")
 								.text("0")));
 //		Element doc = Element.toXmlElement("<root><foo><bar>0</bar><baz>0</baz></foo><foo><bar>1</bar><baz>0</baz></foo></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/foo[bar=0][baz=0]");
+		XPathExpression xpath = XPathExpression.newXPath("root/foo[bar=0][baz=0]");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(1, result.size());
 		for (Object xe : result) {
@@ -179,7 +179,7 @@ public class XPathTest {
 						.child(element("baz")
 								.text("0")));
 //		Element doc = Element.toXmlElement("<root><foo><bar>0</bar><baz>0</baz></foo><foo><bar>1</bar><baz>0</baz></foo></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/foo[bar=0][baz=6]");
+		XPathExpression xpath = XPathExpression.newXPath("root/foo[bar=0][baz=6]");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertEquals(0, result.size());
 	}
@@ -192,7 +192,7 @@ public class XPathTest {
 				.child(element("b")
 						.text("2")));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a><b>2</b></a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
 		assertNotNull(result);
 		assertEquals(1, result.size());
@@ -208,7 +208,7 @@ public class XPathTest {
 				.child(element("b")
 					.text("2")));
 //		Element doc = Element.toXmlElement("<root><a><b>5</b></a><a><b>2</b></a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		String result = xpath.evaluateAnyString(doc);
 		assertNotNull(result);
 		assertEquals("", result);
@@ -224,7 +224,7 @@ public class XPathTest {
 						.child(element("b")
 								.text("2")));
 //		Element doc = Element.toXmlElement("<root><a><b>5</b></a><a><b>2</b></a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Number result = xpath.evaluateAnyNumber(doc);
 		assertNull(result);
 	}
@@ -235,7 +235,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Object result = xpath.evaluateAny(doc);
 		assertNotNull(result);
 		assertTrue(result instanceof XmlTextElement);
@@ -247,7 +247,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/b");
+		XPathExpression xpath = XPathExpression.newXPath("root/b");
 		Object result = xpath.evaluateAny(doc);
 		assertNull(result);
 	}
@@ -258,7 +258,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		String result = xpath.evaluateAnyString(doc);
 		assertNotNull(result);
 	}
@@ -269,7 +269,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/b/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/b/text()");
 		String result = xpath.evaluateAnyString(doc);
 		assertEquals("", result);
 	}
@@ -280,7 +280,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").child(element("c")));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a><c></c></a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		String result = xpath.evaluateAnyString(doc);
 		assertEquals("", result);
 	}
@@ -291,7 +291,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Number result = xpath.evaluateAnyNumber(doc);
 		assertTrue(result.intValue() == 1 || result.intValue() == 2);
 	}
@@ -302,7 +302,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/b");
+		XPathExpression xpath = XPathExpression.newXPath("root/b");
 		Number result = xpath.evaluateAnyNumber(doc);
 		assertNull(result);
 	}
@@ -313,7 +313,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>foo</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Number result = xpath.evaluateAnyNumber(doc);
 		assertNull(result);
 	}
@@ -324,7 +324,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		int result = xpath.evaluateAnyInt(doc);
 		assertTrue(result == 1 || result == 2);
 	}
@@ -335,7 +335,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("xyz"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>xyz</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		int result = xpath.evaluateAnyInt(doc);
 		assertEquals(1, result);
 	}
@@ -346,7 +346,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("xyz"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>xyz</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		int result = xpath.evaluateAnyInt(doc);
 		assertEquals(0, result);
 	}
@@ -357,7 +357,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		float result = xpath.evaluateAnyFloat(doc);
 		assertTrue(result == 1 || result == 2);
 	}
@@ -368,7 +368,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("xyz"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>xyz</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		float result = xpath.evaluateAnyFloat(doc);
 		assertTrue(Math.abs(1 - result) < 0.0001);
 	}
@@ -379,7 +379,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("xyz"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>xyz</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		float result = xpath.evaluateAnyFloat(doc);
 		assertTrue(result < 0.0001);
 	}
@@ -390,7 +390,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<Number> result = xpath.evaluateAsNumbers(doc);
 		assertEquals(2, result.size());
 	}
@@ -401,7 +401,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>foo</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<Number> result = xpath.evaluateAsNumbers(doc);
 		assertEquals(0, result.size());
 	}
@@ -412,7 +412,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>foo</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Collection<Number> result = xpath.evaluateAsNumbers(doc);
 		assertEquals(0, result.size());
 	}
@@ -423,7 +423,7 @@ public class XPathTest {
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
 //		Element doc = Element.toXmlElement("<root><a>1</a><a>2</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<String> result = xpath.evaluateAsStrings(doc);
 		assertEquals(2, result.size());
 	}
@@ -434,7 +434,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>foo</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a/text()");
+		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<String> result = xpath.evaluateAsStrings(doc);
 		assertEquals(1, result.size());
 	}
@@ -445,7 +445,7 @@ public class XPathTest {
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
 //		Element doc = Element.toXmlElement("<root><a><b></b></a><a>foo</a></root>");
-		XPathExpression xpath = XPathExpression.toXPathExpression("root/a");
+		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Collection<String> result = xpath.evaluateAsStrings(doc);
 		assertEquals(0, result.size());
 	}

@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class XmlToJson {
 
     public static final String xml =
-        "    <?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
         "<DataTable xmlns=\"http://*****.com\">\n" +
         "    <xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\n" +
         "        <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"StudentRecord\" msdata:UseCurrentLocale=\"true\">\n" +
