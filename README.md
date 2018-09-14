@@ -79,7 +79,7 @@ Its in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>1.4.0</version>
+        <version>2.0.0</version>
     </dependency>
 
 Or alternatively you can clone the repo and install locally:
@@ -98,9 +98,7 @@ There are a bunch of features that I could add.
 In no particular order:
 - Support comments
 - Support CDATA blocks
-- Add an XmlWrapperTag annotation
 - XML streaming
   - Push and Pull
   - object, xpath
 - Validation
-- XPath querying
