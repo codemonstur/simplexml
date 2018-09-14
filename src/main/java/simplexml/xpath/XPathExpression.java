@@ -10,23 +10,8 @@ import static simplexml.utils.Builder.toNumber;
 import static simplexml.utils.Constants.EXPRESSION_PATH_SEPARATOR;
 
 /**
- * Performs queries on XML documents. The queries are written using the XPath syntax, with the following restrictions:
- * <ul>
- * <li>Transitive children (<tt>//</tt>), parent (<tt>../</tt>) and
- * <tt>sibling</tt> axes are not supported</li>
- * <li>Attributes (<tt>@att</tt>) are not supported</li>
- * <li>The only operator allowed in a predicate is equality between a path and a constant</li>
- * </ul>
- * Normal usage involves instantiating an expression from a String using the {@link #newXPath(String)} method, and
- * then querying a document using the evaluate method.
- * <p>
- * Examples of valid queries:
- * <ol>
- * <li><tt>abc/def</tt></li>
- * <li><tt>abc[ghi=3]/def/text()</tt></li>
- * <li><tt>abc[ghi=3][q=0]/def[xyz='hello']</tt></li>
- * </ol>
- */ 
+ * Adapted from xml-lif (https://github.com/liflab/xml-lif) by Sylvain Hallé
+ */
 public final class XPathExpression {
 
 	public final List<Segment> segments;
