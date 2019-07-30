@@ -34,7 +34,7 @@ The simplest case possible:
     object.name = "test";
 
     final SimpleXml simple = new SimpleXml();
-    System.out.println(simple.toXml(project));
+    System.out.println(simple.toXml(object));
 
 This code will output:
 
@@ -59,7 +59,7 @@ The simplest case possible:
     }
 
     final SimpleXml simple = new SimpleXml();
-    final MyObject object = simple.fromXml("<myobject><name>test</name></myobject>");
+    final MyObject object = simple.fromXml("<myobject><name>test</name></myobject>", MyObject.class);
     System.out.println(object.name);
 
 This code will output:
