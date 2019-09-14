@@ -1,10 +1,7 @@
 package question;
 
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlName;
-import simplexml.error.InvalidXPath;
-
-import java.io.IOException;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlName;
 
 public class Question2 {
 
@@ -30,9 +27,9 @@ public class Question2 {
         public String Int;
     }
 
-    public static void main(final String... args) throws InvalidXPath, IOException {
-        final SimpleXml simple = new SimpleXml();
-        final Cint c = simple.fromXml(xml, "ns0:InputRequest/ns0:FMan/ns0:CInc", Cint.class);
+    public static void main(final String... args) {
+        final XmlParser parser = new XmlParser();
+        final Cint c = parser.fromXml(xml, "ns0:InputRequest/ns0:FMan/ns0:CInc", Cint.class);
         System.out.println(c.act + " - " + c.op + " - " + c.Int);
     }
 

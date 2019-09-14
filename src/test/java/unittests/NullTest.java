@@ -2,21 +2,21 @@ package unittests;
 
 import model.SimplePojo;
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import static org.junit.Assert.*;
-import static simplexml.SimpleXml.newSimpleXml;
+import static xmlparser.XmlParser.newXmlParser;
 
 public class NullTest {
 
-    private SimpleXml simple = newSimpleXml().shouldPrettyPrint(false).build();
+    private XmlParser parser = newXmlParser().shouldPrettyPrint(false).build();
 
     @Test
     public void serializeNulls() {
         final String pojoXml = "<simplepojo />";
         final SimplePojo pojo = new SimplePojo(null, null, null, null, null, null, null);
 
-        final String xml = simple.toXml(pojo);
+        final String xml = parser.toXml(pojo);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", pojoXml, xml);
@@ -26,7 +26,7 @@ public class NullTest {
     public void deserializeNulls() {
         final String pojoXml = "<simplepojo><integer/></simplepojo>";
 
-        final SimplePojo pojo = simple.fromXml(pojoXml, SimplePojo.class);
+        final SimplePojo pojo = parser.fromXml(pojoXml, SimplePojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertNull("Boolean is not null", pojo.booleans);

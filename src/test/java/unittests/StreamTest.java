@@ -2,8 +2,8 @@ package unittests;
 
 import example.RawStream;
 import org.junit.Test;
-import simplexml.SimpleXml;
-import simplexml.utils.Interfaces.CheckedIterator;
+import xmlparser.XmlParser;
+import xmlparser.utils.Interfaces.CheckedIterator;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,11 +22,11 @@ public class StreamTest {
 
     @Test
     public void streamRaw() throws Exception {
-        final SimpleXml simple = new SimpleXml();
+        final XmlParser parser = new XmlParser();
 
         final List<String> list = new ArrayList<>();
         try (final InputStream in = RawStream.class.getResourceAsStream("/streamable_2.xml")) {
-            final CheckedIterator<String> it = simple.iterateXml(in);
+            final CheckedIterator<String> it = parser.iterateXml(in);
             while (it.hasNext()) {
                 list.add(it.next());
             }

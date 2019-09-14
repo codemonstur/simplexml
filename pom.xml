@@ -104,7 +104,7 @@
                 <version>1.4.0</version>
                 <configuration>
                     <targetClasses>
-                        <param>simplexml.*</param>
+                        <param>xmlparser.*</param>
                     </targetClasses>
                     <targetTests>
                         <param>unittests.*</param>

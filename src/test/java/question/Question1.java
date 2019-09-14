@@ -1,11 +1,8 @@
 package question;
 
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlAttribute;
-import simplexml.annotations.XmlName;
-import simplexml.error.InvalidXPath;
-
-import java.io.IOException;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlAttribute;
+import xmlparser.annotations.XmlName;
 
 /**
  * Example taken from:
@@ -63,9 +60,9 @@ public class Question1 {
         public String address1;
     }
 
-    public static void main(final String... args) throws IOException, InvalidXPath {
-        final SimpleXml simple = new SimpleXml();
-        final StudentRecord student = simple.fromXml(xml, "DataTable/diffgr:diffgram/DocumentElement/StudentRecord", StudentRecord.class);
+    public static void main(final String... args) {
+        final XmlParser parser = new XmlParser();
+        final StudentRecord student = parser.fromXml(xml, "DataTable/diffgr:diffgram/DocumentElement/StudentRecord", StudentRecord.class);
         System.out.println(student.id + " : " + student.firstName + " " + student.lastName);
     }
 }

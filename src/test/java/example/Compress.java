@@ -1,6 +1,6 @@
 package example;
 
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 public final class Compress {
 
@@ -16,8 +16,8 @@ public final class Compress {
 
 
     public static void main(final String... args) {
-        final SimpleXml simple = new SimpleXml();
-        System.out.println(simple.compressXml(POM));
+        final XmlParser parser = new XmlParser();
+        System.out.println(parser.compressXml(POM));
     }
 
 }

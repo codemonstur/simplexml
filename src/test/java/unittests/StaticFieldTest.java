@@ -2,19 +2,19 @@ package unittests;
 
 import model.StaticFieldPojo;
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import static org.junit.Assert.assertNotNull;
 
 public class StaticFieldTest {
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     @Test
     public void deserializeObject() {
         final String pojoXml = "<staticfieldpojo></staticfieldpojo>\n";
 
-        final StaticFieldPojo pojo = simple.fromXml(pojoXml, StaticFieldPojo.class);
+        final StaticFieldPojo pojo = parser.fromXml(pojoXml, StaticFieldPojo.class);
 
         assertNotNull("Pojo is null", pojo);
     }

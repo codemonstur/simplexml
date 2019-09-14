@@ -1,14 +1,14 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.model.XmlElement;
-import simplexml.model.XmlElement.XmlTextElement;
-import simplexml.xpath.XPathExpression;
+import xmlparser.model.XmlElement;
+import xmlparser.model.XmlElement.XmlTextElement;
+import xmlparser.xpath.XPathExpression;
 
 import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static simplexml.model.XmlElement.element;
+import static xmlparser.model.XmlElement.element;
 
 public class XPathTest {
 

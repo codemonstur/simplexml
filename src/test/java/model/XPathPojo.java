@@ -1,7 +1,7 @@
 package model;
 
-import simplexml.annotations.XmlPath;
-import simplexml.annotations.XmlTextNode;
+import xmlparser.annotations.XmlPath;
+import xmlparser.annotations.XmlTextNode;
 
 public final class XPathPojo {
 

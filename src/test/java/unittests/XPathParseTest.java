@@ -1,11 +1,11 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.error.InvalidXPath;
-import simplexml.xpath.Predicate;
-import simplexml.xpath.Segment;
-import simplexml.xpath.TextSegment;
-import simplexml.xpath.XPathExpression;
+import xmlparser.error.InvalidXPath;
+import xmlparser.xpath.Predicate;
+import xmlparser.xpath.Segment;
+import xmlparser.xpath.TextSegment;
+import xmlparser.xpath.XPathExpression;
 
 import static org.junit.Assert.*;
 

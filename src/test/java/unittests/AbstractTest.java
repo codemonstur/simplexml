@@ -1,10 +1,10 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlAbstractClass;
-import simplexml.annotations.XmlAbstractClass.TypeMap;
-import simplexml.annotations.XmlName;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlAbstractClass;
+import xmlparser.annotations.XmlAbstractClass.TypeMap;
+import xmlparser.annotations.XmlName;
 
 import java.io.IOException;
 
@@ -51,13 +51,13 @@ public class AbstractTest {
         String name;
     }
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     @Test
     public void deserializeOne() throws IOException {
         final String pojoXml = resourceToString("/abstract_class_1.xml");
 
-        final TargetedMessage1 pojo = simple.fromXml(pojoXml, TargetedMessage1.class);
+        final TargetedMessage1 pojo = parser.fromXml(pojoXml, TargetedMessage1.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
@@ -70,7 +70,7 @@ public class AbstractTest {
     public void deserializeTwo() throws IOException {
         final String pojoXml = resourceToString("/abstract_class_2.xml");
 
-        final TargetedMessage2 pojo = simple.fromXml(pojoXml, TargetedMessage2.class);
+        final TargetedMessage2 pojo = parser.fromXml(pojoXml, TargetedMessage2.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
@@ -83,7 +83,7 @@ public class AbstractTest {
     public void deserializeThree() throws IOException {
         final String pojoXml = resourceToString("/abstract_class_3.xml");
 
-        final TargetedMessage3 pojo = simple.fromXml(pojoXml, TargetedMessage3.class);
+        final TargetedMessage3 pojo = parser.fromXml(pojoXml, TargetedMessage3.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);

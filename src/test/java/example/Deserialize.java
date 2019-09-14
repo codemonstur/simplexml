@@ -1,8 +1,6 @@
 package example;
 
-import simplexml.SimpleXml;
-
-import java.io.IOException;
+import xmlparser.XmlParser;
 
 public final class Deserialize {
 
@@ -35,13 +33,13 @@ public final class Deserialize {
         }
     }
 
-    public static void main(final String... args) throws IOException {
-        final SimpleXml simple = new SimpleXml();
+    public static void main(final String... args) {
+        final XmlParser parser = new XmlParser();
 
-        final Project project1 = simple.fromXml(POM_1, Project.class);
+        final Project project1 = parser.fromXml(POM_1, Project.class);
         System.out.println(project1.groupId + ":" + project1.artifactId + ":" + project1.version);
 
-        final Project project2 = simple.fromXml(POM_2, Project.class);
+        final Project project2 = parser.fromXml(POM_2, Project.class);
         System.out.println(project2.groupId + ":" + project2.artifactId + ":" + project2.version);
     }
 

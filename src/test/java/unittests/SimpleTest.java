@@ -2,24 +2,24 @@ package unittests;
 
 import model.Pojo;
 import org.junit.Test;
-import simplexml.SimpleXml;
-import simplexml.model.XmlElement;
+import xmlparser.XmlParser;
+import xmlparser.model.XmlElement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static simplexml.SimpleXml.newSimpleXml;
-import static simplexml.model.XmlElement.element;
+import static xmlparser.XmlParser.newXmlParser;
+import static xmlparser.model.XmlElement.element;
 
 public class SimpleTest {
 
-    private SimpleXml simple = new SimpleXml();
-    private SimpleXml simpler = newSimpleXml().shouldPrettyPrint(false).build();
+    private XmlParser parser = new XmlParser();
+    private XmlParser parserShort = newXmlParser().shouldPrettyPrint(false).build();
 
     @Test
     public void deserializeObject() {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
-        final Pojo pojo = simple.fromXml(pojoXml, Pojo.class);
+        final Pojo pojo = parser.fromXml(pojoXml, Pojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertEquals("Pojo has the wrong name", "Hello", pojo.name);
@@ -29,7 +29,7 @@ public class SimpleTest {
     public void deserializeShort() {
         final String pojoXml = "<pojo><name>Hello</name></pojo>";
 
-        final Pojo pojo = simpler.fromXml(pojoXml, Pojo.class);
+        final Pojo pojo = parserShort.fromXml(pojoXml, Pojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertEquals("Pojo has the wrong name", "Hello", pojo.name);
@@ -40,7 +40,7 @@ public class SimpleTest {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
         final Pojo pojo = new Pojo("Hello");
 
-        final String xml = simple.toXml(pojo);
+        final String xml = parser.toXml(pojo);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", pojoXml, xml);
@@ -51,7 +51,7 @@ public class SimpleTest {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
         final XmlElement dom = element("pojo").child(element("name").text("Hello"));
 
-        final String xml = simple.domToXml(dom);
+        final String xml = parser.domToXml(dom);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", pojoXml, xml);
@@ -62,7 +62,7 @@ public class SimpleTest {
         final String pojoXml = "<pojo><name>Hello</name></pojo>";
         final Pojo pojo = new Pojo("Hello");
 
-        final String xml = simpler.toXml(pojo);
+        final String xml = parserShort.toXml(pojo);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", pojoXml, xml);
@@ -73,7 +73,7 @@ public class SimpleTest {
         final String pojoXml = "<pojo><name>Hello</name></pojo>";
         final XmlElement dom = element("pojo").child(element("name").text("Hello"));
 
-        final String xml = simpler.domToXml(dom);
+        final String xml = parserShort.domToXml(dom);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", pojoXml, xml);

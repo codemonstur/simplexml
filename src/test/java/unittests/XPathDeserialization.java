@@ -2,20 +2,20 @@ package unittests;
 
 import model.XPathPojo;
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class XPathDeserialization {
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     @Test
     public void deserializeXPath() {
         final String xml = "<xpathpojo><one><two><three>value</three></two></one></xpathpojo>";
 
-        final XPathPojo pojo = simple.fromXml(xml, XPathPojo.class);
+        final XPathPojo pojo = parser.fromXml(xml, XPathPojo.class);
 
         assertNotNull("POJO not deserialized", pojo);
         assertNotNull("POJO value not deserialized", pojo.value);

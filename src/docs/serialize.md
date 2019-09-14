@@ -2,7 +2,7 @@
 
 Lets start with this code:
 
-    import simplexml.SimpleXml;
+    import xmlparser.XmlParser;
     
     public class Serialize {
     
@@ -17,8 +17,8 @@ Lets start with this code:
         public static void main(final String... args) {
             final Project project = new Project("test");
     
-            final SimpleXml simple = new SimpleXml();
-            System.out.println(simple.toXml(project));
+            final XmlParser parser = new XmlParser();
+            System.out.println(parser.toXml(project));
     
         }
     

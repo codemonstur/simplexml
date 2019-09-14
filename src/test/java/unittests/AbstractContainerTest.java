@@ -1,11 +1,11 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlAbstractClass;
-import simplexml.annotations.XmlAbstractClass.TypeMap;
-import simplexml.annotations.XmlName;
-import simplexml.annotations.XmlWrapperTag;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlAbstractClass;
+import xmlparser.annotations.XmlAbstractClass.TypeMap;
+import xmlparser.annotations.XmlName;
+import xmlparser.annotations.XmlWrapperTag;
 
 import java.util.List;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class AbstractContainerTest {
         String role_field;
     }
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     public static final String xml =
             "<items>\n" +
@@ -67,7 +67,7 @@ public class AbstractContainerTest {
 
     @Test
     public void deserializeList() {
-        final ContainerList pojo = simple.fromXml(xml, ContainerList.class);
+        final ContainerList pojo = parser.fromXml(xml, ContainerList.class);
 
         assertNotNull("No serialization response", pojo);
         assertNotNull("Missing 'items' field", pojo.items);
@@ -79,7 +79,7 @@ public class AbstractContainerTest {
 
     @Test
     public void deserializeSet() {
-        final ContainerSet pojo = simple.fromXml(xml, ContainerSet.class);
+        final ContainerSet pojo = parser.fromXml(xml, ContainerSet.class);
 
         assertNotNull("No serialization response", pojo);
         assertNotNull("Missing 'items' field", pojo.items);

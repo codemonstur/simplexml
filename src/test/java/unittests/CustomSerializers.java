@@ -1,12 +1,12 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
-import static simplexml.SimpleXml.newSimpleXml;
+import static xmlparser.XmlParser.newXmlParser;
 
 public class CustomSerializers {
 
@@ -34,7 +34,7 @@ public class CustomSerializers {
             "  <special>1:special</special>\n" +
             "</container>\n";
 
-    private SimpleXml simple = newSimpleXml()
+    private XmlParser parser = newXmlParser()
         .addDeserializer(Special.class, value -> {
             final String[] parts = value.split(":");
             if (parts.length != 2) return null;
@@ -49,7 +49,7 @@ public class CustomSerializers {
 
     @Test
     public void serialize() {
-        final String xml = simple.toXml(CONTAINER);
+        final String xml = parser.toXml(CONTAINER);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", CONTAINER_XML, xml);
@@ -57,7 +57,7 @@ public class CustomSerializers {
 
     @Test
     public void deserialize() {
-        final Container c = simple.fromXml(CONTAINER_XML, Container.class);
+        final Container c = parser.fromXml(CONTAINER_XML, Container.class);
 
         assertNotNull("Pojo is null", c);
         assertReflectionEquals(c, CONTAINER);

@@ -1,9 +1,9 @@
 package example;
 
-import simplexml.SimpleXml;
-import simplexml.model.XmlElement;
+import xmlparser.XmlParser;
+import xmlparser.model.XmlElement;
 
-import static simplexml.model.XmlElement.element;
+import static xmlparser.model.XmlElement.element;
 
 public final class Builder {
 
@@ -14,8 +14,8 @@ public final class Builder {
                 .child(element("child"))
                 .text("Some text");
 
-        final SimpleXml simple = new SimpleXml();
-        System.out.println(simple.domToXml(node));
+        final XmlParser parser = new XmlParser();
+        System.out.println(parser.domToXml(node));
     }
 
 }

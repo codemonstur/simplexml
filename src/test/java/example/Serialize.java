@@ -1,10 +1,10 @@
 package example;
 
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlAttribute;
-import simplexml.annotations.XmlName;
-import simplexml.annotations.XmlNoExport;
-import simplexml.annotations.XmlTextNode;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlAttribute;
+import xmlparser.annotations.XmlName;
+import xmlparser.annotations.XmlNoExport;
+import xmlparser.annotations.XmlTextNode;
 
 public final class Serialize {
 
@@ -29,8 +29,8 @@ public final class Serialize {
     public static void main(final String... args) {
         final Project project = new Project("test<>&\"'", "Just a project", "invisible");
 
-        final SimpleXml simple = new SimpleXml();
-        System.out.println(simple.toXml(project));
+        final XmlParser parser = new XmlParser();
+        System.out.println(parser.toXml(project));
     }
 
 }

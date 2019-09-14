@@ -2,7 +2,7 @@ package unittests;
 
 import model.ComplexPojo;
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import java.util.*;
 
@@ -27,11 +27,11 @@ public class ComplexTest {
             "  <set>1234567.9</set>\n" +
             "</complexpojo>\n";
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     @Test
     public void deserialize() {
-        final ComplexPojo pojo = simple.fromXml(complexXml, ComplexPojo.class);
+        final ComplexPojo pojo = parser.fromXml(complexXml, ComplexPojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertReflectionEquals(pojo, newDefaultComplexPojo());
@@ -39,7 +39,7 @@ public class ComplexTest {
 
     @Test
     public void serialize() {
-        final String xml = simple.toXml(complex);
+        final String xml = parser.toXml(complex);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", complexXml, xml);

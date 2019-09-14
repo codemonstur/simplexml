@@ -1,7 +1,7 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,8 +21,8 @@ public class CompressTest {
 
     @Test
     public void compress() {
-        final SimpleXml simple = new SimpleXml();
-        final String compressed = simple.compressXml(POM_WITH_WHITESPACE);
+        final XmlParser parser = new XmlParser();
+        final String compressed = parser.compressXml(POM_WITH_WHITESPACE);
         assertEquals("POMs was not adequately compressed", POM_COMPRESSED, compressed);
     }
 

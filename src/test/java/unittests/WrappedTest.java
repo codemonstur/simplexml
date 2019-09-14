@@ -2,7 +2,7 @@ package unittests;
 
 import model.WrappedPojo;
 import org.junit.Test;
-import simplexml.SimpleXml;
+import xmlparser.XmlParser;
 
 import java.util.*;
 
@@ -36,11 +36,11 @@ public class WrappedTest {
     private static final String wrappedXmlNull = "<wrappedpojo />";
     private static final String wrappedXmlNullTwo = "<wrappedpojo><wrapper1></wrapper1></wrappedpojo>";
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     @Test
     public void deserialize() {
-        final WrappedPojo pojo = simple.fromXml(wrappedXml, WrappedPojo.class);
+        final WrappedPojo pojo = parser.fromXml(wrappedXml, WrappedPojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertReflectionEquals(newDefaultWrappedPojo(), pojo);
@@ -48,7 +48,7 @@ public class WrappedTest {
 
     @Test
     public void serialize() {
-        final String xml = simple.toXml(wrapped);
+        final String xml = parser.toXml(wrapped);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", wrappedXml, xml);
@@ -56,8 +56,8 @@ public class WrappedTest {
 
     @Test
     public void deserializeNull() {
-        final WrappedPojo pojo1 = simple.fromXml(wrappedXmlNull, WrappedPojo.class);
-        final WrappedPojo pojo2 = simple.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
+        final WrappedPojo pojo1 = parser.fromXml(wrappedXmlNull, WrappedPojo.class);
+        final WrappedPojo pojo2 = parser.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
 
         assertNotNull("Pojo is null", pojo1);
         assertNotNull("Pojo is null", pojo2);
@@ -67,7 +67,7 @@ public class WrappedTest {
 
     @Test
     public void serializeNull() {
-        final String xml = simple.toXml(wrappedNull);
+        final String xml = parser.toXml(wrappedNull);
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", wrappedXmlNull, xml);

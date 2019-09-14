@@ -1,11 +1,10 @@
 package question;
 
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlAttribute;
-import simplexml.annotations.XmlFieldDeserializer;
-import simplexml.model.XmlElement;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlAttribute;
+import xmlparser.annotations.XmlFieldDeserializer;
+import xmlparser.model.XmlElement;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +41,9 @@ public class Question3 {
         }
     }
 
-    public static void main(final String... args) throws IOException {
-        final SimpleXml simple = new SimpleXml();
-        final Document document = simple.fromXml(xml, Document.class);
+    public static void main(final String... args) {
+        final XmlParser parser = new XmlParser();
+        final Document document = parser.fromXml(xml, Document.class);
         System.out.println(document.code + " : " + document.clazz + " : " + document.properties);
     }
 

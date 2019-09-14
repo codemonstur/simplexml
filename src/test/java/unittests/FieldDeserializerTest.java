@@ -1,10 +1,10 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.SimpleXml;
-import simplexml.annotations.XmlFieldDeserializer;
-import simplexml.error.InvalidAnnotation;
-import simplexml.model.XmlElement;
+import xmlparser.XmlParser;
+import xmlparser.annotations.XmlFieldDeserializer;
+import xmlparser.error.InvalidAnnotation;
+import xmlparser.model.XmlElement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class FieldDeserializerTest {
         return map;
     }
 
-    private SimpleXml simple = new SimpleXml();
+    private XmlParser parser = new XmlParser();
 
     @Test
     public void testFieldDeserializer() {
@@ -44,7 +44,7 @@ public class FieldDeserializerTest {
             "    </map>\n" +
             "</fieldpojo>";
 
-        final FieldPojo pojo = simple.fromXml(xml, FieldPojo.class);
+        final FieldPojo pojo = parser.fromXml(xml, FieldPojo.class);
 
         assertNotNull("pojo is null", pojo);
         assertNotNull("map is null", pojo.map);
@@ -55,6 +55,6 @@ public class FieldDeserializerTest {
     @Test (expected = InvalidAnnotation.class)
     public void testInvalidFieldDeserializer() {
         final String xml = "<invalidfieldpojo><map></map></invalidfieldpojo>";
-        simple.fromXml(xml, InvalidFieldPojo.class);
+        parser.fromXml(xml, InvalidFieldPojo.class);
     }
 }
