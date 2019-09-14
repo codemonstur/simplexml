@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static simplexml.XmlReader.parseXML;
+import static simplexml.XmlReader.toXmlDom;
 import static simplexml.parsing.ObjectDeserializer.defaultDeserializers;
 import static simplexml.parsing.ObjectSerializer.defaultSerializer;
 import static simplexml.xpath.XPathExpression.newXPath;
@@ -21,7 +21,7 @@ public final class SimpleXml {
     private final XmlCompress compress;
     private final XmlReader reader;
     private final XmlWriter writer;
-    private final XmlStream stream;
+    private final XmlIterator stream;
     private final Charset charset;
 
     public SimpleXml() {
@@ -47,7 +47,7 @@ public final class SimpleXml {
                 return shouldPrettyPrint;
             }
         };
-        this.stream = new XmlStream() {};
+        this.stream = new XmlIterator() {};
     }
 
     public String compressXml(final String xml) {
@@ -79,7 +79,7 @@ public final class SimpleXml {
         }
     }
     public XmlElement fromXml(final InputStream stream) throws IOException {
-        return parseXML(new InputStreamReader(stream, charset));
+        return toXmlDom(new InputStreamReader(stream, charset));
     }
     public String toXml(final Object o) {
         return writer.toXml(o);

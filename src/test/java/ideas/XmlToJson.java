@@ -1,6 +1,6 @@
 package ideas;
 
-import simplexml.XmlReader;
+import simplexml.XmlStreamReader;
 import simplexml.parsing.EventParser;
 
 import java.io.ByteArrayInputStream;
@@ -48,9 +48,22 @@ public class XmlToJson {
         "    </diffgr:diffgram>\n" +
         "</DataTable>";
 
+    // Differences:
+    // XML has namespaces, sortof part of the name, separator value is a colon which is not allowed in JSON
+    // XML has child tags and attributes, JSON has only fields
+    // XML has comments, JSON does not
+    // JSON has arrays, XML has duplicate child objects
+       // To write the object out correctly you would have to wait until all sibling tags have been read,
+       // this rule is particularly nasty with respect to the root element, essentially you would not be
+       // able to stream anything. The full JSON will be kept in memory until the whole thing can be written
+    // JSON has type information (boolean, integer, string), XML has only strings
+    // XML has self closing tags and regular tags, JSON has objects
+    // XML has a named root tag, JSON does not
+    // XML has text nodes, JSON does not
+
     public static void main(final String... args) throws IOException {
         // TODO support for arrays
-        XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(UTF_8))), new EventParser() {
+        XmlStreamReader.toXmlStream(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(UTF_8))), new EventParser() {
             int indent = 0;
             String indentSpaces = "";
             boolean isRoot = true;

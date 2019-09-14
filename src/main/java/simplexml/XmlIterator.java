@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
-public interface XmlStream {
+public interface XmlIterator {
 
     default CheckedIterator<String> iterateXml(final InputStreamReader in) {
         return new CheckedIterator<String>() {
@@ -37,7 +37,7 @@ public interface XmlStream {
 
             public XmlElement next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
-                return XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
+                return XmlReader.toXmlDom(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
             }
         };
     }
@@ -54,7 +54,7 @@ public interface XmlStream {
 
             public T next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
-                final XmlElement element = XmlReader.parseXML(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
+                final XmlElement element = XmlReader.toXmlDom(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
                 return reader.domToObject(element, clazz);
             }
         };
