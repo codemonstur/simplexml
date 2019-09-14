@@ -3,8 +3,6 @@ package unittests;
 import org.junit.Test;
 import simplexml.SimpleXml;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
@@ -50,7 +48,7 @@ public class CustomSerializers {
 
 
     @Test
-    public void serialize() throws IOException {
+    public void serialize() {
         final String xml = simple.toXml(CONTAINER);
 
         assertNotNull("No serialization response", xml);
@@ -58,7 +56,7 @@ public class CustomSerializers {
     }
 
     @Test
-    public void deserialize() throws IOException {
+    public void deserialize() {
         final Container c = simple.fromXml(CONTAINER_XML, Container.class);
 
         assertNotNull("Pojo is null", c);

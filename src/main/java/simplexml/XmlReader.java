@@ -29,7 +29,7 @@ import static simplexml.xpath.XPathExpression.newXPath;
 
 public interface XmlReader extends AccessDeserializers {
 
-    default <T> T domToObject(final XmlElement node, final Class<T> clazz) throws IllegalAccessException, InvalidXPath {
+    default <T> T domToObject(final XmlElement node, final Class<T> clazz) throws InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node, clazz);
@@ -49,25 +49,26 @@ public interface XmlReader extends AccessDeserializers {
             }
 
             switch (toFieldType(f)) {
-                case TEXTNODE: f.set(o, textNodeToValue(f.getType(), selectedNode)); break;
-                case ANNOTATED_ATTRIBUTE: f.set(o, attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f))); break;
-                case SET: f.set(o, domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
-                case LIST: f.set(o, domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
-                case ARRAY: f.set(o, domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f))); break;
-                case MAP: f.set(o, domToMap((ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
+                case FIELD_DESERIALIZER: setField(f, o, invokeFieldDeserializer(f, selectedNode)); break;
+                case TEXTNODE: setField(f, o, textNodeToValue(f.getType(), selectedNode)); break;
+                case ANNOTATED_ATTRIBUTE: setField(f, o, attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f))); break;
+                case SET: setField(f, o, domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
+                case LIST: setField(f, o, domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
+                case ARRAY: setField(f, o, domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f))); break;
+                case MAP: setField(f, o, domToMap((ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
                 default:
                     final String name = toName(f);
                     final String value = selectedNode.attributes.get(name);
                     if (value != null) {
-                        f.set(o, stringToValue(f.getType(), value));
+                        setField(f, o, stringToValue(f.getType(), value));
                         break;
                     }
                     if (isAbstract(f)) {
                         final XmlElement child = selectedNode.findChildForName(name, null);
-                        f.set(o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
+                        setField(f, o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
                         break;
                     }
-                    f.set(o, domToObject(findChildForName(deWrap(selectedNode, f),name, null), f.getType()));
+                    setField(f, o, domToObject(findChildForName(deWrap(selectedNode, f),name, null), f.getType()));
                     break;
             }
         }
@@ -93,7 +94,7 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(value) : null;
     }
-    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException, InvalidXPath {
+    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
         final boolean isAbstract = isAbstract(field);
@@ -110,7 +111,7 @@ public interface XmlReader extends AccessDeserializers {
         }
         return set;
     }
-    default List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException, InvalidXPath {
+    default List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
         final boolean isAbstract = isAbstract(field);
@@ -127,7 +128,7 @@ public interface XmlReader extends AccessDeserializers {
         }
         return list;
     }
-    default Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws IllegalAccessException, InvalidXPath {
+    default Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 

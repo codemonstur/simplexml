@@ -4,8 +4,6 @@ import model.NativePojo;
 import org.junit.Test;
 import simplexml.SimpleXml;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static simplexml.SimpleXml.newSimpleXml;
@@ -15,7 +13,7 @@ public class NativeFieldTest {
     private SimpleXml simple = newSimpleXml().shouldPrettyPrint(false).build();
 
     @Test
-    public void deserializeInt() throws IOException {
+    public void deserializeInt() {
         final String pojoXml = "<nativepojo><id>5</id></nativepojo>";
 
         final NativePojo pojo = simple.fromXml(pojoXml, NativePojo.class);

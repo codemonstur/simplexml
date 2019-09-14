@@ -1,7 +1,6 @@
 package unittests;
 
 import org.junit.Test;
-import simplexml.error.InvalidXPath;
 import simplexml.model.XmlElement;
 import simplexml.model.XmlElement.XmlTextElement;
 import simplexml.xpath.XPathExpression;
@@ -14,7 +13,7 @@ import static simplexml.model.XmlElement.element;
 public class XPathTest {
 
 	@Test
-	public void testEmpty() throws InvalidXPath {
+	public void testEmpty() {
 		XmlElement doc = element("a");
 		XPathExpression xpath = XPathExpression.newXPath("");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -22,7 +21,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testSingleEmptyText() throws InvalidXPath {
+	public void testSingleEmptyText() {
 		XmlElement doc = element("a");
 		XPathExpression xpath = XPathExpression.newXPath("a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -30,7 +29,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testSingle() throws InvalidXPath {
+	public void testSingle() {
 		XmlElement doc = element("a");
 		XPathExpression xpath = XPathExpression.newXPath("a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -38,7 +37,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testSingleValue() throws InvalidXPath {
+	public void testSingleValue() {
 		XmlElement doc = element("a").text("1");
 		XPathExpression xpath = XPathExpression.newXPath("a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -46,7 +45,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testSingleValueText() throws InvalidXPath {
+	public void testSingleValueText() {
 		XmlElement doc = element("a").text("1");
 		XPathExpression xpath = XPathExpression.newXPath("a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -57,7 +56,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testtwoLevels1() throws InvalidXPath {
+	public void testtwoLevels1() {
 		XmlElement doc = element("root").child(element("a"));
 		XPathExpression xpath = XPathExpression.newXPath("root/a");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -65,7 +64,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testtwoLevels2() throws InvalidXPath {
+	public void testtwoLevels2() {
 		XmlElement doc = element("root").child(element("a").text("1"));
 		XPathExpression xpath = XPathExpression.newXPath("root/a/text()");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -76,7 +75,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testMultipleValues1() throws InvalidXPath {
+	public void testMultipleValues1() {
 		XmlElement doc = element("root").child(element("a").text("1")).child(element("a").text("2"));
 //				Element.toXmlElement("<root><a>1</a><a>2</a></root>");
 		XPathExpression xpath = XPathExpression.newXPath("root/a");
@@ -88,7 +87,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testMultipleValues2() throws InvalidXPath {
+	public void testMultipleValues2() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("b").text("123"))
@@ -103,7 +102,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testPredicate1() throws InvalidXPath {
+	public void testPredicate1() {
 		XmlElement doc = element("root")
 			.child(element("foo")
 				.child(element("bar")
@@ -125,7 +124,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testPredicate2() throws InvalidXPath {
+	public void testPredicate2() {
 		XmlElement doc = element("root")
 				.child(element("foo")
 						.child(element("bar")
@@ -144,18 +143,19 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testPredicate3() throws InvalidXPath {
+	public void testPredicate3() {
 		XmlElement doc = element("root")
-				.child(element("foo")
-						.child(element("bar")
-								.text("0"))
-						.child(element("baz")
-								.text("0")))
-				.child(element("foo")
-						.child(element("bar")
-								.text("1"))
-						.child(element("baz")
-								.text("0")));
+			.child(element("foo")
+				.child(element("bar")
+					.text("0"))
+				.child(element("baz")
+					.text("0")))
+			.child(element("foo")
+				.child(element("bar")
+					.text("1"))
+				.child(element("baz")
+					.text("0")));
+
 //		Element doc = Element.toXmlElement("<root><foo><bar>0</bar><baz>0</baz></foo><foo><bar>1</bar><baz>0</baz></foo></root>");
 		XPathExpression xpath = XPathExpression.newXPath("root/foo[bar=0][baz=0]");
 		Collection<XmlElement> result = xpath.evaluate(doc);
@@ -166,7 +166,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testPredicate4() throws InvalidXPath {
+	public void testPredicate4() {
 		XmlElement doc = element("root")
 				.child(element("foo")
 						.child(element("bar")
@@ -185,7 +185,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testText1() throws InvalidXPath {
+	public void testText1() {
 		XmlElement doc = element("root")
 			.child(element("a").text("1"))
 			.child(element("a")
@@ -199,7 +199,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyString4() throws InvalidXPath {
+	public void testAnyString4() {
 		XmlElement doc = element("root")
 			.child(element("a")
 				.child(element("b")
@@ -215,7 +215,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyNumber4() throws InvalidXPath {
+	public void testAnyNumber4() {
 		XmlElement doc = element("root")
 				.child(element("a")
 						.child(element("b")
@@ -230,7 +230,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAny1() throws InvalidXPath {
+	public void testAny1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -242,7 +242,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAny2() throws InvalidXPath {
+	public void testAny2() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -253,7 +253,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyString1() throws InvalidXPath {
+	public void testAnyString1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -264,7 +264,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyString2() throws InvalidXPath {
+	public void testAnyString2() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -275,7 +275,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyString3() throws InvalidXPath {
+	public void testAnyString3() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").child(element("c")));
@@ -286,7 +286,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyNumber1() throws InvalidXPath {
+	public void testAnyNumber1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -297,7 +297,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyNumber2() throws InvalidXPath {
+	public void testAnyNumber2() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -308,7 +308,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyNumber3() throws InvalidXPath {
+	public void testAnyNumber3() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
@@ -319,7 +319,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyInt1() throws InvalidXPath {
+	public void testAnyInt1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -330,7 +330,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyInt2() throws InvalidXPath {
+	public void testAnyInt2() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("xyz"));
@@ -341,7 +341,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyInt3() throws InvalidXPath {
+	public void testAnyInt3() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("xyz"));
@@ -352,7 +352,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyFloat1() throws InvalidXPath {
+	public void testAnyFloat1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -363,7 +363,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyFloat2() throws InvalidXPath {
+	public void testAnyFloat2() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("xyz"));
@@ -374,7 +374,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testAnyFloat3() throws InvalidXPath {
+	public void testAnyFloat3() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("xyz"));
@@ -385,7 +385,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testNumbers1() throws InvalidXPath {
+	public void testNumbers1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -396,7 +396,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testNumbers2() throws InvalidXPath {
+	public void testNumbers2() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
@@ -407,7 +407,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testNumbers3() throws InvalidXPath {
+	public void testNumbers3() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
@@ -418,7 +418,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testStrings1() throws InvalidXPath {
+	public void testStrings1() {
 		XmlElement doc = element("root")
 				.child(element("a").text("1"))
 				.child(element("a").text("2"));
@@ -429,7 +429,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testStrings2() throws InvalidXPath {
+	public void testStrings2() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));
@@ -440,7 +440,7 @@ public class XPathTest {
 	}
 
 	@Test
-	public void testStrings3() throws InvalidXPath {
+	public void testStrings3() {
 		XmlElement doc = element("root")
 				.child(element("a").child(element("b")))
 				.child(element("a").text("foo"));

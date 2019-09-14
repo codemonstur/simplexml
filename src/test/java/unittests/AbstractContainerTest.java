@@ -7,7 +7,6 @@ import simplexml.annotations.XmlAbstractClass.TypeMap;
 import simplexml.annotations.XmlName;
 import simplexml.annotations.XmlWrapperTag;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +66,7 @@ public class AbstractContainerTest {
             "</items>";
 
     @Test
-    public void deserializeList() throws IOException {
+    public void deserializeList() {
         final ContainerList pojo = simple.fromXml(xml, ContainerList.class);
 
         assertNotNull("No serialization response", pojo);
@@ -79,7 +78,7 @@ public class AbstractContainerTest {
     }
 
     @Test
-    public void deserializeSet() throws IOException {
+    public void deserializeSet() {
         final ContainerSet pojo = simple.fromXml(xml, ContainerSet.class);
 
         assertNotNull("No serialization response", pojo);

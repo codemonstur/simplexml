@@ -4,11 +4,7 @@ import model.SimplePojo;
 import org.junit.Test;
 import simplexml.SimpleXml;
 
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static simplexml.SimpleXml.newSimpleXml;
 
 public class NullTest {
@@ -27,7 +23,7 @@ public class NullTest {
     }
 
     @Test
-    public void deserializeNulls() throws IOException {
+    public void deserializeNulls() {
         final String pojoXml = "<simplepojo><integer/></simplepojo>";
 
         final SimplePojo pojo = simple.fromXml(pojoXml, SimplePojo.class);

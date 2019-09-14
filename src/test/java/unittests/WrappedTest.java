@@ -4,7 +4,6 @@ import model.WrappedPojo;
 import org.junit.Test;
 import simplexml.SimpleXml;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +39,7 @@ public class WrappedTest {
     private SimpleXml simple = new SimpleXml();
 
     @Test
-    public void deserialize() throws IOException {
+    public void deserialize() {
         final WrappedPojo pojo = simple.fromXml(wrappedXml, WrappedPojo.class);
 
         assertNotNull("Pojo is null", pojo);
@@ -56,7 +55,7 @@ public class WrappedTest {
     }
 
     @Test
-    public void deserializeNull() throws IOException {
+    public void deserializeNull() {
         final WrappedPojo pojo1 = simple.fromXml(wrappedXmlNull, WrappedPojo.class);
         final WrappedPojo pojo2 = simple.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
 

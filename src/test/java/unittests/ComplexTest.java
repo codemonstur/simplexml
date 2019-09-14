@@ -4,7 +4,6 @@ import model.ComplexPojo;
 import org.junit.Test;
 import simplexml.SimpleXml;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +30,7 @@ public class ComplexTest {
     private SimpleXml simple = new SimpleXml();
 
     @Test
-    public void deserialize() throws IOException {
+    public void deserialize() {
         final ComplexPojo pojo = simple.fromXml(complexXml, ComplexPojo.class);
 
         assertNotNull("Pojo is null", pojo);

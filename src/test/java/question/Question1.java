@@ -11,7 +11,7 @@ import java.io.IOException;
  * Example taken from:
  * https://stackoverflow.com/questions/51997363/convert-xml-containing-both-schema-and-data-into-java-object-using-jackson
  */
-public class SerializeSingleObject {
+public class Question1 {
 
     public static final String xml =
             "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +

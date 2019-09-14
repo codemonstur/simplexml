@@ -1,6 +1,5 @@
 package simplexml;
 
-import simplexml.error.InvalidXPath;
 import simplexml.model.XmlElement;
 import simplexml.parsing.ObjectDeserializer;
 import simplexml.parsing.ObjectSerializer;
@@ -55,23 +54,19 @@ public final class SimpleXml {
         return compress.compressXml(xml);
     }
 
-    public <T> T fromXml(final String xml, final Class<T> clazz) throws IOException {
+    public <T> T fromXml(final String xml, final Class<T> clazz) {
         return fromXml(fromXml(xml), clazz);
     }
     public <T> T fromXml(final InputStream xmlStream, final Class<T> clazz) throws IOException {
         return fromXml(fromXml(xmlStream), clazz);
     }
-    public <T> T fromXml(final XmlElement element, final Class<T> clazz) throws IOException {
-        try {
-            return reader.domToObject(element, clazz);
-        } catch (IllegalAccessException | InvalidXPath e) {
-            throw new IOException(e);
-        }
+    public <T> T fromXml(final XmlElement element, final Class<T> clazz) {
+        return reader.domToObject(element, clazz);
     }
-    public <T> T fromXml(final String xml, final String xpath, final Class<T> clazz) throws InvalidXPath, IOException {
+    public <T> T fromXml(final String xml, final String xpath, final Class<T> clazz) {
         return fromXml(xml, newXPath(xpath), clazz);
     }
-    public <T> T fromXml(final String xml, final XPathExpression xpath, final Class<T> clazz) throws IOException {
+    public <T> T fromXml(final String xml, final XPathExpression xpath, final Class<T> clazz) {
         return fromXml(xpath.evaluateAny(fromXml(xml)), clazz);
     }
 

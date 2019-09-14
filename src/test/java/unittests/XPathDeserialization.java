@@ -4,8 +4,6 @@ import model.XPathPojo;
 import org.junit.Test;
 import simplexml.SimpleXml;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -14,7 +12,7 @@ public class XPathDeserialization {
     private SimpleXml simple = new SimpleXml();
 
     @Test
-    public void deserializeXPath() throws IOException {
+    public void deserializeXPath() {
         final String xml = "<xpathpojo><one><two><three>value</three></two></one></xpathpojo>";
 
         final XPathPojo pojo = simple.fromXml(xml, XPathPojo.class);

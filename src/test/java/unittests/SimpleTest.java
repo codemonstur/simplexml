@@ -5,8 +5,6 @@ import org.junit.Test;
 import simplexml.SimpleXml;
 import simplexml.model.XmlElement;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static simplexml.SimpleXml.newSimpleXml;
@@ -18,7 +16,7 @@ public class SimpleTest {
     private SimpleXml simpler = newSimpleXml().shouldPrettyPrint(false).build();
 
     @Test
-    public void deserializeObject() throws IOException {
+    public void deserializeObject() {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
         final Pojo pojo = simple.fromXml(pojoXml, Pojo.class);
@@ -28,7 +26,7 @@ public class SimpleTest {
     }
 
     @Test
-    public void deserializeShort() throws IOException {
+    public void deserializeShort() {
         final String pojoXml = "<pojo><name>Hello</name></pojo>";
 
         final Pojo pojo = simpler.fromXml(pojoXml, Pojo.class);

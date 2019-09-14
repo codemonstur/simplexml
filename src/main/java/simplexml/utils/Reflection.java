@@ -1,11 +1,14 @@
 package simplexml.utils;
 
 import simplexml.annotations.*;
-import simplexml.model.*;
 import simplexml.annotations.XmlAbstractClass.TypeMap;
+import simplexml.error.AssignmentFailure;
+import simplexml.error.InvalidAnnotation;
+import simplexml.model.XmlElement;
 import simplexml.utils.Interfaces.AccessSerializers;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
@@ -36,9 +39,10 @@ public enum Reflection {;
     }
 
     public enum FieldType {
-        TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER
+        TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER, FIELD_DESERIALIZER
     }
     public static FieldType toFieldType(final Field f) {
+        if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
         if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXTNODE;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
 
@@ -108,18 +112,18 @@ public enum Reflection {;
     public static boolean isAbstract(final Field f) {
         return f.isAnnotationPresent(XmlAbstractClass.class);
     }
-    public static Class<?> findAbstractType(final XmlAbstractClass annotation, final XmlElement node) throws IllegalAccessException {
+    public static Class<?> findAbstractType(final XmlAbstractClass annotation, final XmlElement node) {
         final String typeName = findAbstractTypeName(annotation, node);
         for (final TypeMap map : annotation.types()) {
             if (typeName.equals(map.name()))
                 return map.type();
         }
-        throw new IllegalAccessException(format("Missing type for '%s'", typeName));
+        throw new InvalidAnnotation(format("Missing type for '%s'", typeName));
     }
-    private static String findAbstractTypeName(final XmlAbstractClass annotation, final XmlElement node) throws IllegalAccessException {
+    private static String findAbstractTypeName(final XmlAbstractClass annotation, final XmlElement node) {
         if (!annotation.tag().isEmpty()) {
             final XmlElement child = findChildForName(node, annotation.tag(), null);
-            if (child == null) throw new IllegalAccessException(format("Missing tag %s in element %s", annotation.tag(), node.name));
+            if (child == null) throw new InvalidAnnotation(format("Missing tag %s in element %s", annotation.tag(), node.name));
             return child.getText();
         }
         else return node.attributes.get(annotation.attribute());
@@ -166,4 +170,20 @@ public enum Reflection {;
         return clazz.isPrimitive() ? (Class<T>) PRIMITIVE_TO_OBJECT.get(clazz) : clazz;
     }
 
+    public static Object invokeFieldDeserializer(final Field f, final XmlElement element) {
+        final XmlFieldDeserializer annotation = f.getAnnotation(XmlFieldDeserializer.class);
+        try {
+            return Class.forName(annotation.clazz()).getMethod(annotation.function(), XmlElement.class).invoke(null, element);
+        } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+            throw new InvalidAnnotation("FieldDeserializer " + annotation.clazz() + "." + annotation.function() + " could not be invoked", e);
+        }
+    }
+
+    public static void setField(final Field field, final Object object, final Object value) {
+        try {
+            field.set(object, value);
+        } catch (IllegalAccessException e) {
+            throw new AssignmentFailure(e);
+        }
+    }
 }
