@@ -19,7 +19,6 @@ Lets start with this code:
     
             final XmlParser parser = new XmlParser();
             System.out.println(parser.toXml(project));
-    
         }
     
     }
