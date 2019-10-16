@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
+/*
  * Used for deserializing fields of abstract classes
  */
 @Retention(RUNTIME)

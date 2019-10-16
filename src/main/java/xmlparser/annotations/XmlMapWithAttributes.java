@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
+/*
  * Used for serializing and deserializing maps of this form:
  *
  * <item key="key">value</item>
