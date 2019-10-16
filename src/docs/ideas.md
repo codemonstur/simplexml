@@ -46,13 +46,10 @@ Try to generate the XML structure given above.
 
 https://stackoverflow.com/questions/51953656/java-create-xml-using-xpath
 
-# Add annotation that configures serialization of a Map
+# Make a safe version of map serialization the default
 
-Output could be: <item key="key-here">value-here</item>
-Or it could be : <key>value</key>
-
-The second one is what it does now but it can create invalid XML. Default should be first behaviour. Use
-annotation for second.
+Default should be : <item key="key-here">value-here</item>
+Default is now    : <key>value</key>
 
 # Add an asymmetric name annotation
 
@@ -60,8 +57,8 @@ An annotation that allows you to deserialize using one name and serialize using 
 
 # Add more support for xpath
 
-XPath support is very simplistic at the moment. There are other options documented here:
-https://github.com/code4craft/xsoup
+XPath support is very simplistic at the moment. 
+There are other options documented here: https://github.com/code4craft/xsoup
 
 # Add support for namespaces
 
@@ -79,8 +76,9 @@ check to see if the used namespaces exist
 
 # Speed up Xpath parsing
 
-the @XmlPath annotation contains a string that denotes the XPath expression to use. Currently the Xpath is compiled
-every single time it is encountered. This can be sped up by using interning.
+the @XmlPath annotation contains a string that denotes the XPath expression to use. 
+Currently the Xpath is compiled every single time it is encountered. 
+This can be sped up by using interning.
 
 # Make self-closing tag during serialization configurable
 

@@ -1,8 +1,7 @@
 package xmlparser;
 
-import xmlparser.annotations.XmlAbstractClass;
-import xmlparser.annotations.XmlNoImport;
-import xmlparser.annotations.XmlPath;
+import xmlparser.annotations.*;
+import xmlparser.error.InvalidAnnotation;
 import xmlparser.error.InvalidXPath;
 import xmlparser.model.XmlElement;
 import xmlparser.parsing.DomBuilder;
@@ -20,6 +19,7 @@ import java.util.*;
 import static org.objenesis.ObjenesisHelper.newInstance;
 import static xmlparser.model.XmlElement.findChildForName;
 import static xmlparser.utils.Reflection.*;
+import static xmlparser.utils.Validator.multipleAreTrue;
 import static xmlparser.xpath.XPathExpression.newXPath;
 
 public interface XmlReader extends AccessDeserializers {
@@ -50,7 +50,7 @@ public interface XmlReader extends AccessDeserializers {
                 case SET: setField(f, o, domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
                 case LIST: setField(f, o, domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
                 case ARRAY: setField(f, o, domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f))); break;
-                case MAP: setField(f, o, domToMap((ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
+                case MAP: setField(f, o, domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
                 default:
                     final String name = toName(f);
                     final String value = selectedNode.attributes.get(name);
@@ -137,13 +137,59 @@ public interface XmlReader extends AccessDeserializers {
         }
         return array;
     }
-    default Map<Object, Object> domToMap(final ParameterizedType type, final String name, final XmlElement node) {
+    default Map<Object, Object> domToMap(final Field field, final ParameterizedType type, final String name, final XmlElement node) {
         if (node == null) return null;
-        final XmlElement element = node.findChildForName(name, null);
-        if (element == null) return null;
+
+        final boolean isXmlMapTagIsKey = field.isAnnotationPresent(XmlMapTagIsKey.class);
+        final boolean isXmlMapWithAttributes = field.isAnnotationPresent(XmlMapWithAttributes.class);
+        final boolean isXmlMapWithChildNodes = field.isAnnotationPresent(XmlMapWithChildNodes.class);
+
+        if (multipleAreTrue(isXmlMapTagIsKey, isXmlMapWithAttributes, isXmlMapWithChildNodes))
+            throw new InvalidAnnotation("Only one of XmlMapTagIsKey, XmlMapWithAttributes and XmlMapWithChildNodes is allowed per field");
 
         final ObjectDeserializer convKey = getDeserializer(toClassOfMapKey(type));
         final ObjectDeserializer convVal = getDeserializer(toClassOfMapValue(type));
+
+        if (isXmlMapWithAttributes) {
+            final XmlMapWithAttributes annotation = field.getAnnotation(XmlMapWithAttributes.class);
+            final String keyName = annotation.keyName();
+            final String valueName = annotation.valueName();
+
+            final Map<Object, Object> map = new HashMap<>();
+            for (final XmlElement child : node.children) {
+                if (!name.equals(child.name)) continue;
+
+                final String key = child.attributes.get(keyName);
+                if (key == null) continue;
+
+                final String value = valueName.isEmpty() ? child.getText() : child.attributes.get(valueName);
+                map.put(convKey.convert(key), convVal.convert(value));
+            }
+            return map;
+        }
+        if (isXmlMapWithChildNodes) {
+            final XmlMapWithChildNodes annotation = field.getAnnotation(XmlMapWithChildNodes.class);
+            final String keyName = annotation.keyName();
+            final String valueName = annotation.valueName();
+
+            final Map<Object, Object> map = new HashMap<>();
+            for (final XmlElement child : node.children) {
+                if (!name.equals(child.name)) continue;
+
+                final XmlElement key = child.findChildForName(keyName, null);
+                if (key == null) continue;
+
+                final XmlElement value = valueName.isEmpty() ? child : child.findChildForName(valueName, null);
+                if (value == null) continue;
+
+                map.put(convKey.convert(key.getText()), convVal.convert(value.getText()));
+            }
+            return map;
+        }
+
+        // isXmlMapTagIsKey is also the default
+        final XmlElement element = node.findChildForName(name, null);
+        if (element == null) return null;
 
         final Map<Object, Object> map = new HashMap<>();
         for (final XmlElement child : element.children) {

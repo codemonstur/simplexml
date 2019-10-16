@@ -17,4 +17,12 @@ public enum Validator {;
         return array;
     }
 
+    public static boolean multipleAreTrue(final boolean... values) {
+        int i = 0;
+        for (; i < values.length; i++)
+            if (values[i]) break;
+        for (i++; i < values.length; i++)
+            if (values[i]) return true;
+        return false;
+    }
 }

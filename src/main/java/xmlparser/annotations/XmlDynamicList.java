@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/*
+/**
  * Should deal with lists that have a wrapper tag and the name of the item determines the
  * type of the item. So:
  *
