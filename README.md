@@ -1,6 +1,7 @@
+
+[![Build Status](https://travis-ci.org/codemonstur/simplexml.svg?branch=master)](https://travis-ci.org/codemonstur/simplexml)
 [![GitHub Release](https://img.shields.io/github/release/codemonstur/simplexml.svg)](https://github.com/codemonstur/simplexml/releases) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.codemonstur/simplexml/badge.svg)](http://mvnrepository.com/artifact/com.github.codemonstur/simplexml)
-[![Build Status](https://travis-ci.org/codemonstur/simplexml.svg?branch=master)](https://travis-ci.org/codemonstur/simplexml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/63924c44946973cb37f8/maintainability)](https://codeclimate.com/github/codemonstur/simplexml/maintainability)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 [![Coverage Status](https://coveralls.io/repos/github/codemonstur/simplexml/badge.svg?branch=master)](https://coveralls.io/github/codemonstur/simplexml?branch=master)
