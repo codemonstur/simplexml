@@ -1,0 +1,5 @@
+2.2.0
+
+- Updated year in license
+- Added support for two additional map formats
+- Improved the unit tests
