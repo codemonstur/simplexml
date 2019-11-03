@@ -90,3 +90,10 @@ Make this configurable.
 # Add null-to-empty annotation
 
 An annotation that tells the serializer to create an empty tag for a null field.
+
+# XML validation
+
+# XML transforming
+
+# XML compare
+

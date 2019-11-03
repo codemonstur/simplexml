@@ -38,8 +38,16 @@ public enum Reflection {;
         return textNode;
     }
 
+    public static String toEnumName(final Object o) {
+        return o.toString();
+    }
+
+    public static Class<? extends Enum> toEnumType(final Field field) {
+        return (Class<? extends Enum>) field.getType();
+    }
+
     public enum FieldType {
-        TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER, FIELD_DESERIALIZER
+        TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER, FIELD_DESERIALIZER, ENUM
     }
     public static FieldType toFieldType(final Field f) {
         if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
@@ -47,6 +55,7 @@ public enum Reflection {;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
 
         final Class<?> type = f.getType();
+        if (type.isEnum()) return FieldType.ENUM;
         if (Set.class.isAssignableFrom(type)) return FieldType.SET;
         if (List.class.isAssignableFrom(type)) return FieldType.LIST;
         if (type.isArray()) return FieldType.ARRAY;
@@ -55,9 +64,10 @@ public enum Reflection {;
     }
 
     public enum ClassType {
-        SIMPLE, ARRAY, LIST, SET, MAP, OBJECT
+        SIMPLE, ARRAY, LIST, SET, MAP, OBJECT, ENUM
     }
     public static ClassType toClassType(final Class<?> c, final AccessSerializers s) {
+        if (c.isEnum()) return ENUM;
         if (isSimple(c) || s.hasSerializer(c)) return SIMPLE;
         if (c.isArray()) return ARRAY;
         if (isList(c)) return LIST;

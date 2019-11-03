@@ -1,6 +1,7 @@
 package unittests;
 
 import model.ComplexPojo;
+import model.TestEnum;
 import org.junit.Test;
 import xmlparser.XmlParser;
 
@@ -25,6 +26,7 @@ public class ComplexTest {
             "  <array>34.8</array>\n" +
             "  <set>45.3</set>\n" +
             "  <set>1234567.9</set>\n" +
+            "  <testenum>one</testenum>\n" +
             "</complexpojo>\n";
 
     private XmlParser parser = new XmlParser();
@@ -52,6 +54,6 @@ public class ComplexTest {
         final Float[] array = { 0.5f, 34.8f };
         final Set<Double> set = new HashSet<>(Arrays.asList(45.3, 1234567.90));
 
-        return new ComplexPojo("complex", list, map, array, set);
+        return new ComplexPojo("complex", list, map, array, set, TestEnum.one);
     }
 }

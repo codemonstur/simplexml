@@ -7,6 +7,7 @@ import xmlparser.model.XmlElement;
 import xmlparser.parsing.DomBuilder;
 import xmlparser.parsing.ObjectDeserializer;
 import xmlparser.utils.Interfaces.AccessDeserializers;
+import xmlparser.utils.Reflection;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -51,6 +52,7 @@ public interface XmlReader extends AccessDeserializers {
                 case LIST: setField(f, o, domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
                 case ARRAY: setField(f, o, domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f))); break;
                 case MAP: setField(f, o, domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
+                case ENUM: setField(f, o, enumNodeToValue(Reflection.toEnumType(f), toName(f), deWrap(selectedNode, f))); break;
                 default:
                     final String name = toName(f);
                     final String value = selectedNode.attributes.get(name);
@@ -77,6 +79,11 @@ public interface XmlReader extends AccessDeserializers {
     default Object textNodeToValue(final Class<?> type, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(node) : null;
+    }
+    default Object enumNodeToValue(final Class<? extends Enum> type, final String name, final XmlElement node) {
+        final XmlElement text = findChildForName(node, name, null);
+        final ObjectDeserializer conv = getDeserializer(type);
+        return (conv == null) ? Enum.valueOf(type, text.getText()) : conv.convert(node);
     }
     default Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);

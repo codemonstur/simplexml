@@ -92,13 +92,3 @@ Or alternatively you can clone the repo and install locally:
 
 The MIT license. And I left out the copyright notice everywhere because I just don't care.
 
-## Future Ideas
-
-There are a bunch of features that I could add.
-In no particular order:
-- Support comments
-- Support CDATA blocks
-- XML streaming
-  - Push and Pull
-  - object, xpath
-- Validation
