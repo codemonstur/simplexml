@@ -1,8 +1,19 @@
 
+.PHONY: help clean build check-versions release-notes deploy
+
 DATE=`date +'%F'`
 NAME=`xmllint --xpath "//project/artifactId/text()" pom.xml`
 VERSION=`xmllint --xpath "//project/version/text()" pom.xml`
 PREVIOUS_TAG=`git tag | sort -r | head -n 1`
+
+help:
+	@echo "Available targets for $(NAME):"
+	@echo "\thelp\t\t\tThis help"
+	@echo "\tclean\t\t\tDelete everything in ./target"
+	@echo "\tbuild\t\t\tCleans the project and rebuilds the code"
+	@echo "\tcheck-versions\t\tCheck if the versions of dependencies are up to date"
+	@echo "\trelease-notes\t\tCreate release notes for the latest version"
+	@echo "\tdeploy\t\t\tClean, build and deploy a version to Github and Maven Central"
 
 clean:
 	@echo "[$(NAME)] Cleaning"
