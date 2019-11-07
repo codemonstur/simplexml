@@ -17,11 +17,11 @@ help:
 
 clean:
 	@echo "[$(NAME)] Cleaning"
-	@mvn -q clean
+	@mvn clean
 
 build:
 	@echo "[$(NAME)] Building"
-	@mvn -q -e clean package
+	@mvn -DskipTests=true clean package
 
 check-versions:
 	@mvn versions:display-dependency-updates
