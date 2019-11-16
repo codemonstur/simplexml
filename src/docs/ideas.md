@@ -97,3 +97,17 @@ An annotation that tells the serializer to create an empty tag for a null field.
 
 # XML compare
 
+# After serialization validation method
+
+Add an annotation to mark a method as a validation method. 
+Call that method after the object has been serialized
+
+# XmlSerialization annotation
+
+Add an annotation that marks a method as a serializer for a given object.
+
+# XmlDeserialization annotation
+
+Add an annotation that marks a method as a deserializer for a given object.
+
+
