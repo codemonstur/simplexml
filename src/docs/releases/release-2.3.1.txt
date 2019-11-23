@@ -1,0 +1,4 @@
+2.3.1
+
+Changed serialization of enum from toString() to name()
+
