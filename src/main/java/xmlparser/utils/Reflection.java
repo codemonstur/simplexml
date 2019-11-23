@@ -39,7 +39,7 @@ public enum Reflection {;
     }
 
     public static String toEnumName(final Object o) {
-        return o.toString();
+        return ((Enum)o).name();
     }
 
     public static Class<? extends Enum> toEnumType(final Field field) {
