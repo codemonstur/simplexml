@@ -8,10 +8,12 @@ import xmlparser.xpath.XPathExpression;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.newInputStream;
 import static xmlparser.XmlReader.toXmlDom;
 import static xmlparser.parsing.ObjectDeserializer.defaultDeserializers;
 import static xmlparser.parsing.ObjectSerializer.defaultSerializer;
@@ -54,6 +56,11 @@ public final class XmlParser {
         return compress.compressXml(xml);
     }
 
+    public <T> T fromXml(final Path xmlFile, final Class<T> clazz) throws IOException {
+        try (final InputStream in = newInputStream(xmlFile)) {
+            return fromXml(in, clazz);
+        }
+    }
     public <T> T fromXml(final String xml, final Class<T> clazz) {
         return fromXml(fromXml(xml), clazz);
     }
