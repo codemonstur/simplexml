@@ -1,0 +1,4 @@
+2.4.0
+
+Added fromXml(Path) in XmlParser
+Updated license year
