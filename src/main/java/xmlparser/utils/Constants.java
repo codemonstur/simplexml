@@ -20,6 +20,10 @@ public enum Constants {;
         XML_PROLOG = CHAR_QUESTION_MARK;
 
     public static final String
+        XML_START_COMMENT = "!--",
+        XML_END_COMMENT = "--";
+
+    public static final String
         EMPTY = "",
         SPACE = " ",
         INDENT = "  ",

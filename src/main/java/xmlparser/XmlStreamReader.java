@@ -21,8 +21,14 @@ public interface XmlStreamReader {
 
             str = trim(readLine(in, XML_TAG_END));
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
-            if (str.charAt(0) == XML_PROLOG) continue;
+            if (str.startsWith(XML_START_COMMENT)) {
+                if (str.endsWith(XML_END_COMMENT))
+                    continue;
+                readUntil(in, XML_END_COMMENT+">");
+                continue;
+            }
 
+            if (str.charAt(0) == XML_PROLOG) continue;
             if (str.charAt(0) == XML_SELF_CLOSING) parser.endNode();
             else {
                 final String name = getNameOfTag(str);
