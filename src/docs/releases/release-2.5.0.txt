@@ -1,3 +1,4 @@
 2.5.0
 
 Added support for skipping comments
+Added fromXml(Path) call that returns a DOM

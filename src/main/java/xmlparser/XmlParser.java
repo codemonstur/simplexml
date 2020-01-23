@@ -77,6 +77,12 @@ public final class XmlParser {
         return fromXml(xpath.evaluateAny(fromXml(xml)), clazz);
     }
 
+    public XmlElement fromXml(final Path xmlFile) throws IOException {
+        try (final InputStream in = newInputStream(xmlFile)) {
+            return fromXml(in);
+        }
+    }
+
     public XmlElement fromXml(final String input) {
         try {
             return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
