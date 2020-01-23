@@ -82,8 +82,11 @@ public interface XmlReader extends AccessDeserializers {
     }
     default Object enumNodeToValue(final Class<? extends Enum> type, final String name, final XmlElement node) {
         final XmlElement text = findChildForName(node, name, null);
+        if (text == null) return null;
+        final String value = text.getText();
+        if (value == null) return null;
         final ObjectDeserializer conv = getDeserializer(type);
-        return (conv == null) ? Enum.valueOf(type, text.getText()) : conv.convert(node);
+        return (conv == null) ? Enum.valueOf(type, value) : conv.convert(node);
     }
     default Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
@@ -194,7 +197,6 @@ public interface XmlReader extends AccessDeserializers {
             return map;
         }
 
-        // isXmlMapTagIsKey is also the default
         final XmlElement element = node.findChildForName(name, null);
         if (element == null) return null;
 
