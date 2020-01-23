@@ -2,6 +2,8 @@ package xmlparser.model;
 
 import java.util.*;
 
+import static xmlparser.utils.Functions.isNullOrEmpty;
+
 public class XmlElement {
 
     public XmlElement parent;
@@ -25,21 +27,21 @@ public class XmlElement {
         this.children.add(child);
     }
 
-    public XmlElement findChildForName(final String name, final XmlElement _default) {
+    public XmlElement findChildForName(final String name, final XmlElement defaultValue) {
         for (final XmlElement child : children) {
             if (name.equals(child.name))
                 return child;
         }
-        return _default;
+        return defaultValue;
     }
 
-    public static XmlElement findChildForName(final XmlElement element, final String name, final XmlElement _default) {
-        if (element == null) return _default;
+    public static XmlElement findChildForName(final XmlElement element, final String name, final XmlElement defaultValue) {
+        if (element == null) return defaultValue;
         for (final XmlElement child : element.children) {
             if (name.equals(child.name))
                 return child;
         }
-        return _default;
+        return defaultValue;
     }
 
     public int numChildrenWithName(final String name) {
@@ -57,6 +59,11 @@ public class XmlElement {
                 builder.append(((XmlTextElement)child).text);
         }
         return builder.length() == 0 ? null : builder.toString();
+    }
+
+    public void setText(final String text) {
+        children.removeIf(xmlElement -> xmlElement instanceof XmlTextElement);
+        if (!isNullOrEmpty(text)) children.add(new XmlTextElement(this, text));
     }
 
     public boolean hasNonTextChildren() {
