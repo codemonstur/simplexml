@@ -8,6 +8,7 @@ import xmlparser.parsing.DomBuilder;
 import xmlparser.parsing.ObjectDeserializer;
 import xmlparser.utils.Interfaces.AccessDeserializers;
 import xmlparser.utils.Reflection;
+import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -207,9 +208,9 @@ public interface XmlReader extends AccessDeserializers {
         return map;
     }
 
-    static XmlElement toXmlDom(final InputStreamReader in) throws IOException {
+    static XmlElement toXmlDom(final InputStreamReader in, final Trim trimmer) throws IOException {
         final DomBuilder p = new DomBuilder();
-        XmlStreamReader.toXmlStream(in, p);
+        XmlStreamReader.toXmlStream(in, p, trimmer);
         return p.getRoot();
     }
 

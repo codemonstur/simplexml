@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 
 import static xmlparser.utils.Constants.CHAR_FORWARD_SLASH;
 import static xmlparser.utils.Constants.CHAR_SPACE;
+import static xmlparser.utils.Trimming.Trim;
 
 public enum XmlParse {;
 
@@ -54,20 +55,23 @@ public enum XmlParse {;
         return chars.substring(start, end).equals(postfix);
     }
 
-    public static int indexOfNonWhitespaceChar(final String input, final int offset) {
+    public static int indexOfNonWhitespaceChar(final String input, final int offset, final Trim trimmer) {
         for (int i = offset; i < input.length(); i++) {
             final char at = input.charAt(i);
-            if (at == ' ' || at == '\t' || at == '\n' || at == '\r') continue;
+            if (trimmer.isWhitespace(at)) continue;
             return i;
         }
         return -1;
     }
-    public static int indexOfWhitespaceChar(final String input, final int offset) {
+    public static int indexOfWhitespaceChar(final String input, final int offset, final Trim trimmer) {
         for (int i = offset; i < input.length(); i++) {
             final char at = input.charAt(i);
-            if (at == ' ' || at == '\t' || at == '\n' || at == '\r') return i;
+            if (trimmer.isWhitespace(at)) return i;
         }
         return -1;
     }
 
 }
+
+// at == ' ' || at == '\t' || at == '\n' || at == '\r'
+// at == ' ' || at == '\t' || at == '\n' || at == '\r'

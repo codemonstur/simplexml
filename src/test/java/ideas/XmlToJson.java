@@ -2,6 +2,7 @@ package ideas;
 
 import xmlparser.XmlStreamReader;
 import xmlparser.parsing.EventParser;
+import xmlparser.utils.Trimming;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -120,7 +121,7 @@ public class XmlToJson {
                     valueWasWritten = true;
                 }
             }
-        });
+        }, new Trimming.NativeTrimmer());
     }
 
     private static String newIndent(final int number) {

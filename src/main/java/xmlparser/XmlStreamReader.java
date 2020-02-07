@@ -2,24 +2,29 @@ package xmlparser;
 
 import xmlparser.error.InvalidXml;
 import xmlparser.parsing.EventParser;
+import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import static xmlparser.utils.Constants.*;
-import static xmlparser.utils.Functions.trim;
 import static xmlparser.utils.XML.unescapeXml;
 import static xmlparser.utils.XmlParse.*;
 
 public interface XmlStreamReader {
 
-    static void toXmlStream(final InputStreamReader in, final EventParser parser) throws IOException {
-        String str;
-        while ((str = readLine(in, XML_TAG_START)) != null) {
-            if (!str.isEmpty()) parser.someText(unescapeXml(str.trim()));
+    static void toXmlStream(final InputStreamReader in, final EventParser parser, final Trim trimmer) throws IOException {
+        boolean isStart = true;
+        String str; while ((str = readLine(in, XML_TAG_START)) != null) {
+            final String text = trimmer.trim(str);
+            if (!text.isEmpty()) {
+                if (isStart) throw new InvalidXml("XML contains non-whitespace characters before opening tag");
+                parser.someText(unescapeXml(text));
+            }
+            isStart = false;
 
-            str = trim(readLine(in, XML_TAG_END));
+            str = trimmer.trim(readLine(in, XML_TAG_END));
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
             if (str.startsWith(XML_START_COMMENT)) {
                 if (str.endsWith(XML_END_COMMENT))
@@ -40,28 +45,28 @@ public interface XmlStreamReader {
                 final int beginAttr = name.length();
                 final int end = str.length();
                 if (str.endsWith(FORWARD_SLASH)) {
-                    parser.startNode(name, xmlToAttributes(str.substring(beginAttr, end-1)));
+                    parser.startNode(name, xmlToAttributes(str.substring(beginAttr, end-1), trimmer));
                     parser.endNode();
                 } else {
-                    parser.startNode(name, xmlToAttributes(str.substring(beginAttr+1, end)));
+                    parser.startNode(name, xmlToAttributes(str.substring(beginAttr+1, end), trimmer));
                 }
             }
         }
     }
 
-    static HashMap<String, String> xmlToAttributes(String input) {
+    static HashMap<String, String> xmlToAttributes(String input, final Trim trimmer) {
         final HashMap<String, String> attributes = new HashMap<>();
 
         while (!input.isEmpty()) {
-            int startName = indexOfNonWhitespaceChar(input, 0);
+            int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startName == -1) break;
             int equals = input.indexOf(CHAR_EQUALS, startName+1);
             if (equals == -1) break;
 
-            final String name = input.substring(startName, equals).trim();
+            final String name = trimmer.trim(input.substring(startName, equals));
             input = input.substring(equals+1);
 
-            int startValue = indexOfNonWhitespaceChar(input, 0);
+            int startValue = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startValue == -1) break;
 
             int endValue; final String value;
@@ -69,11 +74,11 @@ public interface XmlStreamReader {
                 startValue++;
                 endValue = input.indexOf(CHAR_DOUBLE_QUOTE, startValue);
                 if (endValue == -1) endValue = input.length()-1;
-                value = input.substring(startValue, endValue).trim();
+                value = trimmer.trim(input.substring(startValue, endValue));
             } else {
-                endValue = indexOfWhitespaceChar(input, startValue+1);
+                endValue = indexOfWhitespaceChar(input, startValue+1, trimmer);
                 if (endValue == -1) endValue = input.length()-1;
-                value = input.substring(startValue, endValue+1).trim();
+                value = trimmer.trim(input.substring(startValue, endValue+1));
             }
 
             input = input.substring(endValue+1);

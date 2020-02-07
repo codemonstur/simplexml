@@ -1,0 +1,9 @@
+
+Benchmark                        Mode  Cnt         Score        Error  Units
+TrimBenchmark.regularTrim       thrpt   25  44435644,661 ± 365418,610  ops/s
+TrimBenchmark.trimCustomFaster  thrpt   25  23315939,850 ± 269077,102  ops/s
+TrimBenchmark.trimCustomOne     thrpt   25  13134681,034 ± 596946,807  ops/s
+
+The alternative trim functions are significantly slower than the built in one.
+Sad, but to be expected. I don't have a choice with implementation though. The
+parser must work.

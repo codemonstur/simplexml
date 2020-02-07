@@ -1,0 +1,9 @@
+
+
+Benchmark                    Mode  Cnt         Score         Error  Units
+TrimBenchmark.indirectTrim  thrpt   25  43070383,815 ± 1495600,448  ops/s
+TrimBenchmark.regularTrim   thrpt   25  42563360,676 ± 1322460,849  ops/s
+
+The indirect way was somehow faster. Weird. Must be a measurement error.
+Anyway, there is no problem in hiding the trim behind a level of indirection.
+Yeah, obvious I know.

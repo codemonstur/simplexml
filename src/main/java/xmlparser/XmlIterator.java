@@ -1,13 +1,15 @@
 package xmlparser;
 
-import xmlparser.model.XmlElement;
 import xmlparser.error.InvalidXml;
+import xmlparser.model.XmlElement;
 import xmlparser.utils.Interfaces.CheckedIterator;
+import xmlparser.utils.Trimming.Trim;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+
+import static xmlparser.utils.IO.newStreamReader;
 
 public interface XmlIterator {
 
@@ -26,7 +28,7 @@ public interface XmlIterator {
         };
     }
 
-    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset) {
+    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset, final Trim trimmer) {
         return new CheckedIterator<XmlElement>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
@@ -37,13 +39,15 @@ public interface XmlIterator {
 
             public XmlElement next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
-                return XmlReader.toXmlDom(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
+                try (final InputStreamReader in = newStreamReader(xml, charset)) {
+                    return XmlReader.toXmlDom(in, trimmer);
+                }
             }
         };
     }
 
     default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
-            , final Class<T> clazz) {
+            , final Class<T> clazz, final Trim trimmer) {
         return new CheckedIterator<T>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
@@ -54,8 +58,10 @@ public interface XmlIterator {
 
             public T next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
-                final XmlElement element = XmlReader.toXmlDom(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(charset)), charset));
-                return reader.domToObject(element, clazz);
+                try (final InputStreamReader in = newStreamReader(xml, charset)) {
+                    final XmlElement element = XmlReader.toXmlDom(in, trimmer);
+                    return reader.domToObject(element, clazz);
+                }
             }
         };
     }

@@ -1,8 +1,6 @@
 package xmlparser.error;
 
-import java.io.IOException;
-
-public final class InvalidXml extends IOException {
+public final class InvalidXml extends RuntimeException {
     public InvalidXml() {}
     public InvalidXml(final String message) {
         super(message);

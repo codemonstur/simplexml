@@ -4,6 +4,8 @@ import xmlparser.model.XmlElement;
 import xmlparser.parsing.ObjectDeserializer;
 import xmlparser.parsing.ObjectSerializer;
 import xmlparser.utils.Interfaces.CheckedIterator;
+import xmlparser.utils.Trimming;
+import xmlparser.utils.Trimming.Trim;
 import xmlparser.xpath.XPathExpression;
 
 import java.io.*;
@@ -17,6 +19,7 @@ import static java.nio.file.Files.newInputStream;
 import static xmlparser.XmlReader.toXmlDom;
 import static xmlparser.parsing.ObjectDeserializer.defaultDeserializers;
 import static xmlparser.parsing.ObjectSerializer.defaultSerializer;
+import static xmlparser.utils.Trimming.NativeTrimmer;
 import static xmlparser.xpath.XPathExpression.newXPath;
 
 public final class XmlParser {
@@ -24,14 +27,15 @@ public final class XmlParser {
     private final XmlReader reader;
     private final XmlWriter writer;
     private final XmlIterator stream;
+    private final Trim trimmer;
     private final Charset charset;
 
     public XmlParser() {
-        this(false, true, UTF_8, defaultSerializer(), new HashMap<>(), defaultDeserializers());
+        this(false, true, UTF_8, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer());
     }
 
     private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final Charset charset, final ObjectSerializer defaultSerializer
-            , final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers) {
+            , final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer) {
         this.charset = charset;
         this.compress = new XmlCompress() {};
         this.reader = deserializers::get;
@@ -50,10 +54,11 @@ public final class XmlParser {
             }
         };
         this.stream = new XmlIterator() {};
+        this.trimmer = trimmer;
     }
 
     public String compressXml(final String xml) {
-        return compress.compressXml(xml);
+        return compress.compressXml(xml, trimmer);
     }
 
     public <T> T fromXml(final Path xmlFile, final Class<T> clazz) throws IOException {
@@ -92,7 +97,7 @@ public final class XmlParser {
         }
     }
     public XmlElement fromXml(final InputStream stream) throws IOException {
-        return toXmlDom(new InputStreamReader(stream, charset));
+        return toXmlDom(new InputStreamReader(stream, charset), trimmer);
     }
     public String toXml(final Object o) {
         return writer.toXml(o);
@@ -110,10 +115,10 @@ public final class XmlParser {
         return stream.iterateXml(new InputStreamReader(in, charset));
     }
     public CheckedIterator<XmlElement> iterateDom(final InputStream in) {
-        return stream.iterateDom(new InputStreamReader(in, charset), charset);
+        return stream.iterateDom(new InputStreamReader(in, charset), charset, trimmer);
     }
     public <T> CheckedIterator<T> iterateObject(final InputStream in, final Class<T> clazz) {
-        return stream.iterateObject(new InputStreamReader(in, charset), charset, reader, clazz);
+        return stream.iterateObject(new InputStreamReader(in, charset), charset, reader, clazz, trimmer);
     }
 
     public static Builder newXmlParser() {
@@ -124,6 +129,7 @@ public final class XmlParser {
         private boolean shouldEncodeUTF8 = false;
         private boolean shouldPrettyPrint = true;
         private Charset charset = UTF_8;
+        private Trim trimmer = new NativeTrimmer();
         private ObjectSerializer defaultSerializer = ObjectSerializer.defaultSerializer();
         private Map<Class<?>, ObjectSerializer> serializers = new HashMap<>();
         private Map<Class<?>, ObjectDeserializer> deserializers = defaultDeserializers();
@@ -138,6 +144,18 @@ public final class XmlParser {
         }
         public Builder addDeserializer(final Class<?> c, final ObjectDeserializer deserializer) {
             this.deserializers.put(c, deserializer);
+            return this;
+        }
+        public Builder trimmer(final Trim trimmer) {
+            this.trimmer = trimmer;
+            return this;
+        }
+        public Builder lenientWhitespace() {
+            this.trimmer = new Trimming.LenientTrimmer();
+            return this;
+        }
+        public Builder strictWhitespace() {
+            this.trimmer = new Trimming.XmlTrimmer();
             return this;
         }
         public Builder shouldPrettyPrint() {
@@ -162,7 +180,7 @@ public final class XmlParser {
         }
 
         public XmlParser build() {
-            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, charset, defaultSerializer, serializers, deserializers);
+            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, charset, defaultSerializer, serializers, deserializers, trimmer);
         }
     }
 }
