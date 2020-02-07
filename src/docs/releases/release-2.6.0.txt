@@ -1,0 +1,5 @@
+2.6.0
+
+Implemented custom whitespace handling
+- Choose a whitespace trimming strategy from; native, strict, lenient
+- Set a custom Trim object in the builder
