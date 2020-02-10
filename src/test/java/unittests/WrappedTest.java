@@ -33,7 +33,7 @@ public class WrappedTest {
             "</wrappedpojo>\n";
 
     private static final WrappedPojo wrappedNull = new WrappedPojo(null, null, null, null, null);
-    private static final String wrappedXmlNull = "<wrappedpojo />";
+    private static final String wrappedXmlNull = "<wrappedpojo />\n";
     private static final String wrappedXmlNullTwo = "<wrappedpojo><wrapper1></wrapper1></wrappedpojo>";
 
     private XmlParser parser = new XmlParser();
