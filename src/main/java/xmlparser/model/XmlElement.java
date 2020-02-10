@@ -28,11 +28,7 @@ public class XmlElement {
     }
 
     public XmlElement findChildForName(final String name, final XmlElement defaultValue) {
-        for (final XmlElement child : children) {
-            if (name.equals(child.name))
-                return child;
-        }
-        return defaultValue;
+        return findChildForName(this, name, defaultValue);
     }
 
     public static XmlElement findChildForName(final XmlElement element, final String name, final XmlElement defaultValue) {
@@ -84,21 +80,34 @@ public class XmlElement {
     }
 
 
-    public static XmlElement element(final String name) {
-        return new XmlElement(null, name, new HashMap<>(), new ArrayList<>());
+    public static XmlElementBuilder newElement(final String name) {
+        return new XmlElementBuilder(name);
     }
-    public XmlElement child(final XmlElement child) {
-        this.children.add(child);
-        child.parent = this;
-        return this;
-    }
-    public XmlElement attribute(final String name, final String value) {
-        attributes.put(name, value);
-        return this;
-    }
-    public XmlElement text(final String text) {
-        this.children.add(new XmlTextElement(this, text));
-        return this;
+    public static class XmlElementBuilder {
+        private XmlElement element;
+
+        public XmlElementBuilder(final String name) {
+            this.element = new XmlElement(null, name, new HashMap<>());
+        }
+        public XmlElementBuilder attribute(final String name, final String value) {
+            element.attributes.put(name, value);
+            return this;
+        }
+        public XmlElementBuilder text(final String text) {
+            element.setText(text);
+            return this;
+        }
+        public XmlElementBuilder child(final XmlElement child) {
+            element.children.add(child);
+            child.parent = element;
+            return this;
+        }
+        public XmlElementBuilder child(final XmlElementBuilder builder) {
+            return child(builder.build());
+        }
+        public XmlElement build() {
+            return element;
+        }
     }
 
 }

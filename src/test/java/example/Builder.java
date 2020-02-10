@@ -3,16 +3,17 @@ package example;
 import xmlparser.XmlParser;
 import xmlparser.model.XmlElement;
 
-import static xmlparser.model.XmlElement.element;
+import static xmlparser.model.XmlElement.newElement;
 
 public final class Builder {
 
     public static void main(final String... args) {
         final XmlElement node =
-            element("element")
+            newElement("element")
                 .attribute("name", "value")
-                .child(element("child"))
-                .text("Some text");
+                .child(newElement("child"))
+                .text("Some text")
+                .build();
 
         final XmlParser parser = new XmlParser();
         System.out.println(parser.domToXml(node));

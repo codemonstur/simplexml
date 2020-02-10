@@ -8,7 +8,7 @@ import xmlparser.model.XmlElement;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
-import static xmlparser.model.XmlElement.element;
+import static xmlparser.model.XmlElement.newElement;
 
 public class SimpleTest {
 
@@ -49,7 +49,7 @@ public class SimpleTest {
     @Test
     public void serializeDom() {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
-        final XmlElement dom = element("pojo").child(element("name").text("Hello"));
+        final XmlElement dom = newElement("pojo").child(newElement("name").text("Hello")).build();
 
         final String xml = parser.domToXml(dom);
 
@@ -71,7 +71,7 @@ public class SimpleTest {
     @Test
     public void serializeDomShort() {
         final String pojoXml = "<pojo><name>Hello</name></pojo>";
-        final XmlElement dom = element("pojo").child(element("name").text("Hello"));
+        final XmlElement dom = newElement("pojo").child(newElement("name").text("Hello")).build();
 
         final String xml = parserShort.domToXml(dom);
 
