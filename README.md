@@ -73,7 +73,7 @@ Its in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>2.0.0</version>
+        <version>2.6.0</version>
     </dependency>
 
 Or alternatively you can clone the repo and install locally:
