@@ -17,13 +17,16 @@
         </license>
     </licenses>
 
+<!--
     <scm>
         <connection>scm:git:https://github.com/codemonstur/simplexml.git</connection>
         <developerConnection>scm:git:https://github.com/codemonstur/simplexml.git</developerConnection>
         <url>https://github.com/codemonstur/simplexml</url>
         <tag>HEAD</tag>
     </scm>
+-->
 
+<!--
     <developers>
         <developer>
             <id>codemonstur</id>
@@ -31,6 +34,7 @@
             <email>jegvoorneveld@gmail.com</email>
         </developer>
     </developers>
+-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -85,6 +89,7 @@
         </profile>
     </profiles>
 
+<!--
     <reporting>
         <plugins>
             <plugin>
@@ -94,10 +99,12 @@
             </plugin>
         </plugins>
     </reporting>
+-->
 
     <build>
         <plugins>
 
+<!--
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
@@ -111,6 +118,7 @@
                     </targetTests>
                 </configuration>
             </plugin>
+-->
 
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -148,6 +156,7 @@
                 </executions>
             </plugin>
 
+<!--
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -172,6 +181,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.0.0</version>
             </plugin>
+-->
 
         </plugins>
     </build>
@@ -181,7 +191,7 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>2.6</version>
+            <version>3.1</version>
         </dependency>
 
         <dependency>

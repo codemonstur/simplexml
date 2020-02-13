@@ -2,7 +2,7 @@ version: 2.7.0
 packaging: jar
 release: 8
 dependencies:
-  - repository: org.objenesis:objenesis:2.6
+  - repository: org.objenesis:objenesis:3.1
   - repository: junit:junit:4.12
     scope: test
   - repository: org.unitils:unitils-core:3.4.2
