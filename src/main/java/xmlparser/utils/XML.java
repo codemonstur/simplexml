@@ -38,46 +38,6 @@ public enum XML {;
         return encoded.toString();
     }
 
-    public static String unescapeXml(final String text) {
-        StringBuilder result = new StringBuilder(text.length());
-        int i = 0;
-        int n = text.length();
-        while (i < n) {
-            char charAt = text.charAt(i);
-            if (charAt != CHAR_AMPERSAND) {
-                result.append(charAt);
-                i++;
-            } else {
-                if (text.startsWith(ENCODED_AMPERSAND, i)) {
-                    result.append(CHAR_AMPERSAND);
-                    i += 5;
-                } else if (text.startsWith(ENCODED_SINGLE_QUOTE, i)) {
-                    result.append(CHAR_SINGLE_QUOTE);
-                    i += 6;
-                } else if (text.startsWith(ENCODED_DOUBLE_QUOTE, i)) {
-                    result.append(CHAR_DOUBLE_QUOTE);
-                    i += 6;
-                } else if (text.startsWith(ENCODED_LESS_THAN, i)) {
-                    result.append(CHAR_LESS_THAN);
-                    i += 4;
-                } else if (text.startsWith(ENCODED_GREATER_THAN, i)) {
-                    result.append(CHAR_GREATER_THAN);
-                    i += 4;
-                } else if (text.startsWith(ENCODED_UTF8, i)) {
-                    final int index = text.indexOf(';', i);
-                    result.append(toChar(text.substring(i+2, index)));
-                    i = index+1;
-                }
-                else i++;
-            }
-        }
-        return result.toString();
-    }
-
-    private static char toChar(final String substring) {
-        return (char) Integer.parseInt(substring);
-    }
-
     public static String attributesToXml(final List<Field> fields, final Object o, final boolean shouldEncodeUTF8) throws IllegalArgumentException,
             IllegalAccessException {
         final StringBuilder attr = new StringBuilder(6*fields.size());

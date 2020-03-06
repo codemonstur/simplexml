@@ -2,6 +2,7 @@ package xmlparser;
 
 import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
+import xmlparser.utils.Escaping.UnEscape;
 import xmlparser.utils.Interfaces.CheckedIterator;
 import xmlparser.utils.Trimming.Trim;
 
@@ -28,7 +29,7 @@ public interface XmlIterator {
         };
     }
 
-    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset, final Trim trimmer) {
+    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset, final Trim trimmer, final UnEscape escaper) {
         return new CheckedIterator<XmlElement>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
@@ -40,14 +41,14 @@ public interface XmlIterator {
             public XmlElement next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
                 try (final InputStreamReader in = newStreamReader(xml, charset)) {
-                    return XmlReader.toXmlDom(in, trimmer);
+                    return XmlReader.toXmlDom(in, trimmer, escaper);
                 }
             }
         };
     }
 
     default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
-            , final Class<T> clazz, final Trim trimmer) {
+            , final Class<T> clazz, final Trim trimmer, final UnEscape escaper) {
         return new CheckedIterator<T>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
@@ -59,7 +60,7 @@ public interface XmlIterator {
             public T next() throws Exception {
                 final String xml = readUntilCurrentTagIsClosed(in);
                 try (final InputStreamReader in = newStreamReader(xml, charset)) {
-                    final XmlElement element = XmlReader.toXmlDom(in, trimmer);
+                    final XmlElement element = XmlReader.toXmlDom(in, trimmer, escaper);
                     return reader.domToObject(element, clazz);
                 }
             }
