@@ -14,7 +14,16 @@ thread-safe, user friendly API, secure.
 ## How to use
 
 The unit tests in `src/test/java/unittests` can give you a good idea of the capabilities of SimpleXml.
-There are also a number of small example programs in `src/test/java/tools` that showcase various features.
+There are also a number of small example programs in [src/test/java/example](https://github.com/codemonstur/simplexml/tree/master/src/test/java/example) that showcase various features.
+
+### Examples
+
+* [Builder.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/Builder.java)
+* [Compress.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/Compress.java)
+* [Deserialize.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/Deserialize.java)
+* [PrettyPrint.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/PrettyPrint.java)
+* [RawStream.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/RawStream.java)
+* [Serialize.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/Serialize.java)
 
 ### Serializing
 
