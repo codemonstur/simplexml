@@ -58,4 +58,5 @@ public enum Constants {;
         ERROR_PREDICATE_WRONG_START = "Predicate does not start with [",
         ERROR_PREDICATE_WRONG_END = "Predicate does not end with ]",
         ERROR_PREDICATE_WRONG_NAME = "Element name contains ]";
+
 }

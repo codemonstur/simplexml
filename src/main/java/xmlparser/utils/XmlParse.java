@@ -72,6 +72,3 @@ public enum XmlParse {;
     }
 
 }
-
-// at == ' ' || at == '\t' || at == '\n' || at == '\r'
-// at == ' ' || at == '\t' || at == '\n' || at == '\r'

@@ -25,4 +25,5 @@ public enum Validator {;
             if (values[i]) return true;
         return false;
     }
+
 }
