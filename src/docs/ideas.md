@@ -118,4 +118,14 @@ Use reflection to gain access to Java 15 functionality and write code to call th
 
 https://en.wikipedia.org/wiki/CDATA
 
- 
+# Upgrade to Java 11
+
+The code targets Java 8.
+This is primarily because XML parsing is common in legacy projects that are still on older versions of Java.
+It also means the code has some uglinesses that don't have to be there on Java 11.
+
+Java 11 has private interface methods for example. It also has the var keyword.
+Java 13 adds an enhanced switch that can make a central part of the code prettier.
+I'd like to use it but Java 13 is very new.
+
+At some point Java 8 will be so old supporting it is not necessary anymore.
