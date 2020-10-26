@@ -40,8 +40,6 @@ Use interning to speed up the use of the regular expressions
 
 Try to generate the XML structure given above.
 
-# Add enum support
-
 # After adding XPath support make it possible to generate XML using it
 
 https://stackoverflow.com/questions/51953656/java-create-xml-using-xpath
@@ -51,9 +49,8 @@ https://stackoverflow.com/questions/51953656/java-create-xml-using-xpath
 Default should be : <item key="key-here">value-here</item>
 Default is now    : <key>value</key>
 
-# Add an asymmetric name annotation
-
-An annotation that allows you to deserialize using one name and serialize using another
+The multiple ways of serializing maps already exists.
+For now, I've kept the original way for backwards compatibility reasons.
 
 # Add more support for xpath
 
@@ -95,7 +92,7 @@ An annotation that tells the serializer to create an empty tag for a null field.
 
 # XML transforming
 
-# XML compare
+# XML compare / diff
 
 # After serialization validation method
 
@@ -110,4 +107,15 @@ Add an annotation that marks a method as a serializer for a given object.
 
 Add an annotation that marks a method as a deserializer for a given object.
 
+# Add record support
 
+Java 15 removed the ability to use setAccessible() on record fields.
+The serializer therefore fails to deserialize records if used on Java 15.
+
+Use reflection to gain access to Java 15 functionality and write code to call the record canonical constructor.
+
+# Add support for CDATA blocks
+
+https://en.wikipedia.org/wiki/CDATA
+
+ 
