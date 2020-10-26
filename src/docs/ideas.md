@@ -1,4 +1,131 @@
-# A parser listener with this kind of interface
+# Should haves
+
+## Add record support
+
+Java 15 removed the ability to use setAccessible() on record fields.
+The serializer therefore fails to deserialize records if used on Java 15.
+
+Use reflection to gain access to Java 15 functionality and write code to call the record canonical constructor.
+
+## Add more support for xpath
+
+XPath support is very simplistic at the moment. 
+There are other options documented here: https://github.com/code4craft/xsoup
+
+Current XPath support was copied, with permission, from another project.
+The code is rudimentary and, in my opinion, kinda ugly.
+But it works.
+
+It really should be rewritten from scratch.
+With full support for everything you can do with XPath.
+
+## Add support for namespaces
+
+I dislike namespaces, they add no real value and cause parsing problems.
+I therefore didn't add any support for it at all.
+As far as the parser is concerned, namespaces are just attributes and strange names.
+But there really ought to be some sort of support for dealing with namespaces.
+
+- Should be turned off by default
+- Should affect name parsing
+- Should check if the namespace exists
+- Can warn or fail on namespace missing
+
+## Add support for CDATA blocks
+
+CDATA blocks are another weird feature in XML that really shouldn't exist at all.
+But it does exist and it would be nice to have a way to make the parser correctly parse them.
+
+https://en.wikipedia.org/wiki/CDATA
+
+
+# Nice to haves
+
+## After serialization validation method
+
+Add an annotation to mark a method as a validation method. 
+Call that method after the object has been serialized.
+
+## XmlSerialization annotation
+
+Add an annotation that marks a method as a serializer for a given object.
+
+## XmlDeserialization annotation
+
+Add an annotation that marks a method as a deserializer for a given object.
+
+## Remove need for objenesis
+
+Currently, the code has a single dependency; objenesis.
+The library does its job, but I would rather have no dependencies at all.
+
+It was added to create deserialization support for all versions of Java.
+I don't remember exactly which versions of Java you would lose support for if you get rid of it.
+
+## XmlDynamicList annotation
+
+An annotation for a special type of list that; has a wrapper tag,
+and the name of the item determines the type of the item. So:
+
+```
+<list>
+    <string>String here</string>
+    <double>2.5</double>
+</list>
+```
+
+We want to turn that into; `List<Object> list`.
+
+```
+@Retention(RUNTIME)
+public @interface XmlDynamicList {
+    @interface TypeMap {
+        String name();
+        Class<?> type();
+    }
+
+    String name();
+    TypeMap[] types();
+}
+```
+
+# Maybe haves
+
+## Add parser options that will cause fail-fast behavior
+
+check to see if all fields existed in the XmlElement
+check to see if generate object has values for all fields
+check to see if all nodes in the XmlElement have been mapped to a field
+check to see if the used namespaces exist
+
+## Add an @XmlMandatory tag
+
+If the tag exists, but the data is missing, throw a serialization exception
+
+## Speed up Xpath parsing
+
+The @XmlPath annotation contains a string that denotes the XPath expression to use. 
+Currently, the Xpath is compiled every single time it is encountered. 
+This can be sped up by using interning.
+
+## Make self-closing tag during serialization configurable
+
+Some people want serialization to generate empty tags like so <tag></tag>, some people want a self-closing tag: <tag/>.
+Make this configurable.
+// https://stackoverflow.com/questions/52194046/change-empty-tag-to-self-closing-tags-through-java
+// https://stackoverflow.com/questions/52270774/java-transformer-empty-element
+
+## Add null-to-empty annotation
+
+An annotation that tells the serializer to create an empty tag for a null field.
+
+## XML validation
+
+## XML transforming
+
+## XML compare / diff
+
+## A parser listener with this kind of interface
 
 public interface EventHandler {
   void handle(String value);
@@ -12,13 +139,10 @@ Parser parser = newParser()
     .on(END_ELEMENT, handler)
     .on(ERROR, handler)
     .build();
+    
+Don't care that much about this anymore
 
-# Add javadoc and jpeek badge when in maven central
-
-Example project that has done this.
-https://github.com/jknack/handlebars.java/blob/master/pom.xml
-
-# Add a XmlNamePattern annotation that can match multiple names during deserialization
+## Add a XmlNamePattern annotation that can match multiple names during deserialization
 
 https://stackoverflow.com/questions/51964053/convert-liststring-into-below-xml-format-in-java
 https://stackoverflow.com/questions/19834756/jaxb-unmarshalling-with-dynamic-elements
@@ -36,15 +160,17 @@ https://stackoverflow.com/questions/19834756/jaxb-unmarshalling-with-dynamic-ele
 
 Use interning to speed up the use of the regular expressions
 
-# Add support for @DynamicName that generates a name based on something somehow
+## Add support for @DynamicName that generates a name based on something somehow
 
 Try to generate the XML structure given above.
+Can probably be done using generex.
+But I don't want to add another dependency.
 
-# After adding XPath support make it possible to generate XML using it
+## After adding XPath support make it possible to generate XML using it
 
 https://stackoverflow.com/questions/51953656/java-create-xml-using-xpath
 
-# Make a safe version of map serialization the default
+## Make a safe version of map serialization the default
 
 Default should be : <item key="key-here">value-here</item>
 Default is now    : <key>value</key>
@@ -52,73 +178,7 @@ Default is now    : <key>value</key>
 The multiple ways of serializing maps already exists.
 For now, I've kept the original way for backwards compatibility reasons.
 
-# Add more support for xpath
-
-XPath support is very simplistic at the moment. 
-There are other options documented here: https://github.com/code4craft/xsoup
-
-# Add support for namespaces
-
-- Should be turned off by default
-- Should affect name parsing
-- Should check if the namespace exists
-- Can warn or fail on namespace missing
-
-# Add parser options that will cause fail-fast behavior
-
-check to see if all fields existed in the XmlElement
-check to see if generate object has values for all fields
-check to see if all nodes in the XmlElement hve been mapped to a field
-check to see if the used namespaces exist
-
-# Speed up Xpath parsing
-
-the @XmlPath annotation contains a string that denotes the XPath expression to use. 
-Currently the Xpath is compiled every single time it is encountered. 
-This can be sped up by using interning.
-
-# Make self-closing tag during serialization configurable
-
-Some people want serialization to generate empty tags like so <tag></tag>, some people want a self-closing tag: <tag/>.
-Make this configurable.
-// https://stackoverflow.com/questions/52194046/change-empty-tag-to-self-closing-tags-through-java
-// https://stackoverflow.com/questions/52270774/java-transformer-empty-element
-
-# Add null-to-empty annotation
-
-An annotation that tells the serializer to create an empty tag for a null field.
-
-# XML validation
-
-# XML transforming
-
-# XML compare / diff
-
-# After serialization validation method
-
-Add an annotation to mark a method as a validation method. 
-Call that method after the object has been serialized
-
-# XmlSerialization annotation
-
-Add an annotation that marks a method as a serializer for a given object.
-
-# XmlDeserialization annotation
-
-Add an annotation that marks a method as a deserializer for a given object.
-
-# Add record support
-
-Java 15 removed the ability to use setAccessible() on record fields.
-The serializer therefore fails to deserialize records if used on Java 15.
-
-Use reflection to gain access to Java 15 functionality and write code to call the record canonical constructor.
-
-# Add support for CDATA blocks
-
-https://en.wikipedia.org/wiki/CDATA
-
-# Upgrade to Java 11
+## Upgrade to Java 11
 
 The code targets Java 8.
 This is primarily because XML parsing is common in legacy projects that are still on older versions of Java.
