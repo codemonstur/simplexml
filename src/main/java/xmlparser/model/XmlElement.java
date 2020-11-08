@@ -71,6 +71,20 @@ public class XmlElement {
         return false;
     }
 
+    public List<XmlElement> getElementsByTagName(final String name) {
+        final List<XmlElement> list = new ArrayList<>();
+        getElementsByTagName(this, name, list);
+        return list;
+    }
+    private static void getElementsByTagName(final XmlElement element, final String name, final List<XmlElement> list) {
+        if (element == null) return;
+        if (name.equals(element.name)) list.add(element);
+        if (element.children == null) return;
+        for (final XmlElement child : element.children) {
+            getElementsByTagName(child, name, list);
+        }
+    }
+
     public static class XmlTextElement extends XmlElement {
         public final String text;
         public XmlTextElement(final XmlElement parent, final String text) {
