@@ -1,0 +1,144 @@
+Delivered-To: jegvoorneveld@gmail.com
+Received: by 2002:a9d:7252:0:0:0:0:0 with SMTP id a18-v6csp584830otk;
+        Fri, 14 Sep 2018 04:01:19 -0700 (PDT)
+X-Google-Smtp-Source: ANB0Vda97dBLVFkCJm2Se5vCJHTg6XCBMwqljUnCiePxNlHyjIadzrApbO4RQxK2gs6Ey9965+b5
+X-Received: by 2002:a50:86b5:: with SMTP id r50-v6mr18703214eda.201.1536922843185;
+        Fri, 14 Sep 2018 04:00:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1536922843; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ugwp4COjF3Aa71cg+1ZG/7UOlzSmjpxPzT610sTDTNuLNQ8as7NvaOg9F7NOQ8OkvT
+         T5kP/UxNUdVlktkTSYCtncNBmXFWOljB5E0oDPv9SyJ1MZsc3tf6JL3lvrDZTjIwUko7
+         CseztwftIdwkSOJ9byAUp9y9z79JWMF3DJaIktMrh7EICNJCtOv1geB5cCsLqbkJPEjn
+         7WkGpwTK4WDnHebpahwxcZxLU5E7VPTPt4WCy5RgjkNnE4M9OlTr8EvFewfkN+j7HF1v
+         iwze3bcjln4JZ/avxGcI4zi2LCU8AzBGENHJKEVhzxcHCYcX74R21xB5rXYe0omhewys
+         gd1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:to:subject;
+        bh=Eskz+sJcPzJEEzIdAXU7nXg31Y5me7LEI1TaA3BslIw=;
+        b=itD9LGBrXU4Bj72PaFeidXUM9m7hA3iORdnvi92RWIeLio80Nu+N3p/YPEAk/6fmNn
+         CH84pGdNDoSgtxVZD1GJKujscyid7fZie+nxqpQ1PLj5gJb+KBzGddNL3zc6bOLNijlP
+         79K1rzTgP11o/Z0aqyA370/N6i42xFVwEFFu1/qPj659FTEnwybQ7g9UkjqiaaDmGZgY
+         /EqWm3FFV3ZsAZbq35hRV014V3HLM6OB/HCVzvaDHTRwAWxYuoR91THY8/ok4ZlsqbQV
+         zB0wZjDGafOqVENN7BJFZJ3M6zHXANISquObSrd9D55K162rXpLE64yyNc/hkObKClXc
+         rMVA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning shalle@acm.org does not designate 62.13.148.161 as permitted sender) smtp.mailfrom=shalle@acm.org
+Return-Path: <shalle@acm.org>
+Received: from outmail148161.authsmtp.com (outmail148161.authsmtp.com. [62.13.148.161])
+        by mx.google.com with ESMTPS id 39-v6si771344edq.240.2018.09.14.04.00.42
+        for <jegvoorneveld@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 04:00:43 -0700 (PDT)
+Received-SPF: softfail (google.com: domain of transitioning shalle@acm.org does not designate 62.13.148.161 as permitted sender) client-ip=62.13.148.161;
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning shalle@acm.org does not designate 62.13.148.161 as permitted sender) smtp.mailfrom=shalle@acm.org
+Received: from mail-c247.authsmtp.com (mail-c247.authsmtp.com [62.13.128.247])
+	by punt22.authsmtp.com. (8.15.2/8.15.2) with ESMTP id w8EB0gbT086614
+	for <jegvoorneveld@gmail.com>; Fri, 14 Sep 2018 12:00:42 +0100 (BST)
+	(envelope-from shalle@acm.org)
+Received: from [192.168.1.135] (modemcable243.242-179-173.mc.videotron.ca [173.179.242.243])
+	(authenticated bits=0)
+	by mail.authsmtp.com (8.15.2/8.15.2) with ESMTPA id w8EB0f0V027581
+	for <jegvoorneveld@gmail.com>; Fri, 14 Sep 2018 12:00:41 +0100 (BST)
+	(envelope-from shalle@acm.org)
+Subject: Re: code use and licensing of xml-lif
+To: jurgen <jegvoorneveld@gmail.com>
+References: <e4d22403-7da0-88a4-acb1-9cd56ab85c3c@gmail.com>
+ <64305a09-6451-d064-afa5-8adb0753f487@acm.org>
+ <78fc186f-dafc-3835-f31e-80897ec11b34@gmail.com>
+From: =?UTF-8?Q?Sylvain_hall=c3=a9?= <shalle@acm.org>
+Message-ID: <b6253792-10c8-a2a9-6f98-ea250e44b20f@acm.org>
+Date: Fri, 14 Sep 2018 07:00:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <78fc186f-dafc-3835-f31e-80897ec11b34@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Server-Quench: 6bdd10dc-b80d-11e8-9efd-0015176ca198
+X-AuthReport-Spam: If SPAM / abuse - report it at: http://www.authsmtp.com/abuse
+X-AuthRoute: OCd0YQAcAlZOTA0e Di4sBSRFDwI/KQtO DBAdKgxAJlcXWABd GklfJ1tXdlYbQEcA B3loDhRLUl1wUXN0 aQBRbQ9ZYwRPWAZ0 UU9AXFBWFhtqBR8e BRwbTRk8MA0zCn4m ZSBiXHdeVEU0dkV9 QwBSRzlSZGc0O31N WEAMagJVJQtXd0oT Pk1/VHIIYGIBNSth Tl8lBT1jdT5YJCkd XxoAZVsUTQ4PHzUx QQsDGzpnGkNNVyA3 ahgnJDZn
+X-Authentic-SMTP: 61633731383931.1038:706
+X-AuthFastPath: 0 (Was 255)
+X-AuthSMTP-Origin: 173.179.242.243/325
+X-AuthVirus-Status: No virus detected - but ensure you scan with your own anti-virus system.
+
+Great! I'll put this item as an issue in the repository. (I'll have to 
+change the comment headers in the files, and I don't have the time to do 
+this right now.) In the meantime, you can use the code and assume it has 
+the MIT license.
+
+Cheers!
+
+Sylvain
+
+On 2018-09-13 12:45 PM, jurgen wrote:
+> Hello Sylvain,
+> 
+> yes switching to the MIT license from your side would remove any 
+> problems. Please note that the MIT license is significantly more free 
+> than the LGPL license so you'll be making more available to everybody, 
+> not just me.
+> 
+> I will put attribution in some of the source code. Please let me know 
+> when you've switched the license. :)
+> 
+> kind regards,
+> 
+> Jurgen
+> 
+> 
+> On 09/13/2018 04:02 PM, Sylvain hallé wrote:
+>> Hello Jurgen,
+>>
+>> I am glad you find the xml-lif library useful! I am not a specialist 
+>> of software licenses, so the choice of LGPL for the library was not 
+>> the result of a particularly deep reflection. A simple workaround 
+>> would be for me to switch the license to MIT (I have no problem with 
+>> that), which would solve the compatibility issue.
+>>
+>> Would this be OK for you?
+>>
+>> Sylvain
+>>
+>> On 2018-09-08 04:43 PM, jurgen wrote:
+>>> Hello Sylvain,
+>>>
+>>> I have a project called SimpleXml in github 
+>>> (https://github.com/codemonstur/simplexml). Recently I wanted to add
+>>> XPath support to it. Since I didn't want to write the whole thing 
+>>> from scratch I went looking for code that could give
+>>> me a reasonable start. That is when I ran into your project xml-lif.
+>>>
+>>> I successfully converted your code to work with mine and there is now 
+>>> a branch called 'xpath-textnode' where this
+>>> version of the code lives.
+>>>
+>>> This brings me to some thorny issues. First, I don't want to use your 
+>>> code without permission. Also I feel I should
+>>> give proper credit, so far I have added no notices or mentions. 
+>>> Finally, your code is released under the LGPL while
+>>> mine is MIT. These are obviously not compatible.
+>>>
+>>> I don't know to what degree you care about this code, I would like to 
+>>> know how you feel about my using it and any
+>>> requests you might have as to attribution and licensing.
+>>>
+>>> kind regards,
+>>> Jurgen Voorneveld
+>>>
+>>
+> 
+
+-- 
+Sylvain Hallé, Ph.D.
+Professeur titulaire / Full professor
+Titulaire de la Chaire de recherche du Canada en spécification,
+test et vérification de systèmes informatiques /
+Canada Research Chair on Software Specification
+Testing and Verification
+Université du Québec à Chicoutimi, Canada
+E-mail: shalle@acm.org <mailto:shalle@acm.org>
+Web: http://leduotang.ca/sylvain
