@@ -29,6 +29,7 @@ deploy
     git push && git push --tags
     echo [${PROJECT_NAME}] Creating github release
     hub release create -a target/${PROJECT_NAME}-${PROJECT_VERSION}.jar -F src/docs/releases/release-${PROJECT_VERSION}.txt ${PROJECT_NAME}-${PROJECT_VERSION}
+    mvn clean deploy -P release
 
 graal
     docker run -it --mount type=bind,src=`pwd`,dst=/data -w /data oracle/graalvm-ce:1.0.0-rc14 native-image --static --no-server -jar target/${PROJECT_NAME}.jar target/${PROJECT_NAME}
