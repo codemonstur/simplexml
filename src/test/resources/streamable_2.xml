@@ -1,7 +1,0 @@
-<tag attribute="something" bla="/">
-    <child></child>
-</tag>
-
-<something />
-
-<else><child1></child1><child2></child2></else>

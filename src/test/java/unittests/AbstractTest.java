@@ -6,13 +6,32 @@ import xmlparser.annotations.XmlAbstractClass;
 import xmlparser.annotations.XmlAbstractClass.TypeMap;
 import xmlparser.annotations.XmlName;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static util.IO.resourceToString;
 
 public class AbstractTest {
+
+    private static final String ABSTRACT_CLASS_1 = "<targetedMessage>\n" +
+            "    <sender>external application</sender>\n" +
+            "    <payload class=\"class.path.from.external.application.Foo\">\n" +
+            "        <id>1</id>\n" +
+            "    </payload>\n" +
+            "</targetedMessage>";
+
+    private static final String ABSTRACT_CLASS_2 = "<targetedMessage>\n" +
+            "    <sender>external application</sender>\n" +
+            "    <payload type=\"class.path.from.external.application.Foo\">\n" +
+            "        <id>1</id>\n" +
+            "    </payload>\n" +
+            "</targetedMessage>";
+
+    private static final String ABSTRACT_CLASS_3 = "<targetedMessage>\n" +
+            "    <sender>external application</sender>\n" +
+            "    <payload>\n" +
+            "        <class>class.path.from.external.application.Foo</class>\n" +
+            "        <id>1</id>\n" +
+            "    </payload>\n" +
+            "</targetedMessage>";
 
     @XmlName("targetedMessage")
     public class TargetedMessage1 {
@@ -54,8 +73,8 @@ public class AbstractTest {
     private XmlParser parser = new XmlParser();
 
     @Test
-    public void deserializeOne() throws IOException {
-        final String pojoXml = resourceToString("/abstract_class_1.xml");
+    public void deserializeOne() {
+        final String pojoXml = ABSTRACT_CLASS_1;
 
         final TargetedMessage1 pojo = parser.fromXml(pojoXml, TargetedMessage1.class);
 
@@ -67,8 +86,8 @@ public class AbstractTest {
     }
 
     @Test
-    public void deserializeTwo() throws IOException {
-        final String pojoXml = resourceToString("/abstract_class_2.xml");
+    public void deserializeTwo() {
+        final String pojoXml = ABSTRACT_CLASS_2;
 
         final TargetedMessage2 pojo = parser.fromXml(pojoXml, TargetedMessage2.class);
 
@@ -80,8 +99,8 @@ public class AbstractTest {
     }
 
     @Test
-    public void deserializeThree() throws IOException {
-        final String pojoXml = resourceToString("/abstract_class_3.xml");
+    public void deserializeThree() {
+        final String pojoXml = ABSTRACT_CLASS_3;
 
         final TargetedMessage3 pojo = parser.fromXml(pojoXml, TargetedMessage3.class);
 

@@ -1,17 +1,27 @@
 package unittests;
 
-import example.RawStream;
 import org.junit.Test;
 import xmlparser.XmlParser;
 import xmlparser.utils.Interfaces.CheckedIterator;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 public class StreamTest {
+
+    private static final String STREAMABLE =
+            "<tag attribute=\"something\" bla=\"/\">\n" +
+            "    <child></child>\n" +
+            "</tag>\n" +
+            "\n" +
+            "<something />\n" +
+            "\n" +
+            "<else><child1></child1><child2></child2></else>\n";
 
     private static final String XML_ITEM_1 =
             "<tag attribute=\"something\" bla=\"/\">\n" +
@@ -25,7 +35,7 @@ public class StreamTest {
         final XmlParser parser = new XmlParser();
 
         final List<String> list = new ArrayList<>();
-        try (final InputStream in = RawStream.class.getResourceAsStream("/streamable_2.xml")) {
+        try (final InputStream in = new ByteArrayInputStream(STREAMABLE.getBytes(UTF_8))) {
             final CheckedIterator<String> it = parser.iterateXml(in);
             while (it.hasNext()) {
                 list.add(it.next());

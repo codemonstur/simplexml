@@ -12,7 +12,7 @@ dependencies:
 
 build
     echo [${PROJECT_NAME}] Building
-    run-target -i clean build
+    run-task -i clean build
 
 release-notes
     echo [${PROJECT_NAME}] Writing release notes to src/docs/releases/release-${PROJECT_VERSION}.txt
@@ -23,7 +23,7 @@ release-notes
 
 deploy
     echo [${PROJECT_NAME}] Clean and build for deploy
-    run-target -i clean build
+    run-task -i clean build
     echo [${PROJECT_NAME}] Tagging and pushing to github
     git tag ${PROJECT_NAME}-${PROJECT_VERSION}
     git push && git push --tags
