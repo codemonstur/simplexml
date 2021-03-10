@@ -1,0 +1,2 @@
+# Enforce Unix line endings for XML files. Otherwise tests might fail.
+*.xml           text eol=lf
