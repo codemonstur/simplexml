@@ -84,12 +84,22 @@ public class XmlElement {
             getElementsByTagName(child, name, list);
         }
     }
+    
+    @Override
+    public String toString() {
+        return "XmlElement[" + name + "]";
+    }
 
     public static class XmlTextElement extends XmlElement {
         public final String text;
         public XmlTextElement(final XmlElement parent, final String text) {
             super(parent, null, null, null);
             this.text = text;
+        }
+        
+        @Override
+        public String toString() {
+            return "XmlTextElement[" + text + "]";
         }
     }
 
