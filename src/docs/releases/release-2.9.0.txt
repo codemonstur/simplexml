@@ -1,0 +1,11 @@
+2.9.0
+
+Added xmllif proof
+Moved .xml file content into unit tests
+Add toString() to XmlElement.
+Add automatic module name to MANIFEST.MF
+Added faster deserialization option in Question3
+Added questions from stackoverflow
+Added getElementsByTagName() to XmlElement
+Updated ideas document to reflect current state of the code
+Updated junit to prevent security issue
