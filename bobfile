@@ -1,5 +1,8 @@
+include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-lib-github-maven
+
 version: 2.9.0
 packaging: jar
+enablePreview: false
 release: 8
 dependencies:
   - repository: org.objenesis:objenesis:3.1
@@ -9,27 +12,3 @@ dependencies:
     scope: test
   - repository: org.apache.commons:commons-text:1.4
     scope: test
-
-build
-    echo [${PROJECT_NAME}] Building
-    run-task -i clean build
-
-release-notes
-    echo [${PROJECT_NAME}] Writing release notes to src/docs/releases/release-${PROJECT_VERSION}.txt
-    echo ${PROJECT_VERSION} > src/docs/releases/release-${PROJECT_VERSION}.txt
-    echo "" >> src/docs/releases/release-${PROJECT_VERSION}.txt
-    PREVIOUS_TAG = `git tag | sort -r | head -n 1`
-    git log --pretty="%s" ${PREVIOUS_TAG}... master >> src/docs/releases/release-${PROJECT_VERSION}.txt
-
-deploy
-    echo [${PROJECT_NAME}] Clean and build for deploy
-    run-task -i clean build
-    echo [${PROJECT_NAME}] Tagging and pushing to github
-    git tag ${PROJECT_NAME}-${PROJECT_VERSION}
-    git push && git push --tags
-    echo [${PROJECT_NAME}] Creating github release
-    hub release create -a target/${PROJECT_NAME}-${PROJECT_VERSION}.jar -F src/docs/releases/release-${PROJECT_VERSION}.txt ${PROJECT_NAME}-${PROJECT_VERSION}
-    mvn clean deploy -P release
-
-graal
-    docker run -it --mount type=bind,src=`pwd`,dst=/data -w /data oracle/graalvm-ce:1.0.0-rc14 native-image --static --no-server -jar target/${PROJECT_NAME}.jar target/${PROJECT_NAME}

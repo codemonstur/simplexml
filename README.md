@@ -1,10 +1,9 @@
 
-[![Build Status](https://travis-ci.org/codemonstur/simplexml.svg?branch=master)](https://travis-ci.org/codemonstur/simplexml)
 [![GitHub Release](https://img.shields.io/github/release/codemonstur/simplexml.svg)](https://github.com/codemonstur/simplexml/releases) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.codemonstur/simplexml/badge.svg)](http://mvnrepository.com/artifact/com.github.codemonstur/simplexml)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
-# SimpleXML
+# SimpleXml
 
 After a number of bad experiences with XML parsing in Java I decided to write my own parser.
 
@@ -13,7 +12,7 @@ thread-safe, user friendly API, secure.
 
 ## How to use
 
-The unit tests in `src/test/java/unittests` can give you a good idea of the capabilities of SimpleXml.
+The unit tests in [src/test/java/unittests](https://github.com/codemonstur/simplexml/tree/master/src/test/java/unittests) can give you a good idea of the capabilities of SimpleXml.
 There are also a number of small example programs in [src/test/java/example](https://github.com/codemonstur/simplexml/tree/master/src/test/java/example) that showcase various features.
 
 ### Examples
@@ -24,6 +23,16 @@ There are also a number of small example programs in [src/test/java/example](htt
 * [PrettyPrint.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/PrettyPrint.java)
 * [RawStream.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/RawStream.java)
 * [Serialize.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/Serialize.java)
+
+## How to get
+
+It's in maven central.
+
+    <dependency>
+        <groupId>com.github.codemonstur</groupId>
+        <artifactId>simplexml</artifactId>
+        <version>2.9.0</version>
+    </dependency>
 
 ### Serializing
 
@@ -51,7 +60,7 @@ There are more serialization options
 - Field as text node
 - Skipping fields
 
-For more documentation on serializing look in `src/docs/serialize.md`.
+For more documentation on serializing look in [src/docs/serialize.md](https://github.com/codemonstur/simplexml/tree/master/src/docs/serialize.md).
 
 ### Deserializing
 
@@ -74,22 +83,6 @@ The deserializer will respect the same annotations as the serializer
 - Attributes
 - Text nodes
 - Skipped fields
-
-## How to get
-
-Its in maven central.
-
-    <dependency>
-        <groupId>com.github.codemonstur</groupId>
-        <artifactId>simplexml</artifactId>
-        <version>2.8.1</version>
-    </dependency>
-
-Or alternatively you can clone the repo and install locally:
-
-    git clone https://github.com/codemonstur/simplexml.git
-    cd simplexml
-    mvn install
 
 ## License
 
