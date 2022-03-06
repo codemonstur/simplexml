@@ -35,7 +35,8 @@ public enum Constants {;
         SEMICOLON = ";",
         DOUBLE_QUOTE = "\"",
         FORWARD_SLASH = "/",
-        NEW_LINE = "\n";
+        CARRIAGE_RETURN = "\r",
+        LINE_FEED = "\n";
 
     public static final String
         ENCODED_LESS_THAN = "&lt;",

@@ -15,7 +15,7 @@ import static xmlparser.utils.IO.newStreamReader;
 public interface XmlIterator {
 
     default CheckedIterator<String> iterateXml(final InputStreamReader in) {
-        return new CheckedIterator<String>() {
+        return new CheckedIterator<>() {
             public boolean hasNext() throws IOException {
                 final Character next = readFirstNonWhiteChar(in);
                 if (next == null) return false;
@@ -30,7 +30,7 @@ public interface XmlIterator {
     }
 
     default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset, final Trim trimmer, final UnEscape escaper) {
-        return new CheckedIterator<XmlElement>() {
+        return new CheckedIterator<>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
                 if (next == null) return false;
@@ -49,7 +49,7 @@ public interface XmlIterator {
 
     default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
             , final Class<T> clazz, final Trim trimmer, final UnEscape escaper) {
-        return new CheckedIterator<T>() {
+        return new CheckedIterator<>() {
             public boolean hasNext() throws Exception {
                 final Character next = readFirstNonWhiteChar(in);
                 if (next == null) return false;
