@@ -1,12 +1,5 @@
 # Should haves
 
-## Add record support
-
-Java 15 removed the ability to use setAccessible() on record fields.
-The serializer therefore fails to deserialize records if used on Java 15.
-
-Use reflection to gain access to Java 15 functionality and write code to call the record canonical constructor.
-
 ## Add more support for xpath
 
 XPath support is very simplistic at the moment. 
@@ -40,11 +33,6 @@ https://en.wikipedia.org/wiki/CDATA
 
 
 # Nice to haves
-
-## After serialization validation method
-
-Add an annotation to mark a method as a validation method. 
-Call that method after the object has been serialized.
 
 ## XmlSerialization annotation
 

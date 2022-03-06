@@ -6,7 +6,7 @@ import xmlparser.annotations.XmlName;
 
 import java.util.Map;
 
-public class MapPojo {
+public final class MapPojo {
 
     public final Map<Integer, String> map1;
     @XmlMapWithAttributes(keyName = "key", valueName = "value")
