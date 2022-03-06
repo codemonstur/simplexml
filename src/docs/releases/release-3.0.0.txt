@@ -1,0 +1,4 @@
+3.0.0
+
+Added record support
+Made parser dependent on Java 16
