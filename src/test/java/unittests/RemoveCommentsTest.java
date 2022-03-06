@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class RemoveCommentsTest {
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void simpleComment() {

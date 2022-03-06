@@ -36,7 +36,7 @@ public class WrappedTest {
     private static final String wrappedXmlNull = "<wrappedpojo />\n";
     private static final String wrappedXmlNullTwo = "<wrappedpojo><wrapper1></wrapper1></wrappedpojo>";
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void deserialize() {

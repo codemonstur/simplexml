@@ -8,21 +8,17 @@ import xmlparser.parsing.DomBuilder;
 import xmlparser.parsing.ObjectDeserializer;
 import xmlparser.utils.Escaping.UnEscape;
 import xmlparser.utils.Interfaces.AccessDeserializers;
-import xmlparser.utils.Reflection;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.*;
 import java.util.*;
 
 import static org.objenesis.ObjenesisHelper.newInstance;
 import static xmlparser.model.XmlElement.findChildForName;
 import static xmlparser.utils.Reflection.*;
-import static xmlparser.utils.Validator.multipleAreTrue;
+import static xmlparser.utils.Validator.multipleAreNotNull;
 import static xmlparser.xpath.XPathExpression.newXPath;
 
 public interface XmlReader extends AccessDeserializers {
@@ -32,6 +28,58 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node, clazz);
 
+        return clazz.isRecord() ? domToRecord(node, clazz) : domToClass(node, clazz);
+    }
+
+    private <T> T domToRecord(final XmlElement node, final Class<T> clazz) {
+        final String parentName = toName(clazz);
+        XmlElement selectedNode;
+
+        final RecordComponent[] fields = clazz.getRecordComponents();
+        final Object[] fieldValues = new Object[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            final RecordComponent f = fields[i];
+            if (f.isAnnotationPresent(XmlNoImport.class)) continue;
+
+            selectedNode = node;
+            if (f.isAnnotationPresent(XmlPath.class)) {
+                selectedNode = newXPath(parentName + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
+            }
+
+            final Object fieldValue = switch (toFieldType(f)) {
+                case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
+                case TEXTNODE -> textNodeToValue(f.getType(), selectedNode);
+                case ANNOTATED_ATTRIBUTE -> attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f));
+                case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
+                case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
+                case ARRAY -> domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f));
+                case MAP -> domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f));
+                case ENUM -> enumNodeToValue(toEnumType(f), toName(f), deWrap(selectedNode, f));
+                default -> {
+                    final String name = toName(f);
+                    final String value = selectedNode.attributes.get(name);
+                    if (value != null) {
+                        yield stringToValue(f.getType(), value);
+                    }
+                    final var isAbstract = f.getAnnotation(XmlAbstractClass.class);
+                    if (isAbstract != null) {
+                        final XmlElement child = selectedNode.findChildForName(name, null);
+                        yield domToObject(child, findAbstractType(isAbstract, child));
+                    }
+                    yield domToObject(findChildForName(deWrap(selectedNode, f), name, null), f.getType());
+                }
+            };
+            fieldValues[i] = fieldValue;
+        }
+
+        try {
+            return canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException ignore) {
+            throw new SecurityException("Canonical constructor of record could not be invoked");
+        }
+    }
+
+    private <T> T domToClass(final XmlElement node, final Class<T> clazz) {
         final T o = newInstance(clazz);
 
         final String parentName = toName(clazz);
@@ -46,43 +94,47 @@ public interface XmlReader extends AccessDeserializers {
                 selectedNode = newXPath(parentName + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
             }
 
-            switch (toFieldType(f)) {
-                case FIELD_DESERIALIZER: setField(f, o, invokeFieldDeserializer(f, selectedNode)); break;
-                case TEXTNODE: setField(f, o, textNodeToValue(f.getType(), selectedNode)); break;
-                case ANNOTATED_ATTRIBUTE: setField(f, o, attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f))); break;
-                case SET: setField(f, o, domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
-                case LIST: setField(f, o, domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f))); break;
-                case ARRAY: setField(f, o, domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f))); break;
-                case MAP: setField(f, o, domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f))); break;
-                case ENUM: setField(f, o, enumNodeToValue(Reflection.toEnumType(f), toName(f), deWrap(selectedNode, f))); break;
-                default:
+            final Object fieldValue = switch (toFieldType(f)) {
+                case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
+                case TEXTNODE -> textNodeToValue(f.getType(), selectedNode);
+                case ANNOTATED_ATTRIBUTE -> attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f));
+                case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
+                case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
+                case ARRAY -> domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f));
+                case MAP -> domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f));
+                case ENUM -> enumNodeToValue(toEnumType(f), toName(f), deWrap(selectedNode, f));
+                default -> {
                     final String name = toName(f);
                     final String value = selectedNode.attributes.get(name);
                     if (value != null) {
-                        setField(f, o, stringToValue(f.getType(), value));
-                        break;
+                        yield stringToValue(f.getType(), value);
                     }
-                    if (isAbstract(f)) {
+                    final var isAbstract = f.getAnnotation(XmlAbstractClass.class);
+                    if (isAbstract != null) {
                         final XmlElement child = selectedNode.findChildForName(name, null);
-                        setField(f, o, domToObject(child, findAbstractType(f.getAnnotation(XmlAbstractClass.class), child)));
-                        break;
+                        yield domToObject(child, findAbstractType(isAbstract, child));
                     }
-                    setField(f, o, domToObject(findChildForName(deWrap(selectedNode, f),name, null), f.getType()));
-                    break;
-            }
+                    yield domToObject(findChildForName(deWrap(selectedNode, f), name, null), f.getType());
+                }
+            };
+            setField(f, o, fieldValue);
         }
         return o;
     }
 
-    default XmlElement deWrap(final XmlElement element, final Field field) {
+    private XmlElement deWrap(final XmlElement element, final Field field) {
         if (!isWrapped(field)) return element;
         return element.findChildForName(toWrappedName(field), null);
     }
-    default Object textNodeToValue(final Class<?> type, final XmlElement node) {
+    private XmlElement deWrap(final XmlElement element, final RecordComponent field) {
+        if (!isWrapped(field)) return element;
+        return element.findChildForName(toWrappedName(field), null);
+    }
+    private Object textNodeToValue(final Class<?> type, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(node) : null;
     }
-    default Object enumNodeToValue(final Class<? extends Enum> type, final String name, final XmlElement node) {
+    private Object enumNodeToValue(final Class<? extends Enum> type, final String name, final XmlElement node) {
         final XmlElement text = findChildForName(node, name, null);
         if (text == null) return null;
         final String value = text.getText();
@@ -90,27 +142,31 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv == null) ? Enum.valueOf(type, value) : conv.convert(node);
     }
-    default Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
+    private Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         if (conv == null) return null;
         final String value = node.attributes.get(name);
         if (value == null) return null;
         return conv.convert(value);
     }
-    default Object stringToValue(final Class<?> type, final String value) {
+    private Object stringToValue(final Class<?> type, final String value) {
         final ObjectDeserializer conv = getDeserializer(type);
         return (conv != null) ? conv.convert(value) : null;
     }
-    default Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
-        if (node == null) return null;
+    private Set<Object> domToSet(final RecordComponent field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
+        return node == null ? null : domToSet(field.getAnnotation(XmlAbstractClass.class), type, name, node);
+    }
+    private Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
+        return node == null ? null : domToSet(field.getAnnotation(XmlAbstractClass.class), type, name, node);
+    }
+    private Set<Object> domToSet(final XmlAbstractClass isAbstract, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         final ObjectDeserializer elementConv = getDeserializer(type);
-        final boolean isAbstract = isAbstract(field);
 
         final Set<Object> set = new HashSet<>();
         for (final XmlElement n : node.children) {
             if (!n.name.equals(name)) continue;
-            if (isAbstract) {
-                set.add(domToObject(n, findAbstractType(field.getAnnotation(XmlAbstractClass.class), n)));
+            if (isAbstract != null) {
+                set.add(domToObject(n, findAbstractType(isAbstract, n)));
                 continue;
             }
 
@@ -118,16 +174,22 @@ public interface XmlReader extends AccessDeserializers {
         }
         return set;
     }
-    default List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
+
+    private List<Object> domToList(final RecordComponent field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
+        return node == null ? null : domToList(field.getAnnotation(XmlAbstractClass.class), type, name, node);
+    }
+    private List<Object> domToList(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
+        return node == null ? null : domToList(field.getAnnotation(XmlAbstractClass.class), type, name, node);
+    }
+    private List<Object> domToList(final XmlAbstractClass isAbstract, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
-        final boolean isAbstract = isAbstract(field);
 
         final List<Object> list = new LinkedList<>();
         for (final XmlElement n : node.children) {
             if (!n.name.equals(name)) continue;
-            if (isAbstract) {
-                list.add(domToObject(n, findAbstractType(field.getAnnotation(XmlAbstractClass.class), n)));
+            if (isAbstract != null) {
+                list.add(domToObject(n, findAbstractType(isAbstract, n)));
                 continue;
             }
 
@@ -135,7 +197,7 @@ public interface XmlReader extends AccessDeserializers {
         }
         return list;
     }
-    default Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
+    private Object[] domToArray(final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         if (node == null) return null;
         final ObjectDeserializer elementConv = getDeserializer(type);
 
@@ -149,23 +211,37 @@ public interface XmlReader extends AccessDeserializers {
         }
         return array;
     }
-    default Map<Object, Object> domToMap(final Field field, final ParameterizedType type, final String name, final XmlElement node) {
+    private Map<Object, Object> domToMap(final RecordComponent field, final ParameterizedType type, final String name, final XmlElement node) {
         if (node == null) return null;
 
-        final boolean isXmlMapTagIsKey = field.isAnnotationPresent(XmlMapTagIsKey.class);
-        final boolean isXmlMapWithAttributes = field.isAnnotationPresent(XmlMapWithAttributes.class);
-        final boolean isXmlMapWithChildNodes = field.isAnnotationPresent(XmlMapWithChildNodes.class);
+        final XmlMapTagIsKey isXmlMapTagIsKey = field.getAnnotation(XmlMapTagIsKey.class);
+        final XmlMapWithAttributes isXmlMapWithAttributes = field.getAnnotation(XmlMapWithAttributes.class);
+        final XmlMapWithChildNodes isXmlMapWithChildNodes = field.getAnnotation(XmlMapWithChildNodes.class);
 
-        if (multipleAreTrue(isXmlMapTagIsKey, isXmlMapWithAttributes, isXmlMapWithChildNodes))
+        return domToMap(isXmlMapTagIsKey, isXmlMapWithAttributes, isXmlMapWithChildNodes, type, name, node);
+    }
+    private Map<Object, Object> domToMap(final Field field, final ParameterizedType type, final String name, final XmlElement node) {
+        if (node == null) return null;
+
+        final XmlMapTagIsKey isXmlMapTagIsKey = field.getAnnotation(XmlMapTagIsKey.class);
+        final XmlMapWithAttributes isXmlMapWithAttributes = field.getAnnotation(XmlMapWithAttributes.class);
+        final XmlMapWithChildNodes isXmlMapWithChildNodes = field.getAnnotation(XmlMapWithChildNodes.class);
+
+        return domToMap(isXmlMapTagIsKey, isXmlMapWithAttributes, isXmlMapWithChildNodes, type, name, node);
+    }
+
+    private Map<Object, Object> domToMap(final XmlMapTagIsKey isXmlMapTagIsKey, final XmlMapWithAttributes isXmlMapWithAttributes
+            , final XmlMapWithChildNodes isXmlMapWithChildNodes, final ParameterizedType type, final String name
+            , final XmlElement node) {
+        if (multipleAreNotNull(isXmlMapTagIsKey, isXmlMapWithAttributes, isXmlMapWithChildNodes))
             throw new InvalidAnnotation("Only one of XmlMapTagIsKey, XmlMapWithAttributes and XmlMapWithChildNodes is allowed per field");
 
         final ObjectDeserializer convKey = getDeserializer(toClassOfMapKey(type));
         final ObjectDeserializer convVal = getDeserializer(toClassOfMapValue(type));
 
-        if (isXmlMapWithAttributes) {
-            final XmlMapWithAttributes annotation = field.getAnnotation(XmlMapWithAttributes.class);
-            final String keyName = annotation.keyName();
-            final String valueName = annotation.valueName();
+        if (isXmlMapWithAttributes != null) {
+            final String keyName = isXmlMapWithAttributes.keyName();
+            final String valueName = isXmlMapWithAttributes.valueName();
 
             final Map<Object, Object> map = new HashMap<>();
             for (final XmlElement child : node.children) {
@@ -179,10 +255,9 @@ public interface XmlReader extends AccessDeserializers {
             }
             return map;
         }
-        if (isXmlMapWithChildNodes) {
-            final XmlMapWithChildNodes annotation = field.getAnnotation(XmlMapWithChildNodes.class);
-            final String keyName = annotation.keyName();
-            final String valueName = annotation.valueName();
+        if (isXmlMapWithChildNodes != null) {
+            final String keyName = isXmlMapWithChildNodes.keyName();
+            final String valueName = isXmlMapWithChildNodes.valueName();
 
             final Map<Object, Object> map = new HashMap<>();
             for (final XmlElement child : node.children) {

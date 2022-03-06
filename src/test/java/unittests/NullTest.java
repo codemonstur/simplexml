@@ -9,7 +9,7 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class NullTest {
 
-    private XmlParser parser = newXmlParser().shouldPrettyPrint(false).build();
+    private final XmlParser parser = newXmlParser().shouldPrettyPrint(false).build();
 
     @Test
     public void serializeNulls() {

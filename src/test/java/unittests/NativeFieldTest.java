@@ -10,7 +10,7 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class NativeFieldTest {
 
-    private XmlParser parser = newXmlParser().shouldPrettyPrint(false).build();
+    private final XmlParser parser = newXmlParser().shouldPrettyPrint(false).build();
 
     @Test
     public void deserializeInt() {

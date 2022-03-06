@@ -1,9 +1,9 @@
 include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-lib-github-maven
 
-version: 2.9.0
+version: 3.0.0
 packaging: jar
 enablePreview: false
-release: 8
+release: 16
 dependencies:
   - repository: org.objenesis:objenesis:3.2
   - repository: junit:junit:4.13.2

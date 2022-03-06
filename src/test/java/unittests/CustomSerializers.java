@@ -34,7 +34,7 @@ public class CustomSerializers {
             "  <special>1:special</special>\n" +
             "</container>\n";
 
-    private XmlParser parser = newXmlParser()
+    private final XmlParser parser = newXmlParser()
         .addDeserializer(Special.class, value -> {
             final String[] parts = value.split(":");
             if (parts.length != 2) return null;

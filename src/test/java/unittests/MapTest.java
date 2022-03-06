@@ -36,7 +36,7 @@ public class MapTest {
         "  <item key=\"2\" value=\"thumb\" />\n" +
         "</mappojo>\n";
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void deserialize() {

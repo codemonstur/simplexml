@@ -10,8 +10,8 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class EncodingTest {
 
-    private XmlParser parserDefault = new XmlParser();
-    private XmlParser parserEncodeUTF8 = newXmlParser().shouldEncodeUTF8().build();
+    private final XmlParser parserDefault = new XmlParser();
+    private final XmlParser parserEncodeUTF8 = newXmlParser().shouldEncodeUTF8().build();
 
     @Test
     public void serializeWithDangerousChars() {
