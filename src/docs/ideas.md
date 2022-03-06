@@ -130,6 +130,11 @@ Parser parser = newParser()
     
 Don't care that much about this anymore
 
+## Add support for comments parsing
+
+The parser currently throws away all comments.
+Make the parsing configurable so that comments are preserved in the DOM.
+
 ## Add a XmlNamePattern annotation that can match multiple names during deserialization
 
 https://stackoverflow.com/questions/51964053/convert-liststring-into-below-xml-format-in-java

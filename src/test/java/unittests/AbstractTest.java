@@ -45,7 +45,8 @@ public class AbstractTest {
     public class TargetedMessage2 {
         String sender;
         @XmlAbstractClass(attribute="type", types={
-            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
+            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class),
+            @TypeMap(name="class.path.from.external.application.Bar", type=Bar.class)
         })
         Payload payload;
     }

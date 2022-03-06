@@ -29,12 +29,12 @@ public interface XmlStreamReader {
             if (str.startsWith(XML_START_COMMENT)) {
                 if (str.endsWith(XML_END_COMMENT))
                     continue;
-                readUntil(in, XML_END_COMMENT+">");
+                readUntil(in, XML_END_COMMENT + GREATER_THAN);
                 continue;
             }
 
             if (str.charAt(0) == XML_PROLOG) continue;
-            if (str.charAt(0) == XML_SELF_CLOSING) parser.endNode();
+            if (str.charAt(0) == CHAR_FORWARD_SLASH) parser.endNode(false);
             else {
                 final String name = getNameOfTag(str);
                 if (str.length() == name.length()) {
@@ -46,7 +46,7 @@ public interface XmlStreamReader {
                 final int end = str.length();
                 if (str.endsWith(FORWARD_SLASH)) {
                     parser.startNode(name, xmlToAttributes(str.substring(beginAttr, end-1), trimmer, escaper));
-                    parser.endNode();
+                    parser.endNode(true);
                 } else {
                     parser.startNode(name, xmlToAttributes(str.substring(beginAttr+1, end), trimmer, escaper));
                 }
