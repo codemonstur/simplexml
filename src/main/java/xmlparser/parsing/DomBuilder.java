@@ -17,7 +17,8 @@ public class DomBuilder implements EventParser {
 
         this.current = tmp;
     }
-    public void endNode() {
+    public void endNode(final boolean selfClosing) {
+        this.current.setSelfClosing(selfClosing);
         this.current = this.current.parent;
     }
     public void someText(final String txt) {

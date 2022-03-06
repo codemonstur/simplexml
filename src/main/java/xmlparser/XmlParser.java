@@ -121,8 +121,18 @@ public final class XmlParser {
     public void domToXml(final XmlElement node, final Writer out) throws IOException {
         writer.domToXml(node, out);
     }
+    public CheckedIterator<String> iterateXml(final String input) {
+        try (final ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes(UTF_8))) {
+            return stream.iterateXml(new InputStreamReader(in, charset));
+        } catch (Exception ignore) { throw new IllegalArgumentException(ignore); }
+    }
     public CheckedIterator<String> iterateXml(final InputStream in) {
         return stream.iterateXml(new InputStreamReader(in, charset));
+    }
+    public CheckedIterator<XmlElement> iterateDom(final String input) {
+        try (final ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes(UTF_8))) {
+            return stream.iterateDom(new InputStreamReader(in, charset), charset, trimmer, escaper);
+        } catch (Exception ignore) { throw new IllegalArgumentException(ignore); }
     }
     public CheckedIterator<XmlElement> iterateDom(final InputStream in) {
         return stream.iterateDom(new InputStreamReader(in, charset), charset, trimmer, escaper);

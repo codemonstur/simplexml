@@ -10,6 +10,7 @@ public class XmlElement {
     public String name;
     public Map<String, String> attributes;
     public List<XmlElement> children;
+    private boolean selfClosing;
 
     public XmlElement(final XmlElement parent, final String name,
                       final Map<String, String> attributes) {
@@ -21,6 +22,13 @@ public class XmlElement {
         this.name = name;
         this.attributes = attributes;
         this.children = children;
+    }
+
+    public boolean isSelfClosing() {
+        return selfClosing;
+    }
+    public void setSelfClosing(final boolean selfClosing) {
+        this.selfClosing = selfClosing;
     }
 
     public void appendChild(final XmlElement child) {

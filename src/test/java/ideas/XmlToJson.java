@@ -101,7 +101,7 @@ public class XmlToJson {
                 lastHadAttrs = !attrs.isEmpty();
                 lastWasClose = false;
             }
-            public void endNode() {
+            public void endNode(final boolean selfClosing) {
                 if (!valueWasWritten) System.out.print("\"\"");
                 if (lastWasClose || lastHadAttrs) System.out.println();
 
