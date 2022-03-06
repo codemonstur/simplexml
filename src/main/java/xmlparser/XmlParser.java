@@ -21,6 +21,8 @@ import static java.nio.file.Files.newInputStream;
 import static xmlparser.XmlReader.toXmlDom;
 import static xmlparser.parsing.ObjectDeserializer.defaultDeserializers;
 import static xmlparser.parsing.ObjectSerializer.defaultSerializer;
+import static xmlparser.utils.Constants.CARRIAGE_RETURN;
+import static xmlparser.utils.Constants.LINE_FEED;
 import static xmlparser.utils.Trimming.NativeTrimmer;
 import static xmlparser.xpath.XPathExpression.newXPath;
 
@@ -34,15 +36,19 @@ public final class XmlParser {
     private final Charset charset;
 
     public XmlParser() {
-        this(false, true, UTF_8, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
+        this(false, true, UTF_8, LINE_FEED, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
     }
 
-    private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final Charset charset, final ObjectSerializer defaultSerializer
-            , final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final UnEscape escaper) {
+    private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final Charset charset,
+                      final String newLine, final ObjectSerializer defaultSerializer, final Map<Class<?>, ObjectSerializer> serializers,
+                      final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final UnEscape escaper) {
         this.charset = charset;
         this.compress = new XmlCompress() {};
         this.reader = deserializers::get;
         this.writer = new XmlWriter() {
+            public String newLine() {
+                return newLine;
+            }
             public boolean hasSerializer(final Class<?> type) {
                 return serializers.containsKey(type);
             }
@@ -133,6 +139,7 @@ public final class XmlParser {
         private boolean shouldEncodeUTF8 = false;
         private boolean shouldPrettyPrint = true;
         private Charset charset = UTF_8;
+        private String newLine = LINE_FEED;
         private Trim trimmer = new NativeTrimmer();
         private UnEscape escaper = Escaping::unescapeXml;
         private ObjectSerializer defaultSerializer = ObjectSerializer.defaultSerializer();
@@ -149,6 +156,10 @@ public final class XmlParser {
         }
         public Builder addDeserializer(final Class<?> c, final ObjectDeserializer deserializer) {
             this.deserializers.put(c, deserializer);
+            return this;
+        }
+        public Builder windowsNewLines() {
+            this.newLine = CARRIAGE_RETURN + LINE_FEED;
             return this;
         }
         public Builder trimmer(final Trim trimmer) {
@@ -197,7 +208,7 @@ public final class XmlParser {
         }
 
         public XmlParser build() {
-            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, charset, defaultSerializer, serializers, deserializers, trimmer, escaper);
+            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, charset, newLine, defaultSerializer, serializers, deserializers, trimmer, escaper);
         }
     }
 }

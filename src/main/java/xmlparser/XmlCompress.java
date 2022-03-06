@@ -25,8 +25,7 @@ public interface XmlCompress {
     }
 
     static void compressXML(final InputStreamReader in, final OutputStreamWriter out, final Trim trimmer) throws IOException {
-        String str;
-        while ((str = readLine(in, XML_TAG_START)) != null) {
+        String str; while ((str = readLine(in, XML_TAG_START)) != null) {
             // Probably a text node, remove the whitespace and write
             if (!str.isEmpty()) out.write(trimmer.trim(str));
 

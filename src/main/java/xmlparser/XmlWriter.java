@@ -258,7 +258,9 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         if (shouldPrettyPrint()) writer.append(indent);
     }
     private void writeNewLine(final Writer writer) throws IOException {
-        if (shouldPrettyPrint()) writer.append(NEW_LINE);
+        if (shouldPrettyPrint()) writer.append(newLine());
     }
+
+    String newLine();
 
 }
