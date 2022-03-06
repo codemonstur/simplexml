@@ -1,6 +1,6 @@
 package model;
 
-public class NativePojo {
+public final class NativePojo {
     public final int id;
 
     public NativePojo(final int id) {

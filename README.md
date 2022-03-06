@@ -10,6 +10,9 @@ After a number of bad experiences with XML parsing in Java I decided to write my
 This project has the following characteristics; correct XML parsing, small, few dependencies, 
 thread-safe, user friendly API, secure.
 
+Version 3.0.0 depends on Java 16. 
+For Java 8 support you have to use 2.9.0 or earlier.
+
 ## How to use
 
 The unit tests in [src/test/java/unittests](https://github.com/codemonstur/simplexml/tree/master/src/test/java/unittests) can give you a good idea of the capabilities of SimpleXml.
@@ -31,7 +34,7 @@ It's in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>2.9.0</version>
+        <version>3.0.0</version>
     </dependency>
 
 ### Serializing

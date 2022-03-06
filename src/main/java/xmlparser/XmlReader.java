@@ -2,6 +2,7 @@ package xmlparser;
 
 import xmlparser.annotations.*;
 import xmlparser.error.InvalidAnnotation;
+import xmlparser.error.InvalidObject;
 import xmlparser.error.InvalidXPath;
 import xmlparser.model.XmlElement;
 import xmlparser.parsing.DomBuilder;
@@ -28,7 +29,18 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node, clazz);
 
-        return clazz.isRecord() ? domToRecord(node, clazz) : domToClass(node, clazz);
+        final T object = clazz.isRecord() ? domToRecord(node, clazz) : domToClass(node, clazz);
+        for (final Method method : clazz.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(XmlObjectValidator.class))
+                continue;
+            try {
+                method.invoke(object);
+            } catch (Exception e) {
+                throw new InvalidObject(clazz, e);
+            }
+        }
+
+        return object;
     }
 
     private <T> T domToRecord(final XmlElement node, final Class<T> clazz) {
