@@ -47,7 +47,7 @@ public class AbstractContainerTest {
         String role_field;
     }
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     public static final String xml =
             "<items>\n" +

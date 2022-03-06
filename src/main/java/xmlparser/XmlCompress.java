@@ -17,7 +17,7 @@ public interface XmlCompress {
             ; final OutputStreamWriter writer = new OutputStreamWriter(out, UTF_8)
             ) {
             compressXML(reader, writer, trimmer);
-            return new String(out.toByteArray(), UTF_8);
+            return out.toString(UTF_8);
         } catch (IOException e) {
             // can't happen.
             return null;

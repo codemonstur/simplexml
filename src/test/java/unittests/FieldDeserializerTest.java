@@ -23,6 +23,7 @@ public class FieldDeserializerTest {
         private Map<String, String> map;
     }
 
+    // It is used, but the IDE can't see this
     public static Map<String, String> deserializeMap(final XmlElement parent) {
         final Map<String, String> map = new HashMap<>();
         for (final XmlElement item : parent.findChildForName("map", null).children) {
@@ -31,7 +32,7 @@ public class FieldDeserializerTest {
         return map;
     }
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void testFieldDeserializer() {

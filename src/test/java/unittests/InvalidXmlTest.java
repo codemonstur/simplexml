@@ -10,8 +10,8 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class InvalidXmlTest {
 
-    private XmlParser parser = new XmlParser();
-    private XmlParser lenient = newXmlParser().lenientWhitespace().build();
+    private final XmlParser parser = new XmlParser();
+    private final XmlParser lenient = newXmlParser().lenientWhitespace().build();
 
     @Test(expected = InvalidXml.class)
     public void nonWhitespaceAtStart() {

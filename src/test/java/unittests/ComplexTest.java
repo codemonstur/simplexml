@@ -29,7 +29,7 @@ public class ComplexTest {
             "  <testenum>one</testenum>\n" +
             "</complexpojo>\n";
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void deserialize() {

@@ -7,10 +7,7 @@ import xmlparser.error.InvalidAnnotation;
 import xmlparser.model.XmlElement;
 import xmlparser.utils.Interfaces.AccessSerializers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.*;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -18,6 +15,20 @@ import static xmlparser.model.XmlElement.findChildForName;
 import static xmlparser.utils.Reflection.ClassType.*;
 
 public enum Reflection {;
+
+    // I would like to define T as 'T extends Record', haven't figured out how to get the generics to
+    // understand what type I have. The XmlReader calls this using a Class<?> that has been checked with
+    // an if. But how to upcast after that if?
+    public static <T> Constructor<T> canonicalConstructorOfRecord(final Class<T> recordClass) throws SecurityException {
+        try {
+            final var componentTypes = Arrays.stream(recordClass.getRecordComponents())
+                .map(RecordComponent::getType).toArray(Class<?>[]::new);
+            return recordClass.getDeclaredConstructor(componentTypes);
+        } catch (NoSuchMethodException ignore) {
+            // Not possible, record is guaranteed to have this constructor
+            throw new IllegalArgumentException("A record class was found without a canonical constructor");
+        }
+    }
 
     public static Field determineTypeOfFields(final Class<?> clazz, final Object o, final List<Field> attributes
             , final List<Field> childNodes) throws IllegalAccessException {
@@ -45,11 +56,27 @@ public enum Reflection {;
     public static Class<? extends Enum> toEnumType(final Field field) {
         return (Class<? extends Enum>) field.getType();
     }
+    public static Class<? extends Enum> toEnumType(final RecordComponent field) {
+        return (Class<? extends Enum>) field.getType();
+    }
 
     public enum FieldType {
         TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER, FIELD_DESERIALIZER, ENUM
     }
     public static FieldType toFieldType(final Field f) {
+        if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
+        if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXTNODE;
+        if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
+
+        final Class<?> type = f.getType();
+        if (type.isEnum()) return FieldType.ENUM;
+        if (Set.class.isAssignableFrom(type)) return FieldType.SET;
+        if (List.class.isAssignableFrom(type)) return FieldType.LIST;
+        if (type.isArray()) return FieldType.ARRAY;
+        if (Map.class.isAssignableFrom(type)) return FieldType.MAP;
+        return FieldType.OTHER;
+    }
+    public static FieldType toFieldType(final RecordComponent f) {
         if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
         if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXTNODE;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
@@ -116,11 +143,14 @@ public enum Reflection {;
     public static boolean isWrapped(final Field f) {
         return f.isAnnotationPresent(XmlWrapperTag.class);
     }
+    public static boolean isWrapped(final RecordComponent f) {
+        return f.isAnnotationPresent(XmlWrapperTag.class);
+    }
     public static String toWrappedName(final Field f) {
         return f.getAnnotation(XmlWrapperTag.class).value();
     }
-    public static boolean isAbstract(final Field f) {
-        return f.isAnnotationPresent(XmlAbstractClass.class);
+    public static String toWrappedName(final RecordComponent f) {
+        return f.getAnnotation(XmlWrapperTag.class).value();
     }
     public static Class<?> findAbstractType(final XmlAbstractClass annotation, final XmlElement node) {
         final String typeName = findAbstractTypeName(annotation, node);
@@ -144,14 +174,22 @@ public enum Reflection {;
             return o.getSimpleName().toLowerCase();
         return o.getAnnotation(XmlName.class).value();
     }
-
     public static String toName(final Field field) {
+        if (field.isAnnotationPresent(XmlName.class))
+            return field.getAnnotation(XmlName.class).value();
+        return field.getName();
+    }
+    public static String toName(final RecordComponent field) {
         if (field.isAnnotationPresent(XmlName.class))
             return field.getAnnotation(XmlName.class).value();
         return field.getName();
     }
 
     public static Class<?> toClassOfCollection(final Field f) {
+        final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
+        return (Class<?>) stringListType.getActualTypeArguments()[0];
+    }
+    public static Class<?> toClassOfCollection(final RecordComponent f) {
         final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
         return (Class<?>) stringListType.getActualTypeArguments()[0];
     }
@@ -181,6 +219,14 @@ public enum Reflection {;
     }
 
     public static Object invokeFieldDeserializer(final Field f, final XmlElement element) {
+        final XmlFieldDeserializer annotation = f.getAnnotation(XmlFieldDeserializer.class);
+        try {
+            return Class.forName(annotation.clazz()).getMethod(annotation.function(), XmlElement.class).invoke(null, element);
+        } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+            throw new InvalidAnnotation("FieldDeserializer " + annotation.clazz() + "." + annotation.function() + " could not be invoked", e);
+        }
+    }
+    public static Object invokeFieldDeserializer(final RecordComponent f, final XmlElement element) {
         final XmlFieldDeserializer annotation = f.getAnnotation(XmlFieldDeserializer.class);
         try {
             return Class.forName(annotation.clazz()).getMethod(annotation.function(), XmlElement.class).invoke(null, element);

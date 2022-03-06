@@ -26,4 +26,13 @@ public enum Validator {;
         return false;
     }
 
+    public static boolean multipleAreNotNull(final Object... values) {
+        int i = 0;
+        for (; i < values.length; i++)
+            if (values[i] != null) break;
+        for (i++; i < values.length; i++)
+            if (values[i] != null) return true;
+        return false;
+    }
+
 }

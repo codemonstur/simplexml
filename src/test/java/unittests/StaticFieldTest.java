@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class StaticFieldTest {
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void deserializeObject() {

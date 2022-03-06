@@ -12,11 +12,11 @@ import static xmlparser.model.XmlElement.newElement;
 
 public class SimpleTest {
 
-    private XmlParser parser = new XmlParser();
-    private XmlParser parserShort = newXmlParser().shouldPrettyPrint(false).build();
+    private final XmlParser parser = new XmlParser();
+    private final XmlParser parserShort = newXmlParser().shouldPrettyPrint(false).build();
 
     @Test
-    public void deserializeObject() {
+    public void deserializeClass() {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
         final Pojo pojo = parser.fromXml(pojoXml, Pojo.class);
@@ -36,7 +36,7 @@ public class SimpleTest {
     }
 
     @Test
-    public void serialize() {
+    public void serializeClass() {
         final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
         final Pojo pojo = new Pojo("Hello");
 

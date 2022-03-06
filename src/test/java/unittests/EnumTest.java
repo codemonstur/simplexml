@@ -6,12 +6,10 @@ import xmlparser.XmlParser;
 
 import static model.TestEnum.one;
 import static org.junit.Assert.*;
-import static xmlparser.XmlParser.newXmlParser;
 
 public class EnumTest {
 
-    private XmlParser parser = new XmlParser();
-    private XmlParser parserShort = newXmlParser().shouldPrettyPrint(false).build();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void deserializeEnumHasValue() {

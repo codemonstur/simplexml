@@ -10,7 +10,7 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class HtmlTest {
 
-    private XmlParser parser = newXmlParser().unescapeHtml().build();
+    private final XmlParser parser = newXmlParser().unescapeHtml().build();
 
     @Test
     public void deserializeEscapedHtml() {

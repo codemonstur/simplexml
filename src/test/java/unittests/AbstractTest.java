@@ -70,7 +70,7 @@ public class AbstractTest {
         String name;
     }
 
-    private XmlParser parser = new XmlParser();
+    private final XmlParser parser = new XmlParser();
 
     @Test
     public void deserializeOne() {
