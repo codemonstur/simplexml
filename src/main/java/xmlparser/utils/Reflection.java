@@ -38,8 +38,16 @@ public enum Reflection {;
         return textNode;
     }
 
-    public static String toEnumName(final Object o) {
-        return ((Enum)o).name();
+    public static String toEnumName(final Enum o) {
+        try {
+            final String name = o.name();
+            final Field field = o.getClass().getField(name);
+            final XmlEnumValue annotation = field.getAnnotation(XmlEnumValue.class);
+            return annotation != null ? annotation.value() : name;
+        } catch (final NoSuchFieldException e) {
+            // impossible
+            throw new RuntimeException(e);
+        }
     }
 
     public static Class<? extends Enum> toEnumType(final Field field) {

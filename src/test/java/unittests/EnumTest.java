@@ -4,7 +4,8 @@ import model.EnumPojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
 
-import static model.TestEnum.one;
+import static model.SimpleEnum.one;
+import static model.SimpleEnum.value;
 import static org.junit.Assert.*;
 import static xmlparser.XmlParser.newXmlParser;
 
@@ -50,6 +51,27 @@ public class EnumTest {
         parser.fromXml(pojoXml, EnumPojo.class);
 
         fail("Missing enum value didn't throw exception");
+    }
+
+    @Test
+    public void serializeWithValueAnnotation() {
+        final EnumPojo pojo = new EnumPojo(value);
+        final String pojoXml = "<enumpojo>\n  <test>123</test>\n</enumpojo>\n";
+
+        final String pojoOut = parser.toXml(pojo);
+
+        assertNotNull("Pojo is null", pojoOut);
+        assertEquals("Invalid POJO XML", pojoXml, pojoOut);
+    }
+
+    @Test
+    public void deserializeWithValueAnnotation() {
+        final String pojoXml = "<enumpojo><test>123</test></enumpojo>\n";
+
+        final EnumPojo pojo = parser.fromXml(pojoXml, EnumPojo.class);
+
+        assertNotNull("Pojo is null", pojo);
+        assertEquals("Pojo has the wrong name", value, pojo.test);
     }
 
 }
