@@ -34,14 +34,25 @@ public final class XmlParser {
     private final Charset charset;
 
     public XmlParser() {
-        this(false, true, UTF_8, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
+        this(false, true, true, UTF_8, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
     }
 
-    private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final Charset charset, final ObjectSerializer defaultSerializer
+    private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final boolean enableEnumCaching, final Charset charset, final ObjectSerializer defaultSerializer
             , final Map<Class<?>, ObjectSerializer> serializers, final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final UnEscape escaper) {
         this.charset = charset;
         this.compress = new XmlCompress() {};
-        this.reader = deserializers::get;
+        final Map<Class<Enum>, Map<String, Enum>> enumCache = new HashMap<>();
+        this.reader = new XmlReader() {
+            public boolean isEnumCachingEnabled() {
+                return enableEnumCaching;
+            }
+            public Map<Class<Enum>, Map<String, Enum>> getEnumCache() {
+                return enumCache;
+            }
+            public ObjectDeserializer getDeserializer(final Class<?> type) {
+                return deserializers.get(type);
+            }
+        };
         this.writer = new XmlWriter() {
             public boolean hasSerializer(final Class<?> type) {
                 return serializers.containsKey(type);
@@ -132,6 +143,7 @@ public final class XmlParser {
     public static class Builder {
         private boolean shouldEncodeUTF8 = false;
         private boolean shouldPrettyPrint = true;
+        private boolean enableEnumCaching = true;
         private Charset charset = UTF_8;
         private Trim trimmer = new NativeTrimmer();
         private UnEscape escaper = Escaping::unescapeXml;
@@ -191,13 +203,25 @@ public final class XmlParser {
             this.shouldEncodeUTF8 = shouldEncodeUTF8;
             return this;
         }
+        public Builder enableEnumCaching() {
+            this.enableEnumCaching = true;
+            return this;
+        }
+        public Builder disableEnumCaching() {
+            this.enableEnumCaching = false;
+            return this;
+        }
+        public Builder enumCaching(final boolean enumCaching) {
+            this.enableEnumCaching = enumCaching;
+            return this;
+        }
         public Builder charset(final Charset charset) {
             this.charset = charset;
             return this;
         }
 
         public XmlParser build() {
-            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, charset, defaultSerializer, serializers, deserializers, trimmer, escaper);
+            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, enableEnumCaching, charset, defaultSerializer, serializers, deserializers, trimmer, escaper);
         }
     }
 }
