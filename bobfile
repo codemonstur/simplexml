@@ -1,13 +1,13 @@
-version: 2.9.0
+version: 2.10.0
 packaging: jar
 release: 8
 dependencies:
-  - repository: org.objenesis:objenesis:3.1
-  - repository: junit:junit:4.13.1
+  - repository: org.objenesis:objenesis:3.3
+  - repository: junit:junit:4.13.2
     scope: test
-  - repository: org.unitils:unitils-core:3.4.2
+  - repository: org.unitils:unitils-core:3.4.6
     scope: test
-  - repository: org.apache.commons:commons-text:1.4
+  - repository: org.apache.commons:commons-text:1.10.0
     scope: test
 
 build
