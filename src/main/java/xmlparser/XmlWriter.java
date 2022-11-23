@@ -189,9 +189,9 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writeNewLine(writer);
     }
 
-    private void writeEnum(final Writer writer, final String name, final Object o, final String indent) throws IOException {
+    private void writeEnum(final Writer writer, final String name, final Enum o, final String indent) throws IOException {
         writeIndent(writer, indent);
-        writeTag(writer, name, escapeXml(toEnumName(o), shouldEncodeUTF8()));
+        writeTag(writer, name, escapeXml(toEnumValue(o), shouldEncodeUTF8()));
         writeNewLine(writer);
     }
 
@@ -249,7 +249,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             case LIST -> writeList(writer, field, name, value, indent);
             case SET -> writeSet(writer, field, name, value, indent);
             case MAP -> writeMap(writer, field, name, value, indent);
-            case ENUM -> writeEnum(writer, name, value, indent);
+            case ENUM -> writeEnum(writer, name, (Enum)value, indent);
             default -> writeObject(writer, name, value, indent);
         }
     }

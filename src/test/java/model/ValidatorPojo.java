@@ -2,15 +2,15 @@ package model;
 
 import xmlparser.annotations.XmlObjectValidator;
 
-public final class TestablePojo {
+public final class ValidatorPojo {
 
     public final String name;
 
-    public TestablePojo() {
+    public ValidatorPojo() {
         this.name = null;
     }
 
-    public TestablePojo(String name) {
+    public ValidatorPojo(String name) {
         this.name = name;
     }
 
