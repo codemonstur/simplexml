@@ -1,0 +1,6 @@
+3.1.0
+
+Added @XmlEnumValue annotation
+Added windows newline setting
+Added object validator
+DOM stores if self closing tag or not
