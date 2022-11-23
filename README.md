@@ -34,7 +34,7 @@ It's in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
     </dependency>
 
 ### Serializing
