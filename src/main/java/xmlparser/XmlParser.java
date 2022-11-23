@@ -13,6 +13,7 @@ import xmlparser.xpath.XPathExpression;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,15 +37,26 @@ public final class XmlParser {
     private final Charset charset;
 
     public XmlParser() {
-        this(false, true, UTF_8, LINE_FEED, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
+        this(false, true, true, UTF_8, LINE_FEED, defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
     }
 
-    private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final Charset charset,
+    private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final boolean enableEnumCaching, final Charset charset,
                       final String newLine, final ObjectSerializer defaultSerializer, final Map<Class<?>, ObjectSerializer> serializers,
                       final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final UnEscape escaper) {
         this.charset = charset;
         this.compress = new XmlCompress() {};
-        this.reader = deserializers::get;
+        final var enumCache = new HashMap<Class<Enum>, Map<String, Enum>>();
+        this.reader = new XmlReader() {
+            public boolean isEnumCachingEnabled() {
+                return enableEnumCaching;
+            }
+            public Map<Class<Enum>, Map<String, Enum>> getEnumCache() {
+                return enumCache;
+            }
+            public ObjectDeserializer getDeserializer(final Class<?> type) {
+                return deserializers.get(type);
+            }
+        };
         this.writer = new XmlWriter() {
             public String newLine() {
                 return newLine;
@@ -124,7 +136,7 @@ public final class XmlParser {
     public CheckedIterator<String> iterateXml(final String input) {
         try (final ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes(UTF_8))) {
             return stream.iterateXml(new InputStreamReader(in, charset));
-        } catch (Exception ignore) { throw new IllegalArgumentException(ignore); }
+        } catch (final Exception ignore) { throw new IllegalArgumentException(ignore); }
     }
     public CheckedIterator<String> iterateXml(final InputStream in) {
         return stream.iterateXml(new InputStreamReader(in, charset));
@@ -132,7 +144,7 @@ public final class XmlParser {
     public CheckedIterator<XmlElement> iterateDom(final String input) {
         try (final ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes(UTF_8))) {
             return stream.iterateDom(new InputStreamReader(in, charset), charset, trimmer, escaper);
-        } catch (Exception ignore) { throw new IllegalArgumentException(ignore); }
+        } catch (final Exception ignore) { throw new IllegalArgumentException(ignore); }
     }
     public CheckedIterator<XmlElement> iterateDom(final InputStream in) {
         return stream.iterateDom(new InputStreamReader(in, charset), charset, trimmer, escaper);
@@ -148,6 +160,7 @@ public final class XmlParser {
     public static class Builder {
         private boolean shouldEncodeUTF8 = false;
         private boolean shouldPrettyPrint = true;
+        private boolean enableEnumCaching = true;
         private Charset charset = UTF_8;
         private String newLine = LINE_FEED;
         private Trim trimmer = new NativeTrimmer();
@@ -212,13 +225,26 @@ public final class XmlParser {
             this.shouldEncodeUTF8 = shouldEncodeUTF8;
             return this;
         }
+        public Builder enableEnumCaching() {
+            this.enableEnumCaching = true;
+            return this;
+        }
+        public Builder disableEnumCaching() {
+            this.enableEnumCaching = false;
+            return this;
+        }
+        public Builder enumCaching(final boolean enumCaching) {
+            this.enableEnumCaching = enumCaching;
+            return this;
+        }
         public Builder charset(final Charset charset) {
             this.charset = charset;
             return this;
         }
 
         public XmlParser build() {
-            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, charset, newLine, defaultSerializer, serializers, deserializers, trimmer, escaper);
+            return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, enableEnumCaching, charset, newLine,
+                    defaultSerializer, serializers, deserializers, trimmer, escaper);
         }
     }
 }

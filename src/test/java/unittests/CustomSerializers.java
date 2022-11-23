@@ -62,4 +62,5 @@ public class CustomSerializers {
         assertNotNull("Pojo is null", c);
         assertReflectionEquals(c, CONTAINER);
     }
+
 }

@@ -24,7 +24,7 @@ public enum Reflection {;
             final var componentTypes = Arrays.stream(recordClass.getRecordComponents())
                 .map(RecordComponent::getType).toArray(Class<?>[]::new);
             return recordClass.getDeclaredConstructor(componentTypes);
-        } catch (NoSuchMethodException ignore) {
+        } catch (final NoSuchMethodException ignore) {
             // Not possible, record is guaranteed to have this constructor
             throw new IllegalArgumentException("A record class was found without a canonical constructor");
         }
@@ -49,8 +49,16 @@ public enum Reflection {;
         return textNode;
     }
 
-    public static String toEnumName(final Object o) {
-        return ((Enum)o).name();
+    public static String toEnumValue(final Enum o) {
+        try {
+            final String name = o.name();
+            final Field field = o.getClass().getField(name);
+            final XmlEnumValue annotation = field.getAnnotation(XmlEnumValue.class);
+            return annotation != null ? annotation.value() : name;
+        } catch (final NoSuchFieldException e) {
+            // impossible
+            throw new RuntimeException(e);
+        }
     }
 
     public static Class<? extends Enum> toEnumType(final Field field) {
@@ -222,7 +230,7 @@ public enum Reflection {;
         final XmlFieldDeserializer annotation = f.getAnnotation(XmlFieldDeserializer.class);
         try {
             return Class.forName(annotation.clazz()).getMethod(annotation.function(), XmlElement.class).invoke(null, element);
-        } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+        } catch (final NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             throw new InvalidAnnotation("FieldDeserializer " + annotation.clazz() + "." + annotation.function() + " could not be invoked", e);
         }
     }
@@ -230,7 +238,7 @@ public enum Reflection {;
         final XmlFieldDeserializer annotation = f.getAnnotation(XmlFieldDeserializer.class);
         try {
             return Class.forName(annotation.clazz()).getMethod(annotation.function(), XmlElement.class).invoke(null, element);
-        } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+        } catch (final NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             throw new InvalidAnnotation("FieldDeserializer " + annotation.clazz() + "." + annotation.function() + " could not be invoked", e);
         }
     }
@@ -238,7 +246,7 @@ public enum Reflection {;
     public static void setField(final Field field, final Object object, final Object value) {
         try {
             field.set(object, value);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new AssignmentFailure(e);
         }
     }

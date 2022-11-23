@@ -1,7 +1,7 @@
 package unittests;
 
 import model.EnumPojo;
-import model.TestEnum;
+import model.SimpleEnum;
 import org.junit.Test;
 import xmlparser.XmlParser;
 
@@ -15,7 +15,7 @@ public class Reflexivity {
 
     @Test
     public void reflexiveEnum() {
-        final EnumPojo pojo = new EnumPojo(TestEnum.one);
+        final EnumPojo pojo = new EnumPojo(SimpleEnum.one);
 
         final EnumPojo result = parser.fromXml(parser.toXml(pojo), EnumPojo.class);
 

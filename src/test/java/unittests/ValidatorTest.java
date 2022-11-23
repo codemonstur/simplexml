@@ -1,6 +1,6 @@
 package unittests;
 
-import model.TestablePojo;
+import model.ValidatorPojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidObject;
@@ -15,7 +15,7 @@ public class ValidatorTest {
     public void deserializeValid() {
         final String pojoXml = "<testablepojo>\n  <name>Hello</name>\n</testablepojo>\n";
 
-        final TestablePojo pojo = parser.fromXml(pojoXml, TestablePojo.class);
+        final ValidatorPojo pojo = parser.fromXml(pojoXml, ValidatorPojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertEquals("Pojo has the wrong name", "Hello", pojo.name);
@@ -25,7 +25,7 @@ public class ValidatorTest {
     public void deserializeInvalid() {
         final String pojoXml = "<testablepojo>\n  <name>invalid</name>\n</testablepojo>\n";
 
-        parser.fromXml(pojoXml, TestablePojo.class);
+        parser.fromXml(pojoXml, ValidatorPojo.class);
 
         fail("Invalid object was created");
     }

@@ -35,7 +35,7 @@ public interface XmlReader extends AccessDeserializers {
                 continue;
             try {
                 method.invoke(object);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new InvalidObject(clazz, e);
             }
         }
@@ -86,7 +86,7 @@ public interface XmlReader extends AccessDeserializers {
 
         try {
             return canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException ignore) {
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException ignore) {
             throw new SecurityException("Canonical constructor of record could not be invoked");
         }
     }
@@ -152,8 +152,40 @@ public interface XmlReader extends AccessDeserializers {
         final String value = text.getText();
         if (value == null) return null;
         final ObjectDeserializer conv = getDeserializer(type);
-        return (conv == null) ? Enum.valueOf(type, value) : conv.convert(node);
+        return (conv == null) ? valueOfEnum(type, value) : conv.convert(node);
     }
+
+    boolean isEnumCachingEnabled();
+    <T extends Enum> Map<Class<T>, Map<String, T>> getEnumCache();
+
+    private <T extends Enum> Map<String, T> getEnumValueDirectory(final Class<T> type) {
+        final boolean enumCaching = isEnumCachingEnabled();
+        if (enumCaching) {
+            final Map<Class<T>, Map<String, T>> cache = getEnumCache();
+            return cache.computeIfAbsent(type, this::newEnumValueMap);
+        }
+        return newEnumValueMap(type);
+    }
+
+    private <T extends Enum> Map<String, T> newEnumValueMap(final Class<T> type) {
+        final Map<String, T> valueMap = new HashMap<>();
+        for (final T t : type.getEnumConstants()) {
+            try {
+                final XmlEnumValue annotation = type.getField(t.name()).getAnnotation(XmlEnumValue.class);
+                valueMap.put(annotation != null ? annotation.value() : t.name(), t);
+            } catch (final NoSuchFieldException e) {
+                // impossible
+                throw new RuntimeException(e);
+            }
+        }
+        return valueMap;
+    }
+    private <T extends Enum> T valueOfEnum(final Class<T> type, final String value) {
+        final T t = getEnumValueDirectory(type).get(value);
+        if (t == null) throw new IllegalArgumentException("No enum constant for " + type.getName() + "." + value);
+        return t;
+    }
+
     private Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         if (conv == null) return null;
