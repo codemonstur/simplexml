@@ -22,6 +22,7 @@ public enum Trimming {;
     // https://unicode-search.net/unicode-namesearch.pl?term=SEPARATOR
     // https://stackoverflow.com/questions/28295504/how-to-trim-no-break-space-in-java
     // https://www.fileformat.info/info/unicode/category/Zs/list.htm
+    // https://invisible-characters.com/
     public static Map<String, Character> WHITESPACE_CHARS = Builder.<String, Character>newHashMap()
         .put("control character 0000", '\u0000')
         .put("control character 0001", '\u0001')
@@ -57,6 +58,7 @@ public enum Trimming {;
         .put("information separator one", '\u001f')
         .put("space", '\u0020')
         .put("no-break space", '\u00a0')
+        .put("soft hyphen", '\u00ad')
         .put("control character 0080", '\u0080')
         .put("control character 0081", '\u0081')
         .put("control character 0082", '\u0082')
@@ -89,7 +91,13 @@ public enum Trimming {;
         .put("control character 009d", '\u009d')
         .put("control character 009e", '\u009e')
         .put("control character 009f", '\u009f')
+        .put("combining grapheme joiner", '\u034f')
+        .put("arabic letter mark", '\u061c')
+        .put("hangul choseong filler", '\u115f')
+        .put("hangul jungseong filler", '\u1160')
         .put("ogham space mark", '\u1680')
+        .put("khmer vowel inherent aq", '\u17b4')
+        .put("khmer vowel inherent aa", '\u17b5')
         .put("mongolian vowel separator", '\u180e')
         .put("en quad", '\u2000')
         .put("em quad", '\u2001')
@@ -103,17 +111,47 @@ public enum Trimming {;
         .put("thin space", '\u2009')
         .put("hair space", '\u200a')
         .put("zero width space", '\u200b')
+        .put("zero width non-joiner", '\u200c')
+        .put("zero width joiner", '\u200d')
+        .put("left to right mark", '\u200e')
+        .put("right to left mark", '\u200f')
         .put("line separator", '\u2028')
         .put("paragraph separator", '\u2029')
         .put("narrow no-break space", '\u202f')
         .put("medium mathematical space", '\u205f')
         .put("word joiner", '\u2060')
+        .put("function application", '\u2061')
+        .put("invisible times", '\u2062')
         .put("invisible separator", '\u2063')
+        .put("invisible plus", '\u2064')
+        .put("inhibit symmetric swapping", '\u206a')
+        .put("inhibit arabic form shaping", '\u206c')
+        .put("activate arabic form shaping", '\u206d')
+        .put("national digit shapes", '\u206e')
+        .put("nominal digit shapes", '\u206f')
+        .put("braille pattern blank", '\u2800')
         .put("ideographic space", '\u3000')
+        .put("hangul filler", '\u3164')
         .put("zero width no-break space", '\ufeff')
+        .put("halfwidth hangul filler", '\uffa0')
         .put("anchor fff9", '\ufff9')
         .put("interlinear annotation separator", '\ufffa')
         .put("terminator fffb", '\ufffb')
+        // Five digit unicode characters cannot be directly coded for in Java because characters in Java are 16
+        // bit. Instead you convert the character into two 4 digit characters. There is an online tool that can
+        // be used for conversion: http://www.russellcottrell.com/greek/utilities/SurrogatePairCalculator.htm
+        // For example the character '\u1d159' would become '\ud834\udd59'. But of course you are still only
+        // allowed to put a single 16 bit character into a char. So we'd have to match it on a two char string which
+        // requires that I rewrite the whole code. I don't want to do that. So I'm leaving these characters out.
+//        .put("musical symbol null notehead", '\u1d159')
+//        .put("musical symbol begin beam", '\u1d173')
+//        .put("musical symbol end beam", '\u1d174')
+//        .put("musical symbol begin tie", '\u1d175')
+//        .put("musical symbol end tie", '\u1d176')
+//        .put("musical symbol begin slur", '\u1d177')
+//        .put("musical symbol end slur", '\u1d178')
+//        .put("musical symbol begin phrase", '\u1d179')
+//        .put("musical symbol end phrase", '\u1d17a')
         .build();
 
     public static final Set<Character> ALL_WHITESPACE_CHARACTERS = new HashSet<>(WHITESPACE_CHARS.values());

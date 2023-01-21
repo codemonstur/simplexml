@@ -189,3 +189,12 @@ Java 13 adds an enhanced switch that can make a central part of the code prettie
 I'd like to use it but Java 13 is very new.
 
 At some point Java 8 will be so old supporting it is not necessary anymore.
+
+## Other
+
+Configure indent length
+Keep whitespace between nodes as textnodes
+Return whitespace in stream parser
+method evaluateXPath() on XmlElement
+method evaluateXPath() on XmlParser
+method domToXml(XmlElement, Path) in XmlParser
