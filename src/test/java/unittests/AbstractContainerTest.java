@@ -49,21 +49,21 @@ public class AbstractContainerTest {
 
     private final XmlParser parser = new XmlParser();
 
-    public static final String xml =
-            "<items>\n" +
-            "  <foo>\n" +
-            "    <Item>\n" +
-            "        <id>56789012</content_id>\n" +
-            "        <type>board</type>\n" +
-            "        <board_field>098765</board_field>\n" +
-            "    </Item>\n" +
-            "    <Item>\n" +
-            "        <id>1234</content_id>\n" +
-            "        <type>role</type>\n" +
-            "        <role_field>90000</role_field>\n" +
-            "    </Item>\n" +
-            "  </foo>\n" +
-            "</items>";
+    private static final String xml = """
+            <items>
+              <foo>
+                <Item>
+                    <id>56789012</content_id>
+                    <type>board</type>
+                    <board_field>098765</board_field>
+                </Item>
+                <Item>
+                    <id>1234</content_id>
+                    <type>role</type>
+                    <role_field>90000</role_field>
+                </Item>
+              </foo>
+            </items>""";
 
     @Test
     public void deserializeList() {
@@ -100,4 +100,5 @@ public class AbstractContainerTest {
         }
         return null;
     }
+
 }

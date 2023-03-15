@@ -117,6 +117,8 @@ public interface XmlReader extends AccessDeserializers {
                 case ENUM -> enumNodeToValue(toEnumType(f), toName(f), deWrap(selectedNode, f));
                 default -> {
                     final String name = toName(f);
+                    if (selectedNode == null) yield null;
+
                     final String value = selectedNode.attributes.get(name);
                     if (value != null) {
                         yield stringToValue(f.getType(), value);
@@ -187,6 +189,7 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     private Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
+        if (node == null) return null;
         final ObjectDeserializer conv = getDeserializer(type);
         if (conv == null) return null;
         final String value = node.attributes.get(name);

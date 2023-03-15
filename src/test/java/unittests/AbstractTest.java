@@ -11,27 +11,30 @@ import static org.junit.Assert.assertNotNull;
 
 public class AbstractTest {
 
-    private static final String ABSTRACT_CLASS_1 = "<targetedMessage>\n" +
-            "    <sender>external application</sender>\n" +
-            "    <payload class=\"class.path.from.external.application.Foo\">\n" +
-            "        <id>1</id>\n" +
-            "    </payload>\n" +
-            "</targetedMessage>";
+    private static final String ABSTRACT_CLASS_1 = """
+            <targetedMessage>
+                <sender>external application</sender>
+                <payload class="class.path.from.external.application.Foo">
+                    <id>1</id>
+                </payload>
+            </targetedMessage>""";
 
-    private static final String ABSTRACT_CLASS_2 = "<targetedMessage>\n" +
-            "    <sender>external application</sender>\n" +
-            "    <payload type=\"class.path.from.external.application.Foo\">\n" +
-            "        <id>1</id>\n" +
-            "    </payload>\n" +
-            "</targetedMessage>";
+    private static final String ABSTRACT_CLASS_2 = """
+            <targetedMessage>
+                <sender>external application</sender>
+                <payload type="class.path.from.external.application.Foo">
+                    <id>1</id>
+                </payload>
+            </targetedMessage>""";
 
-    private static final String ABSTRACT_CLASS_3 = "<targetedMessage>\n" +
-            "    <sender>external application</sender>\n" +
-            "    <payload>\n" +
-            "        <class>class.path.from.external.application.Foo</class>\n" +
-            "        <id>1</id>\n" +
-            "    </payload>\n" +
-            "</targetedMessage>";
+    private static final String ABSTRACT_CLASS_3 = """
+            <targetedMessage>
+                <sender>external application</sender>
+                <payload>
+                    <class>class.path.from.external.application.Foo</class>
+                    <id>1</id>
+                </payload>
+            </targetedMessage>""";
 
     @XmlName("targetedMessage")
     public class TargetedMessage1 {
@@ -41,6 +44,7 @@ public class AbstractTest {
         })
         Payload payload;
     }
+
     @XmlName("targetedMessage")
     public class TargetedMessage2 {
         String sender;
@@ -75,9 +79,7 @@ public class AbstractTest {
 
     @Test
     public void deserializeOne() {
-        final String pojoXml = ABSTRACT_CLASS_1;
-
-        final TargetedMessage1 pojo = parser.fromXml(pojoXml, TargetedMessage1.class);
+        final TargetedMessage1 pojo = parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage1.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
@@ -88,9 +90,7 @@ public class AbstractTest {
 
     @Test
     public void deserializeTwo() {
-        final String pojoXml = ABSTRACT_CLASS_2;
-
-        final TargetedMessage2 pojo = parser.fromXml(pojoXml, TargetedMessage2.class);
+        final TargetedMessage2 pojo = parser.fromXml(ABSTRACT_CLASS_2, TargetedMessage2.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
@@ -101,9 +101,7 @@ public class AbstractTest {
 
     @Test
     public void deserializeThree() {
-        final String pojoXml = ABSTRACT_CLASS_3;
-
-        final TargetedMessage3 pojo = parser.fromXml(pojoXml, TargetedMessage3.class);
+        final TargetedMessage3 pojo = parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage3.class);
 
         assertNotNull("No serialization response", pojo);
         assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
@@ -111,4 +109,5 @@ public class AbstractTest {
         assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
         assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
     }
+
 }
