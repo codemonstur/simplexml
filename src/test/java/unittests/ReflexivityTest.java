@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
-public class Reflexivity {
+public class ReflexivityTest {
 
     private final XmlParser parser = newXmlParser().shouldPrettyPrint(false).build();
 

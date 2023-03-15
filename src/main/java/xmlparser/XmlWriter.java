@@ -81,7 +81,6 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
     }
 
-
     private void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
         writeIndent(writer, indent);
         writeTag(writer, name, escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
