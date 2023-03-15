@@ -222,12 +222,12 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 writeIndent(writer, indent+INDENT);
                 writeOpeningTag(writer, toWrappedName(f));
                 writeNewLine(writer);
-                writeField(f.getType(), f, writer, toName(f), f.get(o), indent+INDENT+INDENT);
+                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent+INDENT+INDENT);
                 writeIndent(writer, indent+INDENT);
                 writeClosingTag(writer, toWrappedName(f));
                 writeNewLine(writer);
             } else {
-                writeField(f.getType(), f, writer, toName(f), f.get(o), indent+INDENT);
+                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent+INDENT);
             }
         }
         if (textNode != null) {
