@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 import static xmlparser.XmlParser.newXmlParser;
 
-public class CustomSerializers {
+public class CustomSerializersTest {
 
     private static class Container {
         final String name;

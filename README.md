@@ -10,8 +10,8 @@ After a number of bad experiences with XML parsing in Java I decided to write my
 This project has the following characteristics; correct XML parsing, small, few dependencies, 
 thread-safe, user friendly API, secure.
 
-Version 3.0.0 depends on Java 16. 
-For Java 8 support you have to use 2.9.0 or earlier.
+Version 3.x depends on Java 19. 
+For Java 8 support you have to use 2.x versions.
 
 ## How to use
 
@@ -62,6 +62,7 @@ There are more serialization options
 - Fields as attributes
 - Field as text node
 - Skipping fields
+- etc...
 
 For more documentation on serializing look in [src/docs/serialize.md](https://github.com/codemonstur/simplexml/tree/master/src/docs/serialize.md).
 
@@ -86,6 +87,9 @@ The deserializer will respect the same annotations as the serializer
 - Attributes
 - Text nodes
 - Skipped fields
+- etc...
+
+If there is a feature you would like to have, but doesn't exist, please let me know.
 
 ## License
 
