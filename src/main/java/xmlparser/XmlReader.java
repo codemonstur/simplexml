@@ -4,6 +4,7 @@ import xmlparser.annotations.*;
 import xmlparser.error.InvalidAnnotation;
 import xmlparser.error.InvalidObject;
 import xmlparser.error.InvalidXPath;
+import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
 import xmlparser.parsing.DomBuilder;
 import xmlparser.parsing.ObjectDeserializer;
@@ -15,9 +16,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.objenesis.ObjenesisHelper.newInstance;
 import static xmlparser.model.XmlElement.findChildForName;
+import static xmlparser.utils.Functions.isNullOrEmpty;
 import static xmlparser.utils.Reflection.*;
 import static xmlparser.utils.Validator.multipleAreNotNull;
 import static xmlparser.xpath.XPathExpression.newXPath;
@@ -60,8 +63,8 @@ public interface XmlReader extends AccessDeserializers {
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXTNODE -> textNodeToValue(f.getType(), selectedNode);
-                case ANNOTATED_ATTRIBUTE -> attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f));
+                case TEXTNODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
+                case ANNOTATED_ATTRIBUTE -> attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f));
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case ARRAY -> domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f));
@@ -108,8 +111,8 @@ public interface XmlReader extends AccessDeserializers {
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXTNODE -> textNodeToValue(f.getType(), selectedNode);
-                case ANNOTATED_ATTRIBUTE -> attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f));
+                case TEXTNODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
+                case ANNOTATED_ATTRIBUTE -> attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f));
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case ARRAY -> domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f));
@@ -142,9 +145,12 @@ public interface XmlReader extends AccessDeserializers {
         if (!isWrapped(field)) return element;
         return element.findChildForName(toWrappedName(field), null);
     }
-    private Object textNodeToValue(final Class<?> type, final XmlElement node) {
+    private Object textNodeToValue(final String pattern, final Class<?> type, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
-        return (conv != null) ? conv.convert(node) : null;
+        final Object value = (conv != null) ? conv.convert(node) : null;
+        if (!isNullOrEmpty(pattern) && value != null)
+            validatePattern(pattern, value);
+        return value;
     }
     private Object enumNodeToValue(final Class<? extends Enum> type, final String name, final XmlElement node) {
         final XmlElement text = findChildForName(node, name, null);
@@ -186,11 +192,13 @@ public interface XmlReader extends AccessDeserializers {
         return t;
     }
 
-    private Object attributeToValue(final Class<?> type, final String name, final XmlElement node) {
+    private Object attributeToValue(final String pattern, final Class<?> type, final String name, final XmlElement node) {
         final ObjectDeserializer conv = getDeserializer(type);
         if (conv == null) return null;
         final String value = node.attributes.get(name);
         if (value == null) return null;
+        if (!isNullOrEmpty(pattern))
+            validatePattern(pattern, value);
         return conv.convert(value);
     }
     private Object stringToValue(final Class<?> type, final String value) {
@@ -326,6 +334,14 @@ public interface XmlReader extends AccessDeserializers {
             map.put(convKey.convert(child.name), convVal.convert(child));
         }
         return map;
+    }
+
+    Pattern internPattern(String pattern);
+
+    private void validatePattern(final String pattern, final Object value) {
+        final Pattern p = internPattern(pattern);
+        if (!p.matcher(value.toString()).matches())
+            throw new InvalidXml("Pattern match failure for pattern '" + pattern + "'");
     }
 
     static XmlElement toXmlDom(final InputStreamReader in, final Trim trimmer, final UnEscape escaper) throws IOException {
