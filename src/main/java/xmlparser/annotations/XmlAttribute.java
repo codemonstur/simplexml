@@ -5,4 +5,6 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
-public @interface XmlAttribute { /* just a marker */ }
+public @interface XmlAttribute {
+    String pattern() default "";
+}

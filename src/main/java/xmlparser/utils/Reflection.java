@@ -193,6 +193,22 @@ public enum Reflection {;
         return field.getName();
     }
 
+    public static String toPattern(final Field field) {
+        if (field.isAnnotationPresent(XmlTextNode.class))
+            return field.getAnnotation(XmlTextNode.class).pattern();
+        if (field.isAnnotationPresent(XmlAttribute.class))
+            return field.getAnnotation(XmlAttribute.class).pattern();
+        throw new IllegalArgumentException("Pattern requested for field that doesn't have one " + field);
+    }
+    public static String toPattern(final RecordComponent field) {
+        if (field.isAnnotationPresent(XmlTextNode.class))
+            return field.getAnnotation(XmlTextNode.class).pattern();
+        if (field.isAnnotationPresent(XmlAttribute.class))
+            return field.getAnnotation(XmlAttribute.class).pattern();
+        throw new IllegalArgumentException("Pattern requested for field that doesn't have one " + field);
+    }
+
+
     public static Class<?> toClassOfCollection(final Field f) {
         final ParameterizedType stringListType = (ParameterizedType) f.getGenericType();
         return (Class<?>) stringListType.getActualTypeArguments()[0];

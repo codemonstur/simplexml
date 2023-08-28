@@ -13,9 +13,10 @@ import xmlparser.xpath.XPathExpression;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.newInputStream;
@@ -46,9 +47,13 @@ public final class XmlParser {
         this.charset = charset;
         this.compress = new XmlCompress() {};
         final var enumCache = new HashMap<Class<Enum>, Map<String, Enum>>();
+        final var patternMap = new HashMap<String, Pattern>();
         this.reader = new XmlReader() {
             public boolean isEnumCachingEnabled() {
                 return enableEnumCaching;
+            }
+            public Pattern internPattern(final String pattern) {
+                return patternMap.computeIfAbsent(pattern, Pattern::compile);
             }
             public Map<Class<Enum>, Map<String, Enum>> getEnumCache() {
                 return enumCache;
@@ -113,7 +118,7 @@ public final class XmlParser {
     public XmlElement fromXml(final String input) {
         try {
             return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // Not possible
             return null;
         }
