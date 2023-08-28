@@ -14,20 +14,22 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 public class ComplexTest {
 
     private static final ComplexPojo complex = newDefaultComplexPojo();
-    private static final String complexXml = "<complexpojo>\n" +
-            "  <name>complex</name>\n" +
-            "  <list>first</list>\n" +
-            "  <list>second</list>\n" +
-            "  <list>monkey</list>\n" +
-            "  <map>\n" +
-            "    <1>thumb</1>\n" +
-            "  </map>\n" +
-            "  <array>0.5</array>\n" +
-            "  <array>34.8</array>\n" +
-            "  <set>45.3</set>\n" +
-            "  <set>1234567.9</set>\n" +
-            "  <testenum>one</testenum>\n" +
-            "</complexpojo>\n";
+    private static final String complexXml = """
+            <complexpojo>
+              <name>complex</name>
+              <list>first</list>
+              <list>second</list>
+              <list>monkey</list>
+              <map>
+                <1>thumb</1>
+              </map>
+              <array>0.5</array>
+              <array>34.8</array>
+              <set>45.3</set>
+              <set>1234567.9</set>
+              <testenum>one</testenum>
+            </complexpojo>
+            """;
 
     private final XmlParser parser = new XmlParser();
 
@@ -56,4 +58,5 @@ public class ComplexTest {
 
         return new ComplexPojo("complex", list, map, array, set, SimpleEnum.one);
     }
+
 }

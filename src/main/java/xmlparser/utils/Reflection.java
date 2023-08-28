@@ -121,32 +121,32 @@ public enum Reflection {;
     }
 
     public static boolean isSimple(final Class<?> c) {
-        return c.isAssignableFrom(Double.class)
-            || c.isAssignableFrom(double.class)
-            || c.isAssignableFrom(Integer.class)
-            || c.isAssignableFrom(String.class)
-            || c.isAssignableFrom(int.class)
-            || c.isAssignableFrom(float.class)
-            || c.isAssignableFrom(Float.class)
-            || c.isAssignableFrom(byte.class)
-            || c.isAssignableFrom(Byte.class)
-            || c.isAssignableFrom(char.class)
-            || c.isAssignableFrom(Character.class)
-            || c.isAssignableFrom(short.class)
-            || c.isAssignableFrom(Short.class)
-            || c.isAssignableFrom(Long.class)
-            || c.isAssignableFrom(long.class)
-            || c.isAssignableFrom(boolean.class)
-            || c.isAssignableFrom(Boolean.class);
+        return c.equals(Double.class)
+            || c.equals(double.class)
+            || c.equals(Integer.class)
+            || c.equals(String.class)
+            || c.equals(int.class)
+            || c.equals(float.class)
+            || c.equals(Float.class)
+            || c.equals(byte.class)
+            || c.equals(Byte.class)
+            || c.equals(char.class)
+            || c.equals(Character.class)
+            || c.equals(short.class)
+            || c.equals(Short.class)
+            || c.equals(Long.class)
+            || c.equals(long.class)
+            || c.equals(boolean.class)
+            || c.equals(Boolean.class);
     }
     public static boolean isList(final Class<?> c) {
-        return c.isAssignableFrom(List.class);
+        return !c.equals(Object.class) && c.isAssignableFrom(List.class);
     }
     public static boolean isSet(final Class<?> c) {
-        return c.isAssignableFrom(Set.class);
+        return !c.equals(Object.class) && c.isAssignableFrom(Set.class);
     }
     public static boolean isMap(final Class<?> c) {
-        return c.isAssignableFrom(Map.class);
+        return !c.equals(Object.class) && c.isAssignableFrom(Map.class);
     }
     public static boolean isWrapped(final Field f) {
         return f.isAnnotationPresent(XmlWrapperTag.class);
@@ -177,6 +177,11 @@ public enum Reflection {;
         else return node.attributes.get(annotation.attribute());
     }
 
+    public static String toName(final Field field, final Object o) {
+        if (field.isAnnotationPresent(XmlNameFromClass.class))
+            return toName(o.getClass());
+        return toName(field);
+    }
     public static String toName(final Class<?> o) {
         if (!o.isAnnotationPresent(XmlName.class))
             return o.getSimpleName().toLowerCase();

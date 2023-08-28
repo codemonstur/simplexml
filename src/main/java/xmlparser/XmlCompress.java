@@ -12,9 +12,9 @@ import static xmlparser.utils.XmlParse.*;
 public interface XmlCompress {
 
     default String compressXml(final String input, final Trim trimmer) {
-        try ( final ByteArrayOutputStream out = new ByteArrayOutputStream()
-            ; final InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes(UTF_8)), UTF_8)
-            ; final OutputStreamWriter writer = new OutputStreamWriter(out, UTF_8)
+        try ( final var out = new ByteArrayOutputStream()
+            ; final var reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes(UTF_8)), UTF_8)
+            ; final var writer = new OutputStreamWriter(out, UTF_8)
             ) {
             compressXML(reader, writer, trimmer);
             return out.toString(UTF_8);
