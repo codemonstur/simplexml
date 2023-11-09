@@ -41,6 +41,8 @@ It's in maven central.
 
 The simplest case possible:
 
+    import xmlparser.XmlParser;
+
     public class MyObject {
         String name;
     }
@@ -48,8 +50,8 @@ The simplest case possible:
     MyObject object = new MyObject();
     object.name = "test";
 
-    final SimpleXml simple = new SimpleXml();
-    System.out.println(simple.toXml(object));
+    final XmlParser parser = new XmlParser();
+    System.out.println(parser.toXml(object));
 
 This code will output:
 
@@ -70,12 +72,14 @@ For more documentation on serializing look in [src/docs/serialize.md](https://gi
 
 The simplest case possible:
 
+    import xmlparser.XmlParser;
+
     public class MyObject {
         String name;
     }
 
-    final SimpleXml simple = new SimpleXml();
-    final MyObject object = simple.fromXml("<myobject><name>test</name></myobject>", MyObject.class);
+    final XmlParser parser = new XmlParser();
+    final MyObject object = parser.fromXml("<myobject><name>test</name></myobject>", MyObject.class);
     System.out.println(object.name);
 
 This code will output:
