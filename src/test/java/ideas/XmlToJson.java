@@ -3,16 +3,20 @@ package ideas;
 import xmlparser.XmlStreamReader;
 import xmlparser.parsing.EventParser;
 import xmlparser.utils.Escaping;
+import xmlparser.utils.IO;
 import xmlparser.utils.Trimming;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static xmlparser.utils.IO.newStreamReader;
 
 public class XmlToJson {
 
@@ -65,7 +69,7 @@ public class XmlToJson {
 
     public static void main(final String... args) throws IOException {
         // TODO support for arrays
-        XmlStreamReader.toXmlStream(new InputStreamReader(new ByteArrayInputStream(xml.getBytes(UTF_8))), new EventParser() {
+        XmlStreamReader.toXmlStream(newStreamReader(xml, UTF_8), new EventParser() {
             int indent = 0;
             String indentSpaces = "";
             boolean isRoot = true;
@@ -122,7 +126,7 @@ public class XmlToJson {
                     valueWasWritten = true;
                 }
             }
-        }, new Trimming.NativeTrimmer(), Escaping::unescapeXml);
+        }, false, new Trimming.NativeTrimmer(), Escaping::unescapeXml);
     }
 
     private static String newIndent(final int number) {

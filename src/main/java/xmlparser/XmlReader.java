@@ -89,8 +89,8 @@ public interface XmlReader extends AccessDeserializers {
 
         try {
             return canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
-        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException ignore) {
-            throw new SecurityException("Canonical constructor of record could not be invoked");
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new SecurityException("Canonical constructor of record could not be invoked", e);
         }
     }
 
@@ -347,9 +347,10 @@ public interface XmlReader extends AccessDeserializers {
             throw new InvalidXml("Pattern match failure for pattern '" + pattern + "'");
     }
 
-    static XmlElement toXmlDom(final InputStreamReader in, final Trim trimmer, final UnEscape escaper) throws IOException {
+    static XmlElement toXmlDom(final InputStreamReader in, final boolean conserveWhitespace,
+                               final Trim trimmer, final UnEscape escaper) throws IOException {
         final DomBuilder p = new DomBuilder();
-        XmlStreamReader.toXmlStream(in, p, trimmer, escaper);
+        XmlStreamReader.toXmlStream(in, p, conserveWhitespace, trimmer, escaper);
         return p.getRoot();
     }
 

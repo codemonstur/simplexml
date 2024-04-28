@@ -14,15 +14,17 @@ import static xmlparser.utils.XmlParse.*;
 
 public interface XmlStreamReader {
 
-    static void toXmlStream(final InputStreamReader in, final EventParser parser, final Trim trimmer, final UnEscape escaper) throws IOException {
+    static void toXmlStream(final InputStreamReader in, final EventParser parser, final boolean conserveWhitespace,
+                            final Trim trimmer, final UnEscape escaper) throws IOException {
         boolean isStart = true;
         String str; while ((str = readLine(in, XML_TAG_START)) != null) {
             final String text = trimmer.trim(str);
             if (!text.isEmpty()) {
                 if (isStart) throw new InvalidXml("XML contains non-whitespace characters before opening tag");
-                parser.someText(escaper.unescape(text));
+                parser.someText(escaper.unescape( conserveWhitespace ? str : text));
+            } else if (!isStart && conserveWhitespace) {
+                parser.someText(str);
             }
-            isStart = false;
 
             str = trimmer.trim(readLine(in, XML_TAG_END));
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
@@ -34,6 +36,8 @@ public interface XmlStreamReader {
             }
 
             if (str.charAt(0) == XML_PROLOG) continue;
+
+            isStart = false;
             if (str.charAt(0) == CHAR_FORWARD_SLASH) parser.endNode(false);
             else {
                 final String name = getNameOfTag(str);
@@ -58,9 +62,9 @@ public interface XmlStreamReader {
         final HashMap<String, String> attributes = new HashMap<>();
 
         while (!input.isEmpty()) {
-            int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
+            final int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startName == -1) break;
-            int equals = input.indexOf(CHAR_EQUALS, startName+1);
+            final int equals = input.indexOf(CHAR_EQUALS, startName+1);
             if (equals == -1) break;
 
             final String name = trimmer.trim(input.substring(startName, equals));

@@ -1,27 +1,27 @@
 package xmlparser;
 
 import xmlparser.error.InvalidXml;
+import xmlparser.utils.IO;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static xmlparser.utils.Constants.*;
+import static xmlparser.utils.IO.newStreamReader;
 import static xmlparser.utils.XmlParse.*;
 
 public interface XmlCompress {
 
     default String compressXml(final String input, final Trim trimmer) {
         try ( final var out = new ByteArrayOutputStream()
-            ; final var reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes(UTF_8)), UTF_8)
+            ; final var reader = newStreamReader(input, UTF_8)
             ; final var writer = new OutputStreamWriter(out, UTF_8)
             ) {
             compressXML(reader, writer, trimmer);
             return out.toString(UTF_8);
-        } catch (IOException e) {
-            // can't happen.
-            return null;
-        }
+        } catch (final IOException ignore) { return null; }
     }
 
     static void compressXML(final InputStreamReader in, final OutputStreamWriter out, final Trim trimmer) throws IOException {
