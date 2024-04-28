@@ -22,9 +22,9 @@ public class DomBuilder implements EventParser {
         this.current = this.current.parent;
     }
     public void someText(final String txt) {
-        if (txt == null || txt.isEmpty()) return;
+        if (txt == null) return;
 
-        this.current.children.add(new XmlTextElement(this.current, txt.trim()));
+        this.current.children.add(new XmlTextElement(this.current, txt));
     }
     public XmlElement getRoot() {
         return this.root;

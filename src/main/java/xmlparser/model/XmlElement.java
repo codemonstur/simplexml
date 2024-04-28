@@ -104,7 +104,12 @@ public class XmlElement {
             super(parent, null, null, null);
             this.text = text;
         }
-        
+
+        @Override
+        public String getText() {
+            return text;
+        }
+
         @Override
         public String toString() {
             return "XmlTextElement[" + text + "]";
