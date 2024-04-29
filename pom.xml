@@ -35,9 +35,23 @@
     <properties>
         <module.name>com.github.codemonstur.simplexml</module.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.version>3.5.0</maven.version>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <maven.compiler.release>19</maven.compiler.release>
+
+        <version.library.objenesis>3.3</version.library.objenesis>
+        <version.library.junit>4.13.2</version.library.junit>
+        <version.library.unitils-core>3.4.6</version.library.unitils-core>
+        <version.library.commons-text>1.12.0</version.library.commons-text>
+
+        <version.plugin.gpg>3.0.1</version.plugin.gpg>
+        <version.plugin.enforcer>3.4.1</version.plugin.enforcer>
+        <version.plugin.jar>3.3.0</version.plugin.jar>
+        <version.plugin.nexus>1.6.13</version.plugin.nexus>
+        <version.plugin.source>3.3.0</version.plugin.source>
+        <version.plugin.javadoc>3.5.0</version.plugin.javadoc>
     </properties>
 
     <distributionManagement>
@@ -67,7 +81,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>${version.plugin.gpg}</version>
                         <configuration>
                             <passphrase>${gpg.passphrase}</passphrase>
                         </configuration>
@@ -88,10 +102,31 @@
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${version.plugin.enforcer}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals><goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${maven.version}</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${version.plugin.jar}</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -104,7 +139,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <version>${version.plugin.nexus}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>sonatype-nexus-staging</serverId>
@@ -116,7 +151,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${version.plugin.source}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -128,7 +163,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>${version.plugin.javadoc}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -145,27 +180,27 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>3.3</version>
+            <version>${version.library.objenesis}</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${version.library.junit}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.unitils</groupId>
             <artifactId>unitils-core</artifactId>
-            <version>3.4.6</version>
+            <version>${version.library.unitils-core}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.10.0</version>
+            <version>${version.library.commons-text}</version>
             <scope>test</scope>
         </dependency>
 
