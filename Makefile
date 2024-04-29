@@ -24,8 +24,8 @@ build:
 	@mvn -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -DskipTests=true clean package
 
 check-versions:
-	@mvn versions:display-dependency-updates
-	@mvn versions:display-plugin-updates
+	@mvn versions:display-dependency-updates -Dorg.slf4j.simpleLogger.defaultLogLevel=info
+	@mvn versions:display-plugin-updates -Dorg.slf4j.simpleLogger.defaultLogLevel=info
 
 release-notes:
 	@echo "[$(NAME)] Writing release notes to src/docs/releases/release-$(VERSION).txt"
