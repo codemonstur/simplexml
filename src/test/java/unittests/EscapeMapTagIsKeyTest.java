@@ -5,10 +5,12 @@ import xmlparser.XmlParser;
 import xmlparser.annotations.XmlMapTagIsKey;
 import xmlparser.annotations.XmlMapWithAttributes;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static utils.Functions.mapOf;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class EscapeMapTagIsKeyTest {
@@ -27,7 +29,7 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void serializeMapWithDangerousChars() {
-        final PojoMap inputPojo = new PojoMap(Map.of("key", "<>&\"'"));
+        final PojoMap inputPojo = new PojoMap(mapOf("key", "<>&\"'"));
         final String expected = "<pojomap>\n" +
                 "  <map>\n" +
                 "    <key>&lt;&gt;&amp;&quot;&apos;</key>\n" +
@@ -47,7 +49,7 @@ public class EscapeMapTagIsKeyTest {
                 "    <key>&lt;&gt;&amp;&quot;&apos;</key>\n" +
                 "  </map>\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(Map.of("key", "<>&\"'"));
+        final PojoMap expected = new PojoMap(mapOf("key", "<>&\"'"));
 
         final PojoMap actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
@@ -57,7 +59,7 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void serializeMapUTF8Characters() {
-        final PojoMap inputPojo = new PojoMap(Map.of("key", "ƑƟƠƄǠȒ"));
+        final PojoMap inputPojo = new PojoMap(mapOf("key", "ƑƟƠƄǠȒ"));
         final String expected = "<pojomap>\n" +
                 "  <map>\n" +
                 "    <key>&#401;&#415;&#416;&#388;&#480;&#530;</key>\n" +
@@ -72,7 +74,7 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void dontSerializeMapUTF8Characters() {
-        final PojoMap inputPojo = new PojoMap(Map.of("key", "ƑƟƠƄǠȒ"));
+        final PojoMap inputPojo = new PojoMap(mapOf("key", "ƑƟƠƄǠȒ"));
         final String expected = "<pojomap>\n" +
                 "  <map>\n" +
                 "    <key>ƑƟƠƄǠȒ</key>\n" +
@@ -92,7 +94,7 @@ public class EscapeMapTagIsKeyTest {
                 "    <key>&#401;&#415;&#416;&#388;&#480;&#530;</key>\n" +
                 "  </map>\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(Map.of("key", "ƑƟƠƄǠȒ"));
+        final PojoMap expected = new PojoMap(mapOf("key", "ƑƟƠƄǠȒ"));
 
         final PojoMap actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
 
