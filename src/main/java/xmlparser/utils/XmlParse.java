@@ -34,7 +34,7 @@ public enum XmlParse {;
 
         // read the first few bytes that can't match yet
         for (int i = 0; i < end.length(); i++) {
-            int data = in.read();
+            final int data = in.read();
             if (data == -1) return null;
             chars.append((char) data);
         }

@@ -32,20 +32,20 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         final StringWriter output = new StringWriter();
 
         try { writeObject(output, toName(o.getClass()), o, EMPTY); }
-        catch (IllegalArgumentException | IllegalAccessException | IOException e) { /* can't happen */ }
+        catch (final IllegalArgumentException | IllegalAccessException | IOException ignored) { /* can't happen */ }
 
         return output.toString();
     }
     default void toXml(final Object o, final Writer writer) throws IOException {
         try { writeObject(writer, toName(o.getClass()), o, EMPTY); }
-        catch (IllegalArgumentException | IllegalAccessException e) { /* can't happen */ }
+        catch (final IllegalArgumentException | IllegalAccessException ignored) { /* can't happen */ }
     }
 
     default String domToXml(final XmlElement node) {
         final StringWriter output = new StringWriter();
 
         try { domToXml(node, output); }
-        catch (IOException e) { /* can't happen */ }
+        catch (final IOException ignored) { /* can't happen */ }
 
         return output.toString();
     }
@@ -60,7 +60,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             writeNewLine(writer);
         } else if (!node.hasNonTextChildren() && node.attributes.isEmpty()) {
             writeIndent(writer, indent);
-            writeOpeningAndClosingTag(writer, node.name, text);
+            writeOpeningAndClosingTag(writer, node.name, escapeXml(text, shouldEncodeUTF8()));
             writeNewLine(writer);
         } else {
             writeIndent(writer, indent);
@@ -216,8 +216,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writeNewLine(writer);
 
         for (final Field f : childNodes) {
-            boolean isWrapped = isWrapped(f);
-            if (isWrapped) {
+            if (isWrapped(f)) {
                 writeIndent(writer, indent+INDENT);
                 writeOpeningTag(writer, toWrappedName(f));
                 writeNewLine(writer);
