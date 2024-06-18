@@ -1,6 +1,7 @@
 package unittests;
 
 import model.Pojo;
+import model.PojoWithAttribute;
 import org.junit.Test;
 import xmlparser.XmlParser;
 

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static utils.Functions.mapOf;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class EscapeMapWithAttributesTest {
@@ -30,7 +31,7 @@ public class EscapeMapWithAttributesTest {
 
     @Test
     public void serializeMap1WithDangerousChars() {
-        final PojoMap inputPojo = new PojoMap(Map.of("<>&\"'", "<>&\"'"), null);
+        final PojoMap inputPojo = new PojoMap(mapOf("<>&\"'", "<>&\"'"), null);
         final String expected = "<pojomap>\n" +
                 "  <map1 key=\"&lt;&gt;&amp;&quot;&apos;\">&lt;&gt;&amp;&quot;&apos;</map1>\n" +
                 "</pojomap>\n";
@@ -43,7 +44,7 @@ public class EscapeMapWithAttributesTest {
 
     @Test
     public void serializeMap2WithDangerousChars() {
-        final PojoMap inputPojo = new PojoMap(null, Map.of("<>&\"'", "<>&\"'"));
+        final PojoMap inputPojo = new PojoMap(null, mapOf("<>&\"'", "<>&\"'"));
         final String expected = "<pojomap>\n" +
                 "  <map2 key=\"&lt;&gt;&amp;&quot;&apos;\" value=\"&lt;&gt;&amp;&quot;&apos;\" />\n" +
                 "</pojomap>\n";
@@ -59,7 +60,7 @@ public class EscapeMapWithAttributesTest {
         final String inputXml = "<pojomap>\n" +
                 "  <map1 key=\"&lt;&gt;&amp;&quot;&apos;\">&lt;&gt;&amp;&quot;&apos;</map1>\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(Map.of("<>&\"'", "<>&\"'"), null);
+        final PojoMap expected = new PojoMap(mapOf("<>&\"'", "<>&\"'"), null);
 
         final PojoMap actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
@@ -72,7 +73,7 @@ public class EscapeMapWithAttributesTest {
         final String inputXml = "<pojomap>\n" +
                 "  <map2 key=\"&lt;&gt;&amp;&quot;&apos;\" value=\"&lt;&gt;&amp;&quot;&apos;\" />\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(null, Map.of("<>&\"'", "<>&\"'"));
+        final PojoMap expected = new PojoMap(null, mapOf("<>&\"'", "<>&\"'"));
 
         final PojoMap actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
@@ -82,7 +83,7 @@ public class EscapeMapWithAttributesTest {
 
     @Test
     public void serializeMap1UTF8Characters() {
-        final PojoMap inputPojo = new PojoMap(Map.of("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"), null);
+        final PojoMap inputPojo = new PojoMap(mapOf("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"), null);
         final String expected = "<pojomap>\n" +
                 "  <map1 key=\"&#401;&#415;&#416;&#388;&#480;&#530;\">&#401;&#415;&#416;&#388;&#480;&#530;</map1>\n" +
                 "</pojomap>\n";
@@ -95,7 +96,7 @@ public class EscapeMapWithAttributesTest {
 
     @Test
     public void dontSerializeMap1UTF8Characters() {
-        final PojoMap inputPojo = new PojoMap(Map.of("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"), null);
+        final PojoMap inputPojo = new PojoMap(mapOf("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"), null);
         final String expected = "<pojomap>\n" +
                 "  <map1 key=\"ƑƟƠƄǠȒ\">ƑƟƠƄǠȒ</map1>\n" +
                 "</pojomap>\n";
@@ -111,7 +112,7 @@ public class EscapeMapWithAttributesTest {
         final String inputXml = "<pojomap>\n" +
                 "  <map1 key=\"&#401;&#415;&#416;&#388;&#480;&#530;\">&#401;&#415;&#416;&#388;&#480;&#530;</map1>\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(Map.of("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"), null);
+        final PojoMap expected = new PojoMap(mapOf("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"), null);
 
         final PojoMap actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
 
@@ -121,7 +122,7 @@ public class EscapeMapWithAttributesTest {
 
     @Test
     public void serializeMap2UTF8Characters() {
-        final PojoMap inputPojo = new PojoMap(null, Map.of("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"));
+        final PojoMap inputPojo = new PojoMap(null, mapOf("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"));
         final String expected = "<pojomap>\n" +
                 "  <map2 key=\"&#401;&#415;&#416;&#388;&#480;&#530;\" value=\"&#401;&#415;&#416;&#388;&#480;&#530;\" />\n" +
                 "</pojomap>\n";
@@ -134,7 +135,7 @@ public class EscapeMapWithAttributesTest {
 
     @Test
     public void dontSerializeMap2UTF8Characters() {
-        final PojoMap inputPojo = new PojoMap(null, Map.of("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"));
+        final PojoMap inputPojo = new PojoMap(null, mapOf("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"));
         final String expected = "<pojomap>\n" +
                 "  <map2 key=\"ƑƟƠƄǠȒ\" value=\"ƑƟƠƄǠȒ\" />\n" +
                 "</pojomap>\n";
@@ -150,7 +151,7 @@ public class EscapeMapWithAttributesTest {
         final String inputXml = "<pojomap>\n" +
                 "  <map2 key=\"&#401;&#415;&#416;&#388;&#480;&#530;\" value=\"&#401;&#415;&#416;&#388;&#480;&#530;\" />\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(null, Map.of("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"));
+        final PojoMap expected = new PojoMap(null, mapOf("ƑƟƠƄǠȒ", "ƑƟƠƄǠȒ"));
 
         final PojoMap actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
 

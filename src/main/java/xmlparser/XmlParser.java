@@ -106,7 +106,7 @@ public final class XmlParser {
     public XmlElement fromXml(final String input) {
         try {
             return fromXml(new ByteArrayInputStream(input.getBytes(charset)));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // Not possible
             return null;
         }
