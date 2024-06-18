@@ -69,9 +69,9 @@ public interface XmlCompress {
     static void parseAttributes(String input, final OutputStreamWriter out, final Trim trimmer) throws IOException {
 
         while (!input.isEmpty()) {
-            int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
+            final int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startName == -1) break;
-            int equals = input.indexOf(CHAR_EQUALS, startName+1);
+            final int equals = input.indexOf(CHAR_EQUALS, startName+1);
             if (equals == -1) break;
 
             final String name = trimmer.trim(input.substring(startName, equals));
