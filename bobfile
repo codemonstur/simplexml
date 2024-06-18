@@ -5,7 +5,7 @@ packaging: jar
 enablePreview: false
 release: 19
 dependencies:
-  - repository: org.objenesis:objenesis:3.3
+  - repository: org.objenesis:objenesis:3.4
   - repository: junit:junit:4.13.2
     scope: test
   - repository: org.unitils:unitils-core:3.4.6

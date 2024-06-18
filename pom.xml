@@ -3,7 +3,7 @@
 
     <groupId>com.github.codemonstur</groupId>
     <artifactId>simplexml</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A clean and simple XML parser, serializer, and deserializer.</description>
@@ -41,7 +41,7 @@
         <maven.compiler.target>19</maven.compiler.target>
         <maven.compiler.release>19</maven.compiler.release>
 
-        <version.library.objenesis>3.3</version.library.objenesis>
+        <version.library.objenesis>3.4</version.library.objenesis>
         <version.library.junit>4.13.2</version.library.junit>
         <version.library.unitils-core>3.4.6</version.library.unitils-core>
         <version.library.commons-text>1.12.0</version.library.commons-text>
