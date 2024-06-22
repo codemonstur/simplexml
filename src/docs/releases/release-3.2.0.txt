@@ -1,0 +1,5 @@
+3.2.0
+
+Added HTML escaping
+Expanded HTML unescaping
+Fixed bug in dom pretty printing
