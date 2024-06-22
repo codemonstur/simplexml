@@ -9,8 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Map.entry;
-import static java.util.Map.ofEntries;
 
 public enum Constants {;
 
@@ -121,7 +119,7 @@ public enum Constants {;
         final var hexFormat = HexFormat.of();
         final var map = new LinkedHashMap<String, String>();
 
-        final var in = Constants.class.getResourceAsStream("/named-entities-map");
+        final var in = Constants.class.getResourceAsStream("/xmlparser/named-entities-map");
         if (in == null) throw new IllegalStateException("Missing named entities map");
 
         try (final var reader = new BufferedReader(new InputStreamReader(in))) {
