@@ -27,6 +27,24 @@ There are also a number of small example programs in [src/test/java/example](htt
 * [RawStream.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/RawStream.java)
 * [Serialize.java](https://github.com/codemonstur/simplexml/blob/master/src/test/java/example/Serialize.java)
 
+## Implemented annotations
+
+- [@XmlAbstractClass](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlAbstractClass.java)
+- [@XmlAttribute](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlAttribute.java)
+- [@XmlEnumValue](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlEnumValue.java)
+- [@XmlFieldDeserializer](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlFieldDeserializer.java)
+- [@XmlMapTagIsKey](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlMapTagIsKey.java)
+- [@XmlMapWithAttributes](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlMapWithAttributes.java)
+- [@XmlMapWithChildNodes](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlMapWithChildNodes.java)
+- [@XmlName](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlName.java)
+- [@XmlNameFromClass](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlNameFromClass.java)
+- [@XmlNoExport](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlNoExport.java)
+- [@XmlNoImport](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlNoImport.java)
+- [@XmlObjectValidator](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlObjectValidator.java)
+- [@XmlPath](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlPath.java)
+- [@XmlTextNode](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlTextNode.java)
+- [@XmlWrapperTag](https://github.com/codemonstur/simplexml/blob/master/src/main/java/xmlparser/annotations/XmlWrapperTag.java)
+
 ## How to get
 
 It's in maven central.
@@ -34,7 +52,7 @@ It's in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
     </dependency>
 
 ### Serializing
