@@ -17,65 +17,66 @@ public class SimpleTest {
 
     @Test
     public void deserializeClass() {
-        final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
+        final var input = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
-        final Pojo pojo = parser.fromXml(pojoXml, Pojo.class);
+        final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Pojo has the wrong name", "Hello", actual.name);
     }
 
     @Test
     public void deserializeShort() {
-        final String pojoXml = "<pojo><name>Hello</name></pojo>";
+        final var input = "<pojo><name>Hello</name></pojo>";
 
-        final Pojo pojo = parserShort.fromXml(pojoXml, Pojo.class);
+        final var actual = parserShort.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Pojo has the wrong name", "Hello", actual.name);
     }
 
     @Test
     public void serializeClass() {
-        final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
-        final Pojo pojo = new Pojo("Hello");
+        final var input = new Pojo("Hello");
+        final var expected = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
-        final String xml = parser.toXml(pojo);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
     @Test
     public void serializeDom() {
-        final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
-        final XmlElement dom = newElement("pojo").child(newElement("name").text("Hello")).build();
+        final var input = newElement("pojo").child(newElement("name").text("Hello")).build();
+        final var expected = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
-        final String xml = parser.domToXml(dom);
+        final var actual = parser.domToXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
     @Test
     public void serializeShort() {
-        final String pojoXml = "<pojo><name>Hello</name></pojo>";
-        final Pojo pojo = new Pojo("Hello");
+        final var input = new Pojo("Hello");
+        final var expected = "<pojo><name>Hello</name></pojo>";
 
-        final String xml = parserShort.toXml(pojo);
+        final var actual = parserShort.toXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
     @Test
     public void serializeDomShort() {
-        final String pojoXml = "<pojo><name>Hello</name></pojo>";
-        final XmlElement dom = newElement("pojo").child(newElement("name").text("Hello")).build();
+        final var input = newElement("pojo").child(newElement("name").text("Hello")).build();
+        final var expected = "<pojo><name>Hello</name></pojo>";
 
-        final String xml = parserShort.domToXml(dom);
+        final var actual = parserShort.domToXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
+
 }

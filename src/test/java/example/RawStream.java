@@ -1,12 +1,6 @@
 package example;
 
 import xmlparser.XmlParser;
-import xmlparser.utils.Interfaces.CheckedIterator;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class RawStream {
 

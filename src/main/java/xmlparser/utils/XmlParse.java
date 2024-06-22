@@ -63,6 +63,7 @@ public enum XmlParse {;
         }
         return -1;
     }
+
     public static int indexOfWhitespaceChar(final String input, final int offset, final Trim trimmer) {
         for (int i = offset; i < input.length(); i++) {
             final char at = input.charAt(i);

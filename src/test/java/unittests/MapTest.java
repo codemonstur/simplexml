@@ -3,6 +3,9 @@ package unittests;
 import model.MapPojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
+import xmlparser.annotations.XmlMapTagIsKey;
+import xmlparser.annotations.XmlMapWithAttributes;
+import xmlparser.error.InvalidAnnotation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +13,15 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static xmlparser.model.XmlElement.newElement;
 
 public class MapTest {
+
+    private static class InvalidPojo {
+        @XmlMapTagIsKey
+        @XmlMapWithAttributes(keyName = "key")
+        private Map<String, String> map;
+    }
 
     private static final MapPojo map = newDefaultMapPojo();
     private static final String mapXml =
@@ -40,18 +50,29 @@ public class MapTest {
 
     @Test
     public void deserialize() {
-        final MapPojo pojo = parser.fromXml(mapXml, MapPojo.class);
+        final var actual = parser.fromXml(mapXml, MapPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertReflectionEquals(newDefaultMapPojo(), pojo);
+        assertNotNull("Pojo is null", actual);
+        assertReflectionEquals(newDefaultMapPojo(), actual);
     }
 
     @Test
     public void serialize() {
-        final String xml = parser.toXml(map);
+        final var actual = parser.toXml(map);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", mapXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", mapXml, actual);
+    }
+
+    @Test(expected = InvalidAnnotation.class)
+    public void twoMapTagsThrowsExceptionXml() {
+        parser.fromXml("<invalidpojo><map></map></invalidpojo>", InvalidPojo.class);
+    }
+
+    @Test(expected = InvalidAnnotation.class)
+    public void twoMapTagsThrowsExceptionDom() {
+        final var xml = newElement("invalidpojo").child(newElement("map")).build();
+        parser.fromXml(xml, InvalidPojo.class);
     }
 
     private static MapPojo newDefaultMapPojo() {

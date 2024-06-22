@@ -67,30 +67,30 @@ public class AbstractContainerTest {
 
     @Test
     public void deserializeList() {
-        final ContainerList pojo = parser.fromXml(xml, ContainerList.class);
+        final var actual = parser.fromXml(xml, ContainerList.class);
 
-        assertNotNull("No serialization response", pojo);
-        assertNotNull("Missing 'items' field", pojo.items);
-        assertEquals("List item 0 has wrong type", pojo.items.get(0).getClass(), Foo.class);
-        assertEquals("List item 1 has wrong type", pojo.items.get(1).getClass(), Bar.class);
-        assertEquals("Foo does not have 'board_field' set", ((Foo)pojo.items.get(0)).board_field, "098765");
-        assertEquals("Bar does not have 'role_field' set", ((Bar)pojo.items.get(1)).role_field, "90000");
+        assertNotNull("No serialization response", actual);
+        assertNotNull("Missing 'items' field", actual.items);
+        assertEquals("List item 0 has wrong type", Foo.class, actual.items.get(0).getClass());
+        assertEquals("List item 1 has wrong type", Bar.class, actual.items.get(1).getClass());
+        assertEquals("Foo does not have 'board_field' set", "098765", ((Foo)actual.items.get(0)).board_field);
+        assertEquals("Bar does not have 'role_field' set", "90000", ((Bar)actual.items.get(1)).role_field);
     }
 
     @Test
     public void deserializeSet() {
-        final ContainerSet pojo = parser.fromXml(xml, ContainerSet.class);
+        final var actual = parser.fromXml(xml, ContainerSet.class);
 
-        assertNotNull("No serialization response", pojo);
-        assertNotNull("Missing 'items' field", pojo.items);
-        assertEquals("Invalid set size", 2, pojo.items.size());
-        final Foo foo = findFirstItemOfType(pojo.items, Foo.class);
+        assertNotNull("No serialization response", actual);
+        assertNotNull("Missing 'items' field", actual.items);
+        assertEquals("Invalid set size", 2, actual.items.size());
+        final Foo foo = findFirstItemOfType(actual.items, Foo.class);
         assertNotNull("Missing 'foo' instance", foo);
-        assertEquals("Foo does not have 'board_field' set", foo.board_field, "098765");
+        assertEquals("Foo does not have 'board_field' set", "098765", foo.board_field);
 
-        final Bar bar = findFirstItemOfType(pojo.items, Bar.class);
+        final Bar bar = findFirstItemOfType(actual.items, Bar.class);
         assertNotNull("Missing 'bar' instance", bar);
-        assertEquals("Bar does not have 'role_field' set", bar.role_field, "90000");
+        assertEquals("Bar does not have 'role_field' set", "90000", bar.role_field);
     }
 
     private static <T> T findFirstItemOfType(final Set<?> set, final Class<T> type) {

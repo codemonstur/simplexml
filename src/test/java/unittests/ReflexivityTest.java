@@ -15,12 +15,12 @@ public class ReflexivityTest {
 
     @Test
     public void reflexiveEnum() {
-        final EnumPojo pojo = new EnumPojo(SimpleEnum.one);
+        final var pojo = new EnumPojo(SimpleEnum.one);
 
-        final EnumPojo result = parser.fromXml(parser.toXml(pojo), EnumPojo.class);
+        final var actual = parser.fromXml(parser.toXml(pojo), EnumPojo.class);
 
-        assertNotNull("No deserialization response", result);
-        assertEquals("Invalid serialized output", pojo.test, result.test);
+        assertNotNull("No deserialization response", actual);
+        assertEquals("Invalid serialized output", pojo.test, actual.test);
     }
 
 }

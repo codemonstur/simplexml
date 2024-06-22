@@ -13,19 +13,19 @@ public class ValidatorTest {
 
     @Test
     public void deserializeValid() {
-        final String pojoXml = "<testablepojo>\n  <name>Hello</name>\n</testablepojo>\n";
+        final var input = "<testablepojo>\n  <name>Hello</name>\n</testablepojo>\n";
 
-        final ValidatorPojo pojo = parser.fromXml(pojoXml, ValidatorPojo.class);
+        final var actual = parser.fromXml(input, ValidatorPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Pojo has the wrong name", "Hello", actual.name);
     }
 
     @Test(expected = InvalidObject.class)
     public void deserializeInvalid() {
-        final String pojoXml = "<testablepojo>\n  <name>invalid</name>\n</testablepojo>\n";
+        final var input = "<testablepojo>\n  <name>invalid</name>\n</testablepojo>\n";
 
-        parser.fromXml(pojoXml, ValidatorPojo.class);
+        parser.fromXml(input, ValidatorPojo.class);
 
         fail("Invalid object was created");
     }

@@ -5,7 +5,6 @@ import xmlparser.annotations.XmlAbstractClass.TypeMap;
 import xmlparser.error.AssignmentFailure;
 import xmlparser.error.InvalidAnnotation;
 import xmlparser.model.XmlElement;
-import xmlparser.utils.Interfaces.AccessSerializers;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -19,15 +18,10 @@ public enum Reflection {;
     // I would like to define T as 'T extends Record', haven't figured out how to get the generics to
     // understand what type I have. The XmlReader calls this using a Class<?> that has been checked with
     // an if. But how to upcast after that if?
-    public static <T> Constructor<T> canonicalConstructorOfRecord(final Class<T> recordClass) throws SecurityException {
-        try {
-            final var componentTypes = Arrays.stream(recordClass.getRecordComponents())
-                .map(RecordComponent::getType).toArray(Class<?>[]::new);
-            return recordClass.getDeclaredConstructor(componentTypes);
-        } catch (final NoSuchMethodException ignore) {
-            // Not possible, record is guaranteed to have this constructor
-            throw new IllegalArgumentException("A record class was found without a canonical constructor");
-        }
+    public static <T> Constructor<T> canonicalConstructorOfRecord(final Class<T> recordClass) throws SecurityException, NoSuchMethodException {
+        final var componentTypes = Arrays.stream(recordClass.getRecordComponents())
+            .map(RecordComponent::getType).toArray(Class<?>[]::new);
+        return recordClass.getDeclaredConstructor(componentTypes);
     }
 
     public static Field determineTypeOfFields(final Class<?> clazz, final Object o, final List<Field> attributes
@@ -171,10 +165,12 @@ public enum Reflection {;
     private static String findAbstractTypeName(final XmlAbstractClass annotation, final XmlElement node) {
         if (!annotation.tag().isEmpty()) {
             final XmlElement child = findChildForName(node, annotation.tag(), null);
-            if (child == null) throw new InvalidAnnotation(format("Missing tag %s in element %s", annotation.tag(), node.name));
+            if (child == null) throw new InvalidAnnotation(format("Missing tag '%s' in element '%s'", annotation.tag(), node.name));
             return child.getText();
         }
-        else return node.attributes.get(annotation.attribute());
+        final var attribute = node.attributes.get(annotation.attribute());
+        if (attribute == null) throw new InvalidAnnotation(format("Missing attribute '%s' in element '%s'", annotation.attribute(), node.name));
+        return attribute;
     }
 
     public static String toName(final Field field, final Object o) {

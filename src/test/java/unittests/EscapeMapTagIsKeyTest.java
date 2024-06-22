@@ -27,14 +27,14 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void serializeMapWithDangerousChars() {
-        final PojoMap inputPojo = new PojoMap(Map.of("key", "<>&\"'"));
-        final String expected = "<pojomap>\n" +
+        final var inputPojo = new PojoMap(Map.of("key", "<>&\"'"));
+        final var expected = "<pojomap>\n" +
                 "  <map>\n" +
                 "    <key>&lt;&gt;&amp;&quot;&apos;</key>\n" +
                 "  </map>\n" +
                 "</pojomap>\n";
 
-        final String actual = parserDefault.toXml(inputPojo);
+        final var actual = parserDefault.toXml(inputPojo);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected, actual);
@@ -42,14 +42,14 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void deserializeMapWithEscapedChars() {
-        final String inputXml = "<pojomap>\n" +
+        final var inputXml = "<pojomap>\n" +
                 "  <map>\n" +
                 "    <key>&lt;&gt;&amp;&quot;&apos;</key>\n" +
                 "  </map>\n" +
                 "</pojomap>\n";
-        final PojoMap expected = new PojoMap(Map.of("key", "<>&\"'"));
+        final var expected = new PojoMap(Map.of("key", "<>&\"'"));
 
-        final PojoMap actual = parserDefault.fromXml(inputXml, PojoMap.class);
+        final var actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected.map.get("key"), actual.map.get("key"));

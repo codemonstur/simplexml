@@ -8,8 +8,8 @@ import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
 import xmlparser.parsing.DomBuilder;
 import xmlparser.parsing.ObjectDeserializer;
+import xmlparser.utils.AccessDeserializers;
 import xmlparser.utils.Escaping.UnEscape;
-import xmlparser.utils.Interfaces.AccessDeserializers;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
@@ -89,7 +89,7 @@ public interface XmlReader extends AccessDeserializers {
 
         try {
             return canonicalConstructorOfRecord(clazz).newInstance(fieldValues);
-        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new SecurityException("Canonical constructor of record could not be invoked", e);
         }
     }

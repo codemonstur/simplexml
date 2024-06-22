@@ -13,29 +13,29 @@ public class NullTest {
 
     @Test
     public void serializeNulls() {
-        final String pojoXml = "<simplepojo />";
-        final SimplePojo pojo = new SimplePojo(null, null, null, null, null, null, null);
+        final var input = new SimplePojo(null, null, null, null, null, null, null);
+        final var expected = "<simplepojo />";
 
-        final String xml = parser.toXml(pojo);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
     @Test
     public void deserializeNulls() {
-        final String pojoXml = "<simplepojo><integer/></simplepojo>";
+        final var input = "<simplepojo><integer/></simplepojo>";
 
-        final SimplePojo pojo = parser.fromXml(pojoXml, SimplePojo.class);
+        final var actual = parser.fromXml(input, SimplePojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertNull("Boolean is not null", pojo.booleans);
-        assertNull("Byte is not null", pojo.bytes);
-        assertNull("Character is not null", pojo.character);
-        assertNull("String is not null", pojo.string);
-        assertNull("Short is not null", pojo.shorts);
-        assertNull("Long is not null", pojo.longs);
-        assertNull("Integer is not null", pojo.integer);
+        assertNotNull("Pojo is null", actual);
+        assertNull("Boolean is not null", actual.booleans);
+        assertNull("Byte is not null", actual.bytes);
+        assertNull("Character is not null", actual.character);
+        assertNull("String is not null", actual.string);
+        assertNull("Short is not null", actual.shorts);
+        assertNull("Long is not null", actual.longs);
+        assertNull("Integer is not null", actual.integer);
     }
 
 }

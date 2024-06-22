@@ -8,9 +8,6 @@ import java.util.List;
 import static xmlparser.utils.Constants.*;
 import static xmlparser.xpath.Predicate.parsePredicate;
 
-/**
- * Adapted from xml-lif (https://github.com/liflab/xml-lif) by Sylvain Hallé
- */
 public class Segment {
 
 	public final String elementName;

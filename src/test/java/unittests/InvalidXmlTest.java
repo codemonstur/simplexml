@@ -27,10 +27,22 @@ public class InvalidXmlTest {
 
     @Test
     public void lenientWhitespaceAtStart() {
-        final XmlElement element = lenient.fromXml("\ufeff \u205f \u180e <tag></tag>");
+        final var actual = lenient.fromXml("\ufeff \u205f \u180e <tag></tag>");
 
-        assertNotNull(element);
-        assertEquals("Name of tag is invalid", "tag", element.name);
+        assertNotNull(actual);
+        assertEquals("Name of tag is invalid", "tag", actual.name);
+    }
+
+    //    @Test(expected = InvalidXml.class)
+    public void attributesEqualsOnly() {
+        final var actual = parser.fromXml("<tag =></tag>");
+        fail("Bare equals character not caught");
+    }
+
+    //    @Test(expected = InvalidXml.class)
+    public void attributesNameWithoutEquals() {
+        final var actual = parser.fromXml("<tag word></tag>");
+        fail("Bare attribute without value not caught");
     }
 
     //    @Test(expected = InvalidXml.class)

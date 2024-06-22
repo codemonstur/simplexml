@@ -10,17 +10,28 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class HtmlTest {
 
-    private final XmlParser parser = newXmlParser().unescapeHtml().build();
+    private final XmlParser parser = newXmlParser().escapeHtml().unescapeHtml().build();
 
     @Test
     public void deserializeEscapedHtml() {
-        final String pojoXml = "<pojo>\n  <name>&copy;&#123;&#x0026;&#x26;</name>\n</pojo>\n";
-        final Pojo pojo1 = new Pojo("©{&&");
+        final var input = "<pojo>\n  <name>&copy;&#123;&#x0026;&#x26;&quot;&apos;</name>\n</pojo>\n";
+        final var expected = new Pojo("©{&&\"'");
 
-        final Pojo pojo2 = parser.fromXml(pojoXml, Pojo.class);
+        final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("No serialization response", pojo2);
-        assertEquals("Invalid serialized output", pojo1.name, pojo2.name);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected.name, actual.name);
+    }
+
+    @Test
+    public void serializeHtml() {
+        final var input = new Pojo("©{&\"'<>");
+        final var expected = "<pojo>\n  <name>&copy;&lcub;&amp;&quot;&apos;&lt;&gt;</name>\n</pojo>\n";
+
+        final var actual = parser.toXml(input);
+
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
 }

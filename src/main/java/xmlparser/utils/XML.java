@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import static xmlparser.utils.Constants.*;
 import static xmlparser.utils.Functions.isNullOrEmpty;
@@ -13,45 +14,20 @@ import static xmlparser.utils.Reflection.toName;
 
 public enum XML {;
 
-    public static String escapeXml(final String str, final boolean encodeUTF8) {
-        if (isNullOrEmpty(str)) return str;
-
-        final StringBuilder encoded = new StringBuilder();
-        for (final char c : str.toCharArray()) {
-            switch (c) {
-                case CHAR_LESS_THAN:
-                    encoded.append(ENCODED_LESS_THAN); break;
-                case CHAR_DOUBLE_QUOTE:
-                    encoded.append(ENCODED_DOUBLE_QUOTE); break;
-                case CHAR_GREATER_THAN:
-                    encoded.append(ENCODED_GREATER_THAN); break;
-                case CHAR_SINGLE_QUOTE:
-                    encoded.append(ENCODED_SINGLE_QUOTE); break;
-                case CHAR_AMPERSAND:
-                    encoded.append(ENCODED_AMPERSAND); break;
-                default:
-                    encoded.append( (encodeUTF8 && c > 0x7e) ? AMPERSAND+HASH+((int)c)+SEMICOLON : c);
-                    break;
-            }
-        }
-
-        return encoded.toString();
-    }
-
-    public static String attributesToXml(final List<Field> fields, final Object o, final boolean shouldEncodeUTF8) throws IllegalArgumentException,
+    public static String attributesToXml(final List<Field> fields, final Object o, final Function<String, String> escaper) throws IllegalArgumentException,
             IllegalAccessException {
         final StringBuilder attr = new StringBuilder(6*fields.size());
         for (final Field f : fields) {
-            addAttribute(attr, toName(f), escapeXml(f.get(o).toString(), shouldEncodeUTF8));
+            addAttribute(attr, toName(f), escaper.apply(f.get(o).toString()));
         }
         return attr.toString();
     }
-    public static String attributesToXml(final Map<String, String> map, final boolean shouldEncodeUTF8) {
+    public static String attributesToXml(final Map<String, String> map, final Function<String, String> escaper) {
         if (map == null || map.isEmpty()) return EMPTY;
 
         final StringBuilder builder = new StringBuilder();
         for (final Entry<String, String> entry : map.entrySet()) {
-            addAttribute(builder, entry.getKey(), escapeXml(entry.getValue(), shouldEncodeUTF8));
+            addAttribute(builder, entry.getKey(), escaper.apply(entry.getValue()));
         }
         return builder.toString();
     }

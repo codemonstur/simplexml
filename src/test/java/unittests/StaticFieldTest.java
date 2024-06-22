@@ -12,11 +12,11 @@ public class StaticFieldTest {
 
     @Test
     public void deserializeObject() {
-        final String pojoXml = "<staticfieldpojo></staticfieldpojo>\n";
+        final var input = "<staticfieldpojo></staticfieldpojo>\n";
 
-        final StaticFieldPojo pojo = parser.fromXml(pojoXml, StaticFieldPojo.class);
+        final var actual = parser.fromXml(input, StaticFieldPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
+        assertNotNull("Pojo is null", actual);
     }
 
 }
