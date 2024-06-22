@@ -14,13 +14,13 @@ public class WindowsNewLinesTest {
 
     @Test
     public void serializeClass() {
-        final String pojoXml = "<pojo>\r\n  <name>Hello</name>\r\n</pojo>\r\n";
-        final Pojo pojo = new Pojo("Hello");
+        final var input = new Pojo("Hello");
+        final var expected = "<pojo>\r\n  <name>Hello</name>\r\n</pojo>\r\n";
 
-        final String xml = parser.toXml(pojo);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
 }

@@ -7,8 +7,7 @@ import xmlparser.error.InvalidAnnotation;
 import xmlparser.model.XmlElement;
 import xmlparser.model.XmlElement.XmlTextElement;
 import xmlparser.parsing.ObjectSerializer;
-import xmlparser.utils.Interfaces.AccessSerializers;
-import xmlparser.utils.Interfaces.ParserConfiguration;
+import xmlparser.utils.AccessSerializers;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,12 +20,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static xmlparser.utils.Constants.*;
+import static xmlparser.utils.Constants.EMPTY;
+import static xmlparser.utils.Constants.INDENT;
 import static xmlparser.utils.Reflection.*;
 import static xmlparser.utils.Validator.multipleAreTrue;
 import static xmlparser.utils.XML.*;
 
-public interface XmlWriter extends AccessSerializers, ParserConfiguration {
+public interface XmlWriter extends AccessSerializers {
+
+    String newLine();
+    String escape(String input);
+    boolean shouldPrettyPrint();
 
     default String toXml(final Object o) {
         final StringWriter output = new StringWriter();
@@ -56,15 +60,15 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         final String text = node.getText();
         if (text == null && node.children.isEmpty()) {
             writeIndent(writer, indent);
-            writeSelfClosingTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
+            writeSelfClosingTag(writer, node.name, attributesToXml(node.attributes, this::escape));
             writeNewLine(writer);
         } else if (!node.hasNonTextChildren() && node.attributes.isEmpty()) {
             writeIndent(writer, indent);
-            writeOpeningAndClosingTag(writer, node.name, escapeXml(text, shouldEncodeUTF8()));
+            writeOpeningAndClosingTag(writer, node.name, escape(text));
             writeNewLine(writer);
         } else {
             writeIndent(writer, indent);
-            writeOpeningTag(writer, node.name, attributesToXml(node.attributes, shouldEncodeUTF8()));
+            writeOpeningTag(writer, node.name, attributesToXml(node.attributes, this::escape));
             writeNewLine(writer);
             for (final XmlElement child : node.children) {
                 if (child instanceof XmlTextElement) continue;
@@ -72,8 +76,9 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 domToXml(child, writer, INDENT+indent);
             }
             if (text != null) {
-                writeIndent(writer, indent);
-                writer.append(escapeXml(text, shouldEncodeUTF8()));
+                writeIndent(writer, INDENT+indent);
+                writer.append(escape(text));
+                writeNewLine(writer);
             }
             writeIndent(writer, indent);
             writeClosingTag(writer, node.name);
@@ -83,15 +88,15 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
     private void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
         writeIndent(writer, indent);
-        writeTag(writer, name, escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
+        writeTag(writer, name, escape(getSerializer(value.getClass()).convert(value)));
         writeNewLine(writer);
     }
 
     private void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
             , final Object text, final String indent) throws IOException, IllegalAccessException {
         writeIndent(writer, indent);
-        writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()),
-                escapeXml(getSerializer(text.getClass()).convert(text), shouldEncodeUTF8()));
+        writeTag(writer, name, attributesToXml(attributes, value, this::escape),
+                escape(getSerializer(text.getClass()).convert(text)));
         writeNewLine(writer);
     }
 
@@ -140,12 +145,12 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 writeIndent(writer, indent);
                 if (valueName.isEmpty()) {
                     final StringBuilder builder = new StringBuilder();
-                    addAttribute(builder, keyName, escapeXml(convKey.convert(entry.getKey()), shouldEncodeUTF8()));
-                    writeTag(writer, name, builder.toString(), escapeXml(convVal.convert(entry.getValue()), shouldEncodeUTF8()));
+                    addAttribute(builder, keyName, escape(convKey.convert(entry.getKey())));
+                    writeTag(writer, name, builder.toString(), escape(convVal.convert(entry.getValue())));
                 } else {
                     final StringBuilder builder = new StringBuilder();
-                    addAttribute(builder, keyName, escapeXml(convKey.convert(entry.getKey()), shouldEncodeUTF8()));
-                    addAttribute(builder, valueName, escapeXml(convVal.convert(entry.getValue()), shouldEncodeUTF8()));
+                    addAttribute(builder, keyName, escape(convKey.convert(entry.getKey())));
+                    addAttribute(builder, valueName, escape(convVal.convert(entry.getValue())));
                     writeSelfClosingTag(writer, name, builder.toString());
                 }
                 writeNewLine(writer);
@@ -165,7 +170,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 writeField(entry.getKey().getClass(), field, writer, keyName, entry.getKey(), indent+INDENT);
                 if (valueName.isEmpty()) {
                     writeIndent(writer, indent+INDENT);
-                    writer.append(escapeXml(convVal.convert(entry.getValue()), shouldEncodeUTF8()));
+                    writer.append(escape(convVal.convert(entry.getValue())));
                     writeNewLine(writer);
                 } else {
                     writeField(entry.getValue().getClass(), field, writer, valueName, entry.getValue(), indent+INDENT);
@@ -190,7 +195,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
     private void writeEnum(final Writer writer, final String name, final Enum o, final String indent) throws IOException {
         writeIndent(writer, indent);
-        writeTag(writer, name, escapeXml(toEnumValue(o), shouldEncodeUTF8()));
+        writeTag(writer, name, escape(toEnumValue(o)));
         writeNewLine(writer);
     }
 
@@ -203,7 +208,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         if (childNodes.isEmpty()) {
             if (textNode == null) {
                 writeIndent(writer, indent);
-                writeSelfClosingTag(writer, name, attributesToXml(attributes, o, shouldEncodeUTF8()));
+                writeSelfClosingTag(writer, name, attributesToXml(attributes, o, this::escape));
                 writeNewLine(writer);
             }
             else
@@ -212,7 +217,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
 
         writeIndent(writer, indent);
-        writeOpeningTag(writer, name, attributesToXml(attributes, o, shouldEncodeUTF8()));
+        writeOpeningTag(writer, name, attributesToXml(attributes, o, this::escape));
         writeNewLine(writer);
 
         for (final Field f : childNodes) {
@@ -230,7 +235,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
         if (textNode != null) {
             writeIndent(writer, indent);
-            writer.append(escapeXml(textNode.get(o).toString(), shouldEncodeUTF8()));
+            writer.append(escape(textNode.get(o).toString()));
             writeNewLine(writer);
         }
         writeIndent(writer, indent);
@@ -258,7 +263,5 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     private void writeNewLine(final Writer writer) throws IOException {
         if (shouldPrettyPrint()) writer.append(newLine());
     }
-
-    String newLine();
 
 }

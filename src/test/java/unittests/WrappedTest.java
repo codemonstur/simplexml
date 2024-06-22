@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 public class WrappedTest {
+
     private static final WrappedPojo wrapped = newDefaultWrappedPojo();
     private static final String wrappedXml = "<wrappedpojo>\n" +
             "  <wrapper1>\n" +
@@ -40,37 +41,37 @@ public class WrappedTest {
 
     @Test
     public void deserialize() {
-        final WrappedPojo pojo = parser.fromXml(wrappedXml, WrappedPojo.class);
+        final var actual = parser.fromXml(wrappedXml, WrappedPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertReflectionEquals(newDefaultWrappedPojo(), pojo);
+        assertNotNull("Pojo is null", actual);
+        assertReflectionEquals(newDefaultWrappedPojo(), actual);
     }
 
     @Test
     public void serialize() {
-        final String xml = parser.toXml(wrapped);
+        final var actual = parser.toXml(wrapped);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", wrappedXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", wrappedXml, actual);
     }
 
     @Test
     public void deserializeNull() {
-        final WrappedPojo pojo1 = parser.fromXml(wrappedXmlNull, WrappedPojo.class);
-        final WrappedPojo pojo2 = parser.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
+        final var actual1 = parser.fromXml(wrappedXmlNull, WrappedPojo.class);
+        final var actual2 = parser.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
 
-        assertNotNull("Pojo is null", pojo1);
-        assertNotNull("Pojo is null", pojo2);
-        assertReflectionEquals(wrappedNull, pojo1);
-        assertReflectionEquals(wrappedNull, pojo2);
+        assertNotNull("Pojo is null", actual1);
+        assertNotNull("Pojo is null", actual2);
+        assertReflectionEquals(wrappedNull, actual1);
+        assertReflectionEquals(wrappedNull, actual2);
     }
 
     @Test
     public void serializeNull() {
-        final String xml = parser.toXml(wrappedNull);
+        final var actual = parser.toXml(wrappedNull);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", wrappedXmlNull, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", wrappedXmlNull, actual);
     }
 
     private static WrappedPojo newDefaultWrappedPojo() {

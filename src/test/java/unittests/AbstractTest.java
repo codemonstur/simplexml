@@ -5,6 +5,7 @@ import xmlparser.XmlParser;
 import xmlparser.annotations.XmlAbstractClass;
 import xmlparser.annotations.XmlAbstractClass.TypeMap;
 import xmlparser.annotations.XmlName;
+import xmlparser.error.InvalidAnnotation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -36,6 +37,14 @@ public class AbstractTest {
                 </payload>
             </targetedMessage>""";
 
+    private static final String ABSTRACT_MISSING_CLASS = """
+            <targetedMessage>
+                <sender>external application</sender>
+                <payload class="class.path.from.external.application.Bar">
+                    <id>1</id>
+                </payload>
+            </targetedMessage>""";
+
     @XmlName("targetedMessage")
     public class TargetedMessage1 {
         String sender;
@@ -63,7 +72,6 @@ public class AbstractTest {
         Payload payload;
     }
 
-
     abstract class Payload {
         private Integer id;
         Integer getId() {
@@ -79,35 +87,50 @@ public class AbstractTest {
 
     @Test
     public void deserializeOne() {
-        final TargetedMessage1 pojo = parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage1.class);
+        final var actual = parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage1.class);
 
-        assertNotNull("No serialization response", pojo);
-        assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
-        assertNotNull("Missing 'payload' field", pojo.payload);
-        assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
-        assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
+        assertNotNull("No serialization response", actual);
+        assertEquals("Field 'sender' is wrong", "external application", actual.sender);
+        assertNotNull("Missing 'payload' field", actual.payload);
+        assertEquals("Payload field has wrong type", Foo.class, actual.payload.getClass());
+        assertEquals("Foo does not have 'id' set", Integer.valueOf(1), actual.payload.getId());
     }
 
     @Test
     public void deserializeTwo() {
-        final TargetedMessage2 pojo = parser.fromXml(ABSTRACT_CLASS_2, TargetedMessage2.class);
+        final var actual = parser.fromXml(ABSTRACT_CLASS_2, TargetedMessage2.class);
 
-        assertNotNull("No serialization response", pojo);
-        assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
-        assertNotNull("Missing 'payload' field", pojo.payload);
-        assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
-        assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
+        assertNotNull("No serialization response", actual);
+        assertEquals("Field 'sender' is wrong", "external application", actual.sender);
+        assertNotNull("Missing 'payload' field", actual.payload);
+        assertEquals("Payload field has wrong type", Foo.class, actual.payload.getClass());
+        assertEquals("Foo does not have 'id' set", Integer.valueOf(1), actual.payload.getId());
     }
 
     @Test
     public void deserializeThree() {
-        final TargetedMessage3 pojo = parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage3.class);
+        final var actual = parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage3.class);
 
-        assertNotNull("No serialization response", pojo);
-        assertEquals("Field 'sender' is wrong", "external application", pojo.sender);
-        assertNotNull("Missing 'payload' field", pojo.payload);
-        assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
-        assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
+        assertNotNull("No serialization response", actual);
+        assertEquals("Field 'sender' is wrong", "external application", actual.sender);
+        assertNotNull("Missing 'payload' field", actual.payload);
+        assertEquals("Payload field has wrong type", Foo.class, actual.payload.getClass());
+        assertEquals("Foo does not have 'id' set", Integer.valueOf(1), actual.payload.getId());
+    }
+
+    @Test(expected = InvalidAnnotation.class)
+    public void missingTypeThrowsException() {
+        parser.fromXml(ABSTRACT_MISSING_CLASS, TargetedMessage1.class);
+    }
+
+    @Test(expected = InvalidAnnotation.class)
+    public void missingAttributeThrowsException() {
+        parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage1.class);
+    }
+
+    @Test(expected = InvalidAnnotation.class)
+    public void missingChildTagThrowsException() {
+        parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage3.class);
     }
 
 }

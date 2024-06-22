@@ -47,10 +47,10 @@ public class TagNameFromClassTest {
     public void serializeEnvelopeWithGetAction() {
         final var input = new Envelope(new GetAction("1"));
 
-        final var result = parser.toXml(input);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", result);
-        assertEquals("Invalid serialized output", XML_GET_ACTION, result);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", XML_GET_ACTION, actual);
     }
 
     private static final String XML_EMAIL_ACTION = "<envelope>\n" +
@@ -63,10 +63,10 @@ public class TagNameFromClassTest {
     public void serializeEnvelopeWithEmailAction() {
         final var input = new Envelope(new EmailAction("test@acme.org"));
 
-        final var result = parser.toXml(input);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", result);
-        assertEquals("Invalid serialized output", XML_EMAIL_ACTION, result);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", XML_EMAIL_ACTION, actual);
     }
 
     private static final String XML_OBJECT_ACTION = "<envelope>\n" +
@@ -77,10 +77,10 @@ public class TagNameFromClassTest {
     public void serializeEnvelopeWithObject() {
         final var input = new Envelope(new Object());
 
-        final var result = parser.toXml(input);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", result);
-        assertEquals("Invalid serialized output", XML_OBJECT_ACTION, result);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", XML_OBJECT_ACTION, actual);
     }
 
 }

@@ -14,59 +14,59 @@ public class EnumTest {
 
     @Test
     public void deserializeEnumHasValue() {
-        final String pojoXml = "<enumpojo><test>one</test></enumpojo>\n";
+        final var input = "<enumpojo><test>one</test></enumpojo>\n";
 
-        final EnumPojo pojo = parser.fromXml(pojoXml, EnumPojo.class);
+        final var actual = parser.fromXml(input, EnumPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", one, pojo.test);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Pojo has the wrong name", one, actual.test);
     }
 
     @Test
     public void deserializeEnumEmpty() {
-        final String pojoXml = "<enumpojo><test></test></enumpojo>\n";
+        final var input = "<enumpojo><test></test></enumpojo>\n";
 
-        final EnumPojo pojo = parser.fromXml(pojoXml, EnumPojo.class);
+        final var actual = parser.fromXml(input, EnumPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertNull("Pojo has the wrong name", pojo.test);
+        assertNotNull("Pojo is null", actual);
+        assertNull("Pojo has the wrong name", actual.test);
     }
 
     @Test
     public void deserializeEnumMissing() {
-        final String pojoXml = "<enumpojo></enumpojo>\n";
+        final var input = "<enumpojo></enumpojo>\n";
 
-        final EnumPojo pojo = parser.fromXml(pojoXml, EnumPojo.class);
+        final var actual = parser.fromXml(input, EnumPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertNull("Pojo has the wrong name", pojo.test);
+        assertNotNull("Pojo is null", actual);
+        assertNull("Pojo has the wrong name", actual.test);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void deserializeNoEnumOption() {
-        final String pojoXml = "<enumpojo><test>missing</test></enumpojo>\n";
+        final var input = "<enumpojo><test>missing</test></enumpojo>\n";
 
-        parser.fromXml(pojoXml, EnumPojo.class);
+        parser.fromXml(input, EnumPojo.class);
 
         fail("Missing enum value didn't throw exception");
     }
 
     @Test
     public void serializeWithValueAnnotation() {
-        final EnumPojo pojo = new EnumPojo(value);
-        final String pojoXml = "<enumpojo>\n  <test>123</test>\n</enumpojo>\n";
+        final var input = new EnumPojo(value);
+        final var expected = "<enumpojo>\n  <test>123</test>\n</enumpojo>\n";
 
-        final String pojoOut = parser.toXml(pojo);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("Pojo is null", pojoOut);
-        assertEquals("Invalid POJO XML", pojoXml, pojoOut);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Invalid POJO XML", expected, actual);
     }
 
     @Test
     public void deserializeWithValueAnnotation() {
-        final String pojoXml = "<enumpojo><test>123</test></enumpojo>\n";
+        final var pojoXml = "<enumpojo><test>123</test></enumpojo>\n";
 
-        final EnumPojo pojo = parser.fromXml(pojoXml, EnumPojo.class);
+        final var pojo = parser.fromXml(pojoXml, EnumPojo.class);
 
         assertNotNull("Pojo is null", pojo);
         assertEquals("Pojo has the wrong name", value, pojo.test);

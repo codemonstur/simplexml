@@ -9,9 +9,6 @@ import java.util.*;
 import static xmlparser.utils.Builder.toNumber;
 import static xmlparser.utils.Constants.EXPRESSION_PATH_SEPARATOR;
 
-/**
- * Adapted from xml-lif (https://github.com/liflab/xml-lif) by Sylvain Hallé
- */
 public final class XPathExpression {
 
 	public final List<Segment> segments;
@@ -42,7 +39,7 @@ public final class XPathExpression {
     }
 
     public Number evaluateAnyNumber(final XmlElement root) {
-        for (XmlElement e : evaluate(root)) {
+        for (final XmlElement e : evaluate(root)) {
             if (e instanceof XmlTextElement) {
                 final Number n = toNumber(((XmlTextElement) e).text);
                 if (n != null) return n;

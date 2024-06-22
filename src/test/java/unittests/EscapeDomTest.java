@@ -18,10 +18,10 @@ public class EscapeDomTest {
 
     @Test
     public void serializeDomWithDangerousCharsInText() {
-        final XmlElement inputDom = newElement("test").text("&<>'\"").build();
-        final String expected = "<test>&amp;&lt;&gt;&apos;&quot;</test>\n";
+        final var inputDom = newElement("test").text("&<>'\"").build();
+        final var expected = "<test>&amp;&lt;&gt;&apos;&quot;</test>\n";
 
-        final String actual = parserDefault.domToXml(inputDom);
+        final var actual = parserDefault.domToXml(inputDom);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected, actual);
@@ -29,10 +29,10 @@ public class EscapeDomTest {
 
     @Test
     public void serializeDomWithDangerousCharsInAttribute() {
-        final XmlElement inputDom = newElement("test").attribute("hello", "&<>'\"").build();
-        final String expected = "<test hello=\"&amp;&lt;&gt;&apos;&quot;\" />\n";
+        final var inputDom = newElement("test").attribute("hello", "&<>'\"").build();
+        final var expected = "<test hello=\"&amp;&lt;&gt;&apos;&quot;\" />\n";
 
-        final String actual = parserDefault.domToXml(inputDom);
+        final var actual = parserDefault.domToXml(inputDom);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected, actual);
@@ -40,10 +40,10 @@ public class EscapeDomTest {
 
     @Test
     public void deserializeDomWithEscapedChars() {
-        final String inputXml = "<pojo>&lt;&gt;&amp; and something &quot; &apos; &apos;</pojo>\n";
-        final XmlElement expected = newElement("pojo").text("<>& and something \" ' '").build();
+        final var inputXml = "<pojo>&lt;&gt;&amp; and something &quot; &apos; &apos;</pojo>\n";
+        final var expected = newElement("pojo").text("<>& and something \" ' '").build();
 
-        final XmlElement actual = parserDefault.fromXml(inputXml);
+        final var actual = parserDefault.fromXml(inputXml);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid deserialized output", expected.name, actual.name);
@@ -52,10 +52,10 @@ public class EscapeDomTest {
 
     @Test
     public void serializeDomUTF8Characters() {
-        final XmlElement inputDom = newElement("pojo").text("ƑƟƠƄǠȒ").build();
-        final String expected = "<pojo>&#401;&#415;&#416;&#388;&#480;&#530;</pojo>\n";
+        final var inputDom = newElement("pojo").text("ƑƟƠƄǠȒ").build();
+        final var expected = "<pojo>&#401;&#415;&#416;&#388;&#480;&#530;</pojo>\n";
 
-        final String actual = parserEncodeUTF8.domToXml(inputDom);
+        final var actual = parserEncodeUTF8.domToXml(inputDom);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected, actual);
@@ -63,10 +63,10 @@ public class EscapeDomTest {
 
     @Test
     public void dontSerializeDomUTF8Characters() {
-        final XmlElement inputDom = newElement("pojo").text("ƑƟƠƄǠȒ").build();
-        final String expected = "<pojo>ƑƟƠƄǠȒ</pojo>\n";
+        final var inputDom = newElement("pojo").text("ƑƟƠƄǠȒ").build();
+        final var expected = "<pojo>ƑƟƠƄǠȒ</pojo>\n";
 
-        final String actual = parserDefault.domToXml(inputDom);
+        final var actual = parserDefault.domToXml(inputDom);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected, actual);
@@ -74,10 +74,10 @@ public class EscapeDomTest {
 
     @Test
     public void deserializeDomUTF8Characters() {
-        final String inputXml = "<pojo>&#401;&#415;&#416;&#388;&#480;&#530;</pojo>\n";
-        final XmlElement expected = newElement("pojo").text("ƑƟƠƄǠȒ").build();
+        final var inputXml = "<pojo>&#401;&#415;&#416;&#388;&#480;&#530;</pojo>\n";
+        final var expected = newElement("pojo").text("ƑƟƠƄǠȒ").build();
 
-        final XmlElement actual = parserEncodeUTF8.fromXml(inputXml);
+        final var actual = parserEncodeUTF8.fromXml(inputXml);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid deserialized output", expected.name, actual.name);

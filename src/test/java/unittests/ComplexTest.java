@@ -35,18 +35,18 @@ public class ComplexTest {
 
     @Test
     public void deserialize() {
-        final ComplexPojo pojo = parser.fromXml(complexXml, ComplexPojo.class);
+        final var actual = parser.fromXml(complexXml, ComplexPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertReflectionEquals(pojo, newDefaultComplexPojo());
+        assertNotNull("Pojo is null", actual);
+        assertReflectionEquals(newDefaultComplexPojo(), actual);
     }
 
     @Test
     public void serialize() {
-        final String xml = parser.toXml(complex);
+        final var actual = parser.toXml(complex);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", complexXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", complexXml, actual);
     }
 
     private static ComplexPojo newDefaultComplexPojo() {

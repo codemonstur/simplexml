@@ -3,20 +3,21 @@ package xmlparser;
 import xmlparser.model.XmlElement;
 import xmlparser.parsing.ObjectDeserializer;
 import xmlparser.parsing.ObjectSerializer;
+import xmlparser.utils.CheckedIterator;
 import xmlparser.utils.Escaping;
+import xmlparser.utils.Escaping.Escape;
 import xmlparser.utils.Escaping.UnEscape;
-import xmlparser.utils.IO;
-import xmlparser.utils.Interfaces.CheckedIterator;
 import xmlparser.utils.Trimming;
 import xmlparser.utils.Trimming.Trim;
 import xmlparser.xpath.XPathExpression;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -37,18 +38,20 @@ public final class XmlParser {
     private final XmlIterator stream;
     private final boolean conserveWhitespace;
     private final Trim trimmer;
-    private final UnEscape escaper;
+    private final UnEscape unescaper;
     private final Charset charset;
 
     public XmlParser() {
         this(false, true, false, true, UTF_8, LINE_FEED,
-            defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::unescapeXml);
+            defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::escapeXml,
+            Escaping::unescapeXml);
     }
 
     private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final boolean conserveWhitespace,
                       final boolean enableEnumCaching, final Charset charset, final String newLine,
                       final ObjectSerializer defaultSerializer, final Map<Class<?>, ObjectSerializer> serializers,
-                      final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final UnEscape escaper) {
+                      final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final Escape escaper,
+                      final UnEscape unescaper) {
         this.charset = charset;
         this.compress = new XmlCompress() {};
         final var enumCache = new HashMap<Class<Enum>, Map<String, Enum>>();
@@ -68,6 +71,9 @@ public final class XmlParser {
             }
         };
         this.writer = new XmlWriter() {
+            public String escape(final String input) {
+                return escaper.escape(input, shouldEncodeUTF8);
+            }
             public String newLine() {
                 return newLine;
             }
@@ -77,9 +83,6 @@ public final class XmlParser {
             public ObjectSerializer getSerializer(final Class<?> type) {
                 return serializers.getOrDefault(type, defaultSerializer);
             }
-            public boolean shouldEncodeUTF8() {
-                return shouldEncodeUTF8;
-            }
             public boolean shouldPrettyPrint() {
                 return shouldPrettyPrint;
             }
@@ -87,7 +90,7 @@ public final class XmlParser {
         this.stream = new XmlIterator() {};
         this.conserveWhitespace = conserveWhitespace;
         this.trimmer = trimmer;
-        this.escaper = escaper;
+        this.unescaper = unescaper;
     }
 
     public String compressXml(final String xml) {
@@ -117,17 +120,17 @@ public final class XmlParser {
 
     public XmlElement fromXml(final Path xmlFile) throws IOException {
         try (final var in = newInputStream(xmlFile)) {
-            return toXmlDom(newStreamReader(in, charset), conserveWhitespace, trimmer, escaper);
+            return toXmlDom(newStreamReader(in, charset), conserveWhitespace, trimmer, unescaper);
         }
     }
 
     public XmlElement fromXml(final String input) {
         try {
-            return toXmlDom(newStreamReader(input, charset), conserveWhitespace, trimmer, escaper);
+            return toXmlDom(newStreamReader(input, charset), conserveWhitespace, trimmer, unescaper);
         } catch (final IOException ignore) { return null; }
     }
     public XmlElement fromXml(final InputStream in) throws IOException {
-        return toXmlDom(newStreamReader(in, charset), conserveWhitespace, trimmer, escaper);
+        return toXmlDom(newStreamReader(in, charset), conserveWhitespace, trimmer, unescaper);
     }
     public String toXml(final Object o) {
         return writer.toXml(o);
@@ -148,13 +151,13 @@ public final class XmlParser {
         return stream.iterateXml(newStreamReader(input, charset));
     }
     public CheckedIterator<XmlElement> iterateDom(final String input) {
-        return stream.iterateDom(newStreamReader(input, charset), charset, conserveWhitespace, trimmer, escaper);
+        return stream.iterateDom(newStreamReader(input, charset), charset, conserveWhitespace, trimmer, unescaper);
     }
     public CheckedIterator<XmlElement> iterateDom(final InputStream input) {
-        return stream.iterateDom(newStreamReader(input, charset), charset, conserveWhitespace, trimmer, escaper);
+        return stream.iterateDom(newStreamReader(input, charset), charset, conserveWhitespace, trimmer, unescaper);
     }
     public <T> CheckedIterator<T> iterateObject(final InputStream input, final Class<T> clazz) {
-        return stream.iterateObject(newStreamReader(input, charset), charset, reader, clazz, conserveWhitespace, trimmer, escaper);
+        return stream.iterateObject(newStreamReader(input, charset), charset, reader, clazz, conserveWhitespace, trimmer, unescaper);
     }
 
     public static Builder newXmlParser() {
@@ -169,7 +172,8 @@ public final class XmlParser {
         private Charset charset = UTF_8;
         private String newLine = LINE_FEED;
         private Trim trimmer = new NativeTrimmer();
-        private UnEscape escaper = Escaping::unescapeXml;
+        private Escape escaper = Escaping::escapeXml;
+        private UnEscape unescaper = Escaping::unescapeXml;
         private ObjectSerializer defaultSerializer = ObjectSerializer.defaultSerializer();
         private Map<Class<?>, ObjectSerializer> serializers = new HashMap<>();
         private Map<Class<?>, ObjectDeserializer> deserializers = defaultDeserializers();
@@ -206,16 +210,33 @@ public final class XmlParser {
             this.trimmer = new Trimming.XmlTrimmer();
             return this;
         }
+        public Builder escapeXml() {
+            this.escaper = Escaping::escapeXml;
+            return this;
+        }
+        public Builder escapeHtml() {
+            this.escaper = Escaping::escapeHtml;
+            return this;
+        }
         public Builder unescapeXml() {
-            this.escaper = Escaping::unescapeXml;
+            this.unescaper = Escaping::unescapeXml;
             return this;
         }
         public Builder unescapeHtml() {
-            this.escaper = Escaping::unescapeHtml;
+            this.unescaper = Escaping::unescapeHtml;
             return this;
         }
-        public Builder unescape(final UnEscape escaper) {
+        public Builder escape(final Escape escaper) {
             this.escaper = escaper;
+            return this;
+        }
+        public Builder unescape(final UnEscape unescaper) {
+            this.unescaper = unescaper;
+            return this;
+        }
+        public Builder supportHtml() {
+            this.escaper = Escaping::escapeHtml;
+            this.unescaper = Escaping::unescapeHtml;
             return this;
         }
         public Builder shouldPrettyPrint() {
@@ -253,7 +274,8 @@ public final class XmlParser {
 
         public XmlParser build() {
             return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, conserveWhitespace, enableEnumCaching,
-                    charset, newLine, defaultSerializer, serializers, deserializers, trimmer, escaper);
+                    charset, newLine, defaultSerializer, serializers, deserializers, trimmer, escaper, unescaper);
         }
     }
+
 }

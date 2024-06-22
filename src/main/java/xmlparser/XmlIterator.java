@@ -2,8 +2,8 @@ package xmlparser;
 
 import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
+import xmlparser.utils.CheckedIterator;
 import xmlparser.utils.Escaping.UnEscape;
-import xmlparser.utils.Interfaces.CheckedIterator;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;

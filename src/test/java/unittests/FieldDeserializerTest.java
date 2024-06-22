@@ -36,7 +36,7 @@ public class FieldDeserializerTest {
 
     @Test
     public void testFieldDeserializer() {
-        final String xml =
+        final var input =
             "<fieldpojo>\n" +
             "    <map>\n" +
             "        <item name=\"ItemA\" value=\"123\" />\n" +
@@ -45,17 +45,18 @@ public class FieldDeserializerTest {
             "    </map>\n" +
             "</fieldpojo>";
 
-        final FieldPojo pojo = parser.fromXml(xml, FieldPojo.class);
+        final var actual = parser.fromXml(input, FieldPojo.class);
 
-        assertNotNull("pojo is null", pojo);
-        assertNotNull("map is null", pojo.map);
-        assertFalse("map is empty", pojo.map.isEmpty());
-        assertEquals("map has wrong number of elements", 3, pojo.map.size());
+        assertNotNull("pojo is null", actual);
+        assertNotNull("map is null", actual.map);
+        assertFalse("map is empty", actual.map.isEmpty());
+        assertEquals("map has wrong number of elements", 3, actual.map.size());
     }
 
     @Test (expected = InvalidAnnotation.class)
     public void testInvalidFieldDeserializer() {
-        final String xml = "<invalidfieldpojo><map></map></invalidfieldpojo>";
-        parser.fromXml(xml, InvalidFieldPojo.class);
+        final var input = "<invalidfieldpojo><map></map></invalidfieldpojo>";
+        parser.fromXml(input, InvalidFieldPojo.class);
     }
+
 }

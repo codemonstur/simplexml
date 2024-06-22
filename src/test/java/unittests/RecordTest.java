@@ -13,23 +13,23 @@ public class RecordTest {
 
     @Test
     public void serializeRecord() {
-        final String pojoXml = "<recordpojo>\n  <name>Hello</name>\n</recordpojo>\n";
-        final RecordPojo pojo = new RecordPojo("Hello");
+        final var input = new RecordPojo("Hello");
+        final var expected = "<recordpojo>\n  <name>Hello</name>\n</recordpojo>\n";
 
-        final String xml = parser.toXml(pojo);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
     @Test
     public void deserializeRecord() {
-        final String pojoXml = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
+        final var input = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
-        final RecordPojo pojo = parser.fromXml(pojoXml, RecordPojo.class);
+        final var actual = parser.fromXml(input, RecordPojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name());
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Pojo has the wrong name", "Hello", actual.name());
     }
 
 }

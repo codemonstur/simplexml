@@ -14,50 +14,50 @@ public class RemoveCommentsTest {
 
     @Test
     public void simpleComment() {
-        final String pojoXml = "<pojo><!-- comment --><name>Hello</name></pojo>";
+        final var input = "<pojo><!-- comment --><name>Hello</name></pojo>";
 
-        final XmlElement xmlElement = parser.fromXml(pojoXml);
-        final Pojo pojo = parser.fromXml(pojoXml, Pojo.class);
+        final var actualElement = parser.fromXml(input);
+        final var actualPojo = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("XmlElement is null", xmlElement);
+        assertNotNull("XmlElement is null", actualElement);
 
-        final XmlElement name = xmlElement.findChildForName("name", null);
+        final var name = actualElement.findChildForName("name", null);
         assertNotNull("Name element is null", name);
         assertEquals("Name element has the wrong name", "Hello", name.getText());
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name);
+        assertNotNull("Pojo is null", actualPojo);
+        assertEquals("Pojo has the wrong name", "Hello", actualPojo.name);
     }
 
     @Test
     public void commentWithTag() {
-        final String pojoXml = "<pojo><!-- <comment> --><name>Hello</name></pojo>";
+        final var input = "<pojo><!-- <comment> --><name>Hello</name></pojo>";
 
-        final XmlElement xmlElement = parser.fromXml(pojoXml);
-        final Pojo pojo = parser.fromXml(pojoXml, Pojo.class);
+        final var actualElement = parser.fromXml(input);
+        final var actualPojo = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("XmlElement is null", xmlElement);
+        assertNotNull("XmlElement is null", actualElement);
 
-        final XmlElement name = xmlElement.findChildForName("name", null);
+        final var name = actualElement.findChildForName("name", null);
         assertNotNull("Name element is null", name);
         assertEquals("Name element has the wrong name", "Hello", name.getText());
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name);
+        assertNotNull("Pojo is null", actualPojo);
+        assertEquals("Pojo has the wrong name", "Hello", actualPojo.name);
     }
 
     @Test
     public void commentWithMoreTagStuff() {
-        final String pojoXml = "<pojo><!-- <comment></comment> --< -- > <> --><name>Hello</name></pojo>";
+        final var input = "<pojo><!-- <comment></comment> --< -- > <> --><name>Hello</name></pojo>";
 
-        final XmlElement xmlElement = parser.fromXml(pojoXml);
-        final Pojo pojo = parser.fromXml(pojoXml, Pojo.class);
+        final var actualElement = parser.fromXml(input);
+        final var actualPojo = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("XmlElement is null", xmlElement);
+        assertNotNull("XmlElement is null", actualElement);
 
-        final XmlElement name = xmlElement.findChildForName("name", null);
+        final var name = actualElement.findChildForName("name", null);
         assertNotNull("Name element is null", name);
         assertEquals("Name element has the wrong name", "Hello", name.getText());
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong name", "Hello", pojo.name);
+        assertNotNull("Pojo is null", actualPojo);
+        assertEquals("Pojo has the wrong name", "Hello", actualPojo.name);
     }
 
 }

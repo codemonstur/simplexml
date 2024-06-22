@@ -14,23 +14,23 @@ public class NativeFieldTest {
 
     @Test
     public void deserializeInt() {
-        final String pojoXml = "<nativepojo><id>5</id></nativepojo>";
+        final var input = "<nativepojo><id>5</id></nativepojo>";
 
-        final NativePojo pojo = parser.fromXml(pojoXml, NativePojo.class);
+        final var actual = parser.fromXml(input, NativePojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong id", 5, pojo.id);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Pojo has the wrong id", 5, actual.id);
     }
 
     @Test
     public void serializeInt() {
-        final String pojoXml = "<nativepojo><id>5</id></nativepojo>";
-        final NativePojo pojo = new NativePojo(5);
+        final var input = new NativePojo(5);
+        final var expected = "<nativepojo><id>5</id></nativepojo>";
 
-        final String xml = parser.toXml(pojo);
+        final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", pojoXml, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", expected, actual);
     }
 
 }

@@ -8,9 +8,6 @@ import static xmlparser.utils.Constants.*;
 import static xmlparser.utils.Validator.hasExactLength;
 import static xmlparser.utils.Validator.partsAreNotEmpty;
 
-/**
- * Adapted from xml-lif (https://github.com/liflab/xml-lif) by Sylvain Hallé
- */
 public interface Predicate {
 
 	boolean evaluate(XmlElement root);

@@ -9,7 +9,7 @@ public class CompressTest {
 
     private static final String POM_WITH_WHITESPACE =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-        "<  project xmlns=\"http://maven.apache.org/POM/4.0.0\"   \t\n   " +
+        "<  project xmlns=   http://maven.apache.org/POM/4.0.0      \t\n   " +
         "    xmlns:xsi   =    \"http://www.w3.org/2001/XMLSchema-instance\"" +
         "    xsi:schemaLocation   =\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">" +
         "<groupId>       com.github.codemonstur</groupId>" +
@@ -21,9 +21,9 @@ public class CompressTest {
 
     @Test
     public void compress() {
-        final XmlParser parser = new XmlParser();
-        final String compressed = parser.compressXml(POM_WITH_WHITESPACE);
-        assertEquals("POMs was not adequately compressed", POM_COMPRESSED, compressed);
+        final var parser = new XmlParser();
+        final var actual = parser.compressXml(POM_WITH_WHITESPACE);
+        assertEquals("POMs was not adequately compressed", POM_COMPRESSED, actual);
     }
 
 }

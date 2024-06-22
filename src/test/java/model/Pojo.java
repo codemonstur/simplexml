@@ -7,7 +7,7 @@ public final class Pojo {
         this.name = null;
     }
 
-    public Pojo(String name) {
+    public Pojo(final String name) {
         this.name = name;
     }
 }

@@ -13,35 +13,35 @@ public class XPathDeserializationTest {
 
     @Test
     public void deserializeObject() {
-        final String xml = "<xpathpojo><wrapper><object>Hello</object></wrapper></xpathpojo>";
+        final var input = "<xpathpojo><wrapper><object>Hello</object></wrapper></xpathpojo>";
 
-        final XPathPojo pojo = parser.fromXml(xml, XPathPojo.class);
+        final var actual = parser.fromXml(input, XPathPojo.class);
 
-        assertNotNull("POJO not deserialized", pojo);
-        assertNotNull("POJO value not deserialized", pojo.object);
-        assertEquals("POJO values not equal", "Hello", pojo.object);
+        assertNotNull("POJO not deserialized", actual);
+        assertNotNull("POJO value not deserialized", actual.object);
+        assertEquals("POJO values not equal", "Hello", actual.object);
     }
 
     @Test
     public void deserializeAttribute() {
-        final String xml = "<xpathpojo><wrapper attr=\"hello\" /></xpathpojo>";
+        final var input = "<xpathpojo><wrapper attr=\"hello\" /></xpathpojo>";
 
-        final XPathPojo pojo = parser.fromXml(xml, XPathPojo.class);
+        final var actual = parser.fromXml(input, XPathPojo.class);
 
-        assertNotNull("POJO not deserialized", pojo);
-        assertNotNull("POJO value not deserialized", pojo.attr);
-        assertEquals("POJO values not equal", "hello", pojo.attr);
+        assertNotNull("POJO not deserialized", actual);
+        assertNotNull("POJO value not deserialized", actual.attr);
+        assertEquals("POJO values not equal", "hello", actual.attr);
     }
 
     @Test
     public void deserializeTextNode() {
-        final String xml = "<xpathpojo><one><two><three>value</three></two></one></xpathpojo>";
+        final var input = "<xpathpojo><one><two><three>value</three></two></one></xpathpojo>";
 
-        final XPathPojo pojo = parser.fromXml(xml, XPathPojo.class);
+        final var actual = parser.fromXml(input, XPathPojo.class);
 
-        assertNotNull("POJO not deserialized", pojo);
-        assertNotNull("POJO value not deserialized", pojo.value);
-        assertEquals("POJO values not equal", "value", pojo.value);
+        assertNotNull("POJO not deserialized", actual);
+        assertNotNull("POJO value not deserialized", actual.value);
+        assertEquals("POJO values not equal", "value", actual.value);
     }
 
 }

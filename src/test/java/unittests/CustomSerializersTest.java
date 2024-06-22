@@ -49,18 +49,18 @@ public class CustomSerializersTest {
 
     @Test
     public void serialize() {
-        final String xml = parser.toXml(CONTAINER);
+        final var actual = parser.toXml(CONTAINER);
 
-        assertNotNull("No serialization response", xml);
-        assertEquals("Invalid serialized output", CONTAINER_XML, xml);
+        assertNotNull("No serialization response", actual);
+        assertEquals("Invalid serialized output", CONTAINER_XML, actual);
     }
 
     @Test
     public void deserialize() {
-        final Container c = parser.fromXml(CONTAINER_XML, Container.class);
+        final var actual = parser.fromXml(CONTAINER_XML, Container.class);
 
-        assertNotNull("Pojo is null", c);
-        assertReflectionEquals(c, CONTAINER);
+        assertNotNull("Pojo is null", actual);
+        assertReflectionEquals(CONTAINER, actual);
     }
 
 }
