@@ -3,6 +3,7 @@ package xmlparser;
 import xmlparser.annotations.XmlMapTagIsKey;
 import xmlparser.annotations.XmlMapWithAttributes;
 import xmlparser.annotations.XmlMapWithChildNodes;
+import xmlparser.annotations.XmlTextNode;
 import xmlparser.error.InvalidAnnotation;
 import xmlparser.model.XmlElement;
 import xmlparser.model.XmlElement.XmlTextElement;
@@ -81,17 +82,16 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
     }
 
-    private void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
+    private void writeSimple(final Writer writer, final String name, final String text, final String indent) throws IOException {
         writeIndent(writer, indent);
-        writeTag(writer, name, escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
+        writeTag(writer, name, text);
         writeNewLine(writer);
     }
 
     private void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
-            , final Object text, final String indent) throws IOException, IllegalAccessException {
+            , final String text, final String indent) throws IOException, IllegalAccessException {
         writeIndent(writer, indent);
-        writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()),
-                escapeXml(getSerializer(text.getClass()).convert(text), shouldEncodeUTF8()));
+        writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()), text);
         writeNewLine(writer);
     }
 
@@ -206,8 +206,10 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 writeSelfClosingTag(writer, name, attributesToXml(attributes, o, shouldEncodeUTF8()));
                 writeNewLine(writer);
             }
-            else
-                writeSimple(writer, name, o, attributes, textNode.get(o), indent);
+            else {
+                final boolean isCdata = isCdataTextNode(textNode);
+                writeSimple(writer, name, o, attributes, toTextContent(isCdata, name, textNode.get(o)), indent);
+            }
             return;
         }
 
@@ -242,8 +244,9 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     private void writeField(final Class<?> c, final Field field, final Writer writer,
             final String name, final Object value, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
+        final boolean isCdata = isCdataTextNode(field);
         switch (toClassType(c, this)) {
-            case SIMPLE -> writeSimple(writer, name, value, indent);
+            case SIMPLE -> writeSimple(writer, name, toTextContent(isCdata, name, value), indent);
             case ARRAY -> writeArray(writer, field, name, value, indent);
             case LIST -> writeList(writer, field, name, value, indent);
             case SET -> writeSet(writer, field, name, value, indent);
@@ -258,6 +261,10 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
     }
     private void writeNewLine(final Writer writer) throws IOException {
         if (shouldPrettyPrint()) writer.append(newLine());
+    }
+    private String toTextContent(final boolean isCdata, final String tagName, final Object value) {
+        final String content = getSerializer(value.getClass()).convert(value);
+        return isCdata ? "<![CDATA[" + requireValidCdata(content, tagName) + "]]>" : escapeXml(content, shouldEncodeUTF8());
     }
 
     String newLine();

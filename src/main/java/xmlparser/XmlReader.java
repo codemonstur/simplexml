@@ -60,7 +60,7 @@ public interface XmlReader extends AccessDeserializers {
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXTNODE -> textNodeToValue(f.getType(), selectedNode);
+                case TEXT_NODE -> textNodeToValue(f.getType(), selectedNode);
                 case ANNOTATED_ATTRIBUTE -> attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f));
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
@@ -108,7 +108,7 @@ public interface XmlReader extends AccessDeserializers {
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXTNODE -> textNodeToValue(f.getType(), selectedNode);
+                case TEXT_NODE -> textNodeToValue(f.getType(), selectedNode);
                 case ANNOTATED_ATTRIBUTE -> attributeToValue(f.getType(), toName(f), deWrap(selectedNode, f));
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));

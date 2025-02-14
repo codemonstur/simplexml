@@ -1,5 +1,7 @@
 package xmlparser.utils;
 
+import xmlparser.error.InvalidCData;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -36,6 +38,12 @@ public enum XML {;
         }
 
         return encoded.toString();
+    }
+
+    public static String requireValidCdata(final String content, final String name) {
+        if (content.contains("]]>"))
+            throw new InvalidCData("text node of tag " + name + " contains illegal sequence ]]>");
+        return content;
     }
 
     public static String attributesToXml(final List<Field> fields, final Object o, final boolean shouldEncodeUTF8) throws IllegalArgumentException,
