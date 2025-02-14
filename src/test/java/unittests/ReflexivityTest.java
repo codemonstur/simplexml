@@ -1,6 +1,6 @@
 package unittests;
 
-import model.EnumPojo;
+import model.Enum1Pojo;
 import model.SimpleEnum;
 import org.junit.Test;
 import xmlparser.XmlParser;
@@ -15,9 +15,9 @@ public class ReflexivityTest {
 
     @Test
     public void reflexiveEnum() {
-        final var pojo = new EnumPojo(SimpleEnum.one);
+        final var pojo = new Enum1Pojo(SimpleEnum.one);
 
-        final var actual = parser.fromXml(parser.toXml(pojo), EnumPojo.class);
+        final var actual = parser.fromXml(parser.toXml(pojo), Enum1Pojo.class);
 
         assertNotNull("No deserialization response", actual);
         assertEquals("Invalid serialized output", pojo.test, actual.test);

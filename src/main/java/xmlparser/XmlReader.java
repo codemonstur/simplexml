@@ -63,7 +63,7 @@ public interface XmlReader extends AccessDeserializers {
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXTNODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
+                case TEXT_NODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
                 case ANNOTATED_ATTRIBUTE -> attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f));
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
@@ -111,7 +111,7 @@ public interface XmlReader extends AccessDeserializers {
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXTNODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
+                case TEXT_NODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
                 case ANNOTATED_ATTRIBUTE -> attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f));
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
@@ -165,6 +165,7 @@ public interface XmlReader extends AccessDeserializers {
 
     boolean isEnumCachingEnabled();
     <T extends Enum> Map<Class<T>, Map<String, T>> getEnumCache();
+    <T extends Enum> Map<Class<T>, T> getEnumDefaultCache();
 
     private <T extends Enum> Map<String, T> getEnumValueDirectory(final Class<T> type) {
         final boolean enumCaching = isEnumCachingEnabled();
@@ -173,6 +174,14 @@ public interface XmlReader extends AccessDeserializers {
             return cache.computeIfAbsent(type, this::newEnumValueMap);
         }
         return newEnumValueMap(type);
+    }
+    private <T extends Enum> T getDefaultValueForEnum(final Class<T> type) {
+        final boolean enumCaching = isEnumCachingEnabled();
+        if (enumCaching) {
+            final Map<Class<T>, T> cache = getEnumDefaultCache();
+            return cache.computeIfAbsent(type, this::newEnumDefault);
+        }
+        return newEnumDefault(type);
     }
 
     private <T extends Enum> Map<String, T> newEnumValueMap(final Class<T> type) {
@@ -188,10 +197,27 @@ public interface XmlReader extends AccessDeserializers {
         }
         return valueMap;
     }
+    private <T extends Enum> T newEnumDefault(final Class<T> type) {
+        for (final T t : type.getEnumConstants()) {
+            try {
+                if (type.getField(t.name()).isAnnotationPresent(XmlEnumDefaultValue.class))
+                    return t;
+            } catch (final NoSuchFieldException e) {
+                // impossible
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
     private <T extends Enum> T valueOfEnum(final Class<T> type, final String value) {
-        final T t = getEnumValueDirectory(type).get(value);
-        if (t == null) throw new IllegalArgumentException("No enum constant for " + type.getName() + "." + value);
-        return t;
+        final T ret1 = getEnumValueDirectory(type).get(value);
+        if (ret1 != null) return ret1;
+
+        final T ret2 = getDefaultValueForEnum(type);
+        if (ret2 != null) return ret2;
+
+        throw new IllegalArgumentException("No enum constant for " + type.getName() + "." + value);
     }
 
     private Object attributeToValue(final String pattern, final Class<?> type, final String name, final XmlElement node) {

@@ -41,6 +41,7 @@ public class SimpleTest {
         final var expected = "<pojo>\n  <name>Hello</name>\n</pojo>\n";
 
         final var actual = parser.toXml(input);
+        System.out.println( actual);
 
         assertNotNull("No serialization response", actual);
         assertEquals("Invalid serialized output", expected, actual);

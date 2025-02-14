@@ -63,11 +63,11 @@ public enum Reflection {;
     }
 
     public enum FieldType {
-        TEXTNODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER, FIELD_DESERIALIZER, ENUM
+        TEXT_NODE, ANNOTATED_ATTRIBUTE, SET, LIST, ARRAY, MAP, OTHER, FIELD_DESERIALIZER, ENUM
     }
     public static FieldType toFieldType(final Field f) {
         if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
-        if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXTNODE;
+        if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXT_NODE;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
 
         final Class<?> type = f.getType();
@@ -80,7 +80,7 @@ public enum Reflection {;
     }
     public static FieldType toFieldType(final RecordComponent f) {
         if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
-        if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXTNODE;
+        if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXT_NODE;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
 
         final Class<?> type = f.getType();
