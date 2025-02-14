@@ -1,10 +1,10 @@
 package model;
 
-public final class EnumPojo {
+public final class Enum1Pojo {
 
     public final SimpleEnum test;
 
-    public EnumPojo(final SimpleEnum test) {
+    public Enum1Pojo(final SimpleEnum test) {
         this.test = test;
     }
 }

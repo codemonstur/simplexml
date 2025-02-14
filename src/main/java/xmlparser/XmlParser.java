@@ -55,6 +55,7 @@ public final class XmlParser {
         this.charset = charset;
         this.compress = new XmlCompress() {};
         final var enumCache = new HashMap<Class<Enum>, Map<String, Enum>>();
+        final var enumDefaultCache = new HashMap<Class<Enum>, Enum>();
         final var patternMap = new HashMap<String, Pattern>();
         this.reader = new XmlReader() {
             public boolean isEnumCachingEnabled() {
@@ -65,6 +66,9 @@ public final class XmlParser {
             }
             public Map<Class<Enum>, Map<String, Enum>> getEnumCache() {
                 return enumCache;
+            }
+            public Map<Class<Enum>, Enum> getEnumDefaultCache() {
+                return enumDefaultCache;
             }
             public ObjectDeserializer getDeserializer(final Class<?> type) {
                 return deserializers.get(type);
