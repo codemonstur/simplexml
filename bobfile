@@ -1,9 +1,17 @@
 include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-lib-github-maven
 
+vendor: com.github.codemonstur
+name: simplexml
 version: 3.3.0
 packaging: jar
 enablePreview: false
 release: 19
+description: A clean and simple XML parser, serializer, and deserializer.
+license:
+  name: MIT
+developer:
+  name: Jurgen Voorneveld
+  email: jegvoorneveld@gmail.com
 dependencies:
   - repository: org.objenesis:objenesis:3.4
   - repository: junit:junit:4.13.2
