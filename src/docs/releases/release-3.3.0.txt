@@ -1,0 +1,6 @@
+3.3.0
+
+WARNING: Made XML parsing more strict. Invalid XML that used to be parsed without error will
+now most likely throw an InvalidXml exception.
+
+Added XmlEnumDefaultValue annotation
