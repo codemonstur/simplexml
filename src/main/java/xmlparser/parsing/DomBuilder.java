@@ -26,7 +26,16 @@ public class DomBuilder implements EventParser {
 
         this.current.children.add(new XmlTextElement(this.current, txt));
     }
-    public XmlElement getRoot() {
-        return this.root;
+    public boolean isCurrentNull() {
+        return current == null;
     }
+    public boolean isRootNull() {
+        return root == null;
+    }
+
+    public XmlElement getRoot() {
+        return root;
+    }
+
+
 }

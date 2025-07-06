@@ -33,28 +33,46 @@ public class InvalidXmlTest {
         assertEquals("Name of tag is invalid", "tag", actual.name);
     }
 
-    //    @Test(expected = InvalidXml.class)
-    public void attributesEqualsOnly() {
+    @Test(expected = InvalidXml.class)
+    public void attributeEqualsOnly() {
         final var actual = parser.fromXml("<tag =></tag>");
-        fail("Bare equals character not caught");
+        fail("Bare equals character not detected");
     }
 
-    //    @Test(expected = InvalidXml.class)
-    public void attributesNameWithoutEquals() {
+    @Test(expected = InvalidXml.class)
+    public void attributeNameWithoutEquals() {
         final var actual = parser.fromXml("<tag word></tag>");
-        fail("Bare attribute without value not caught");
+        fail("Bare attribute without value not detected");
     }
 
-    //    @Test(expected = InvalidXml.class)
+    @Test(expected = InvalidXml.class)
     public void nonWhitespaceAtEnd() {
         parser.fromXml("<tag></tag> blaa");
-        fail("Non-whitespace characters after tags not caught");
+        fail("Non-whitespace characters after tags not detected");
     }
 
-    //    @Test(expected = InvalidXml.class)
+    @Test(expected = InvalidXml.class)
+    public void noXmlAtAll() {
+        parser.fromXml(" blaa bla val val");
+        fail("Failed to throw exception on no XML");
+    }
+
+    @Test(expected = InvalidXml.class)
     public void unclosedTag() {
         parser.fromXml("<tag>");
-        fail("Unclosed tag not caught");
+        fail("Unclosed tag not detected");
+    }
+
+    @Test(expected = InvalidXml.class)
+    public void unfinishedTag() {
+        parser.fromXml("<tag  ");
+        fail("Unfinished tag not detected");
+    }
+
+    @Test(expected = InvalidXml.class)
+    public void invalidCharacterInOpeningTag() {
+        parser.fromXml("<tag> bla <2 </tag>");
+        fail("Invalid character in tag name not detected");
     }
 
 }

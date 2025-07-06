@@ -27,7 +27,7 @@ public class MapTest {
     private static final String mapXml =
         "<mappojo>\n" +
         "  <map1>\n" +
-        "    <1>monkey</1>\n" +
+        "    <one>monkey</one>\n" +
         "  </map1>\n" +
         "  <map2 key=\"2\" value=\"thumb\" />\n" +
         "  <map3>\n" +
@@ -76,19 +76,19 @@ public class MapTest {
     }
 
     private static MapPojo newDefaultMapPojo() {
-        final Map<Integer, String> map1 = new HashMap<>();
-        map1.put(1, "monkey");
-        final Map<Integer, String> map2 = new HashMap<>();
-        map2.put(2, "thumb");
-        final Map<Integer, String> map3 = new HashMap<>();
-        map3.put(3, "bonk");
-        map3.put(4, "oiff");
+        final Map<String, String> map1 = new HashMap<>();
+        map1.put("one", "monkey");
+        final Map<String, String> map2 = new HashMap<>();
+        map2.put("2", "thumb");
+        final Map<String, String> map3 = new HashMap<>();
+        map3.put("3", "bonk");
+        map3.put("4", "oiff");
         final Map<String, String> map4 = new HashMap<>();
         map4.put("Mark", "Whatney");
-        final Map<Integer, String> map5 = new HashMap<>();
-        map5.put(1, "monkey");
-        final Map<Integer, String> map6 = new HashMap<>();
-        map6.put(2, "thumb");
+        final Map<String, String> map5 = new HashMap<>();
+        map5.put("1", "monkey");
+        final Map<String, String> map6 = new HashMap<>();
+        map6.put("2", "thumb");
 
         return new MapPojo(map1, map2, map3, map4, map5, map6);
     }

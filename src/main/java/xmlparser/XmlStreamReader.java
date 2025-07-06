@@ -17,7 +17,7 @@ public interface XmlStreamReader {
     static void toXmlStream(final InputStreamReader in, final EventParser parser, final boolean conserveWhitespace,
                             final Trim trimmer, final UnEscape escaper) throws IOException {
         boolean isStart = true;
-        String str; while ((str = readLine(in, XML_TAG_START)) != null) {
+        String str; while ((str = readLine(in, trimmer, XML_TAG_START)) != null) {
             final String text = trimmer.trim(str);
             if (!text.isEmpty()) {
                 if (isStart) throw new InvalidXml("XML contains non-whitespace characters before opening tag");
@@ -26,7 +26,7 @@ public interface XmlStreamReader {
                 parser.someText(str);
             }
 
-            str = trimmer.trim(readLine(in, XML_TAG_END));
+            str = trimmer.trim(readLine(in, trimmer, XML_TAG_END));
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
             if (str.startsWith(XML_START_COMMENT)) {
                 if (str.endsWith(XML_END_COMMENT))
@@ -39,6 +39,7 @@ public interface XmlStreamReader {
 
             isStart = false;
             if (str.charAt(0) == CHAR_FORWARD_SLASH) parser.endNode(false);
+            else if (!isValidTagName(str)) throw new InvalidXml("Found opening tag with invalid characters: " + str);
             else {
                 final String name = getNameOfTag(str);
                 if (str.length() == name.length()) {
@@ -58,6 +59,13 @@ public interface XmlStreamReader {
         }
     }
 
+    private static boolean isValidTagName(final String str) {
+        final char first = str.charAt(0);
+        if (first != '_' && !Character.isLetter(first))
+            return false;
+        return true;
+    }
+
     static HashMap<String, String> xmlToAttributes(String input, final Trim trimmer, final UnEscape escaper) {
         final HashMap<String, String> attributes = new HashMap<>();
 
@@ -65,7 +73,7 @@ public interface XmlStreamReader {
             final int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startName == -1) break;
             final int equals = input.indexOf(CHAR_EQUALS, startName+1);
-            if (equals == -1) break;
+            if (equals == -1) throw new InvalidXml("Invalid formatted attribute list: '" + input + "'");
 
             final String name = trimmer.trim(input.substring(startName, equals));
             input = input.substring(equals+1);

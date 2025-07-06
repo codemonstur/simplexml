@@ -377,6 +377,8 @@ public interface XmlReader extends AccessDeserializers {
                                final Trim trimmer, final UnEscape escaper) throws IOException {
         final DomBuilder p = new DomBuilder();
         XmlStreamReader.toXmlStream(in, p, conserveWhitespace, trimmer, escaper);
+        if (!p.isCurrentNull()) throw new InvalidXml("Unbalanced tags");
+        if (p.isRootNull()) throw new InvalidXml("No XML tags found");
         return p.getRoot();
     }
 

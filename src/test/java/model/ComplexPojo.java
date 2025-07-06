@@ -6,12 +6,12 @@ public final class ComplexPojo {
 
     public final String name;
     public final List<String> list;
-    public final Map<Integer, String> map;
+    public final Map<String, String> map;
     public final Float[] array;
     public final Set<Double> set;
     public final SimpleEnum testenum;
 
-    public ComplexPojo(final String name, final List<String> list, final Map<Integer, String> map, final Float[] array
+    public ComplexPojo(final String name, final List<String> list, final Map<String, String> map, final Float[] array
             , final Set<Double> set, final SimpleEnum testenum) {
         this.name = name;
         this.list = list;

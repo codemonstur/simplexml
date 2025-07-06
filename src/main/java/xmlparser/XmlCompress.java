@@ -25,11 +25,11 @@ public interface XmlCompress {
     }
 
     static void compressXML(final InputStreamReader in, final OutputStreamWriter out, final Trim trimmer) throws IOException {
-        String str; while ((str = readLine(in, XML_TAG_START)) != null) {
+        String str; while ((str = readLine(in, trimmer, XML_TAG_START)) != null) {
             // Probably a text node, remove the whitespace and write
             if (!str.isEmpty()) out.write(trimmer.trim(str));
 
-            str = trimmer.trim(readLine(in, XML_TAG_END));
+            str = trimmer.trim(readLine(in, trimmer, XML_TAG_END));
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
             // We don't care about comments
             if (str.charAt(0) == XML_PROLOG) continue;

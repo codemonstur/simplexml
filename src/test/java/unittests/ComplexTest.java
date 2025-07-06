@@ -21,7 +21,7 @@ public class ComplexTest {
               <list>second</list>
               <list>monkey</list>
               <map>
-                <1>thumb</1>
+                <one>thumb</one>
               </map>
               <array>0.5</array>
               <array>34.8</array>
@@ -51,8 +51,8 @@ public class ComplexTest {
 
     private static ComplexPojo newDefaultComplexPojo() {
         final List<String> list = Arrays.asList("first", "second", "monkey");
-        final Map<Integer, String> map = new HashMap<>();
-        map.put(1, "thumb");
+        final Map<String, String> map = new HashMap<>();
+        map.put("one", "thumb");
         final Float[] array = { 0.5f, 34.8f };
         final Set<Double> set = new HashSet<>(Arrays.asList(45.3, 1234567.90));
 

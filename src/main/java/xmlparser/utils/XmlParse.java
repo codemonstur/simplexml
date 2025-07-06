@@ -1,5 +1,7 @@
 package xmlparser.utils;
 
+import xmlparser.error.InvalidXml;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -18,14 +20,20 @@ public enum XmlParse {;
         return tag.substring(0, offset);
     }
 
-    public static String readLine(final InputStreamReader in, final char end) throws IOException {
+    public static String readLine(final InputStreamReader in, final Trim trimmer, final char end) throws IOException {
         final StringBuilder chars = new StringBuilder();
         int data;
         while ((data = in.read()) != -1) {
             if (data == end) break;
             chars.append((char)data);
         }
-        if (data == -1) return null;
+        if (data == -1) {
+            if (end == '<') {
+                final var rest = trimmer.trim(chars.toString());
+                if (!rest.isEmpty()) throw new InvalidXml("Found remaining text after last tag: " + rest);
+            }
+            return null;
+        }
         return chars.toString();
     }
 
