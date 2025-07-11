@@ -2,7 +2,7 @@ include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-lib-g
 
 vendor: com.github.codemonstur
 name: simplexml
-version: 3.3.0
+version: 3.4.0
 packaging: jar
 enablePreview: false
 release: 19
