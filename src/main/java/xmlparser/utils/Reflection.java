@@ -29,7 +29,8 @@ public enum Reflection {;
         Field textNode = null;
         for (final Field f : listFields(clazz)) {
             f.setAccessible(true);
-            if (f.get(o) == null) continue;
+            final var hasDefault = f.getAnnotation(XmlDefaultValue.class);
+            if (f.get(o) == null && (hasDefault == null || !hasDefault.serialize())) continue;
             if (Modifier.isStatic(f.getModifiers())) continue;
             if (Modifier.isTransient(f.getModifiers())) continue;
             if (f.isAnnotationPresent(XmlNoExport.class)) continue;

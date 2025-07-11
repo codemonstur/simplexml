@@ -1,5 +1,7 @@
 package xmlparser.utils;
 
+import xmlparser.annotations.XmlDefaultValue;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -33,6 +35,11 @@ public enum XML {;
     }
     public static void addAttribute(final StringBuilder builder, final String name, final String value) {
         builder.append(SPACE).append(name).append(EQUALS).append(DOUBLE_QUOTE).append(value).append(DOUBLE_QUOTE);
+    }
+    public static Object toValue(final Field f, final Object o) throws IllegalAccessException {
+        final var value = f.get(o);
+        if (value != null) return value;
+        return f.getAnnotation(XmlDefaultValue.class).value();
     }
 
     public static void writeTag(final Writer writer, final String name, final String text) throws IOException {

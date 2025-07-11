@@ -81,7 +81,16 @@ public interface XmlReader extends AccessDeserializers {
                         final XmlElement child = selectedNode.findChildForName(name, null);
                         yield domToObject(child, findAbstractType(isAbstract, child));
                     }
-                    yield domToObject(findChildForName(deWrap(selectedNode, f), name, null), f.getType());
+
+                    final var childForName = findChildForName(deWrap(selectedNode, f), name, null);
+                    if (childForName != null) yield domToObject(childForName, f.getType());
+
+                    final var hasDefault = f.getAnnotation(XmlDefaultValue.class);
+                    if (hasDefault != null && hasDefault.deserialize()) {
+                        yield stringToValue(f.getType(), hasDefault.value());
+                    }
+
+                    yield null;
                 }
             };
             fieldValues[i] = fieldValue;
@@ -131,7 +140,15 @@ public interface XmlReader extends AccessDeserializers {
                         final XmlElement child = selectedNode.findChildForName(name, null);
                         yield domToObject(child, findAbstractType(isAbstract, child));
                     }
-                    yield domToObject(findChildForName(deWrap(selectedNode, f), name, null), f.getType());
+                    final var childForName = findChildForName(deWrap(selectedNode, f), name, null);
+                    if (childForName != null) yield domToObject(childForName, f.getType());
+
+                    final var hasDefault = f.getAnnotation(XmlDefaultValue.class);
+                    if (hasDefault != null && hasDefault.deserialize()) {
+                        yield stringToValue(f.getType(), hasDefault.value());
+                    }
+
+                    yield null;
                 }
             };
             setField(f, o, fieldValue);

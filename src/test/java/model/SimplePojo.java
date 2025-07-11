@@ -20,4 +20,5 @@ public final class SimplePojo {
         this.booleans = booleans;
         this.longs = longs;
     }
+
 }

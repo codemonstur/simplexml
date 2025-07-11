@@ -230,7 +230,7 @@ public interface XmlWriter extends AccessSerializers {
                 writeClosingTag(writer, toWrappedName(f));
                 writeNewLine(writer);
             } else {
-                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent+INDENT);
+                writeField(f.getType(), f, writer, toName(f, f.get(o)), toValue(f, o), indent+INDENT);
             }
         }
         if (textNode != null) {
