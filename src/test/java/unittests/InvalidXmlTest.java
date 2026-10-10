@@ -3,7 +3,6 @@ package unittests;
 import org.junit.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
-import xmlparser.model.XmlElement;
 
 import static org.junit.Assert.*;
 import static xmlparser.XmlParser.newXmlParser;
@@ -35,13 +34,13 @@ public class InvalidXmlTest {
 
     @Test(expected = InvalidXml.class)
     public void attributeEqualsOnly() {
-        final var actual = parser.fromXml("<tag =></tag>");
+        parser.fromXml("<tag =></tag>");
         fail("Bare equals character not detected");
     }
 
     @Test(expected = InvalidXml.class)
     public void attributeNameWithoutEquals() {
-        final var actual = parser.fromXml("<tag word></tag>");
+        parser.fromXml("<tag word></tag>");
         fail("Bare attribute without value not detected");
     }
 

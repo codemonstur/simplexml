@@ -2,7 +2,6 @@ package unittests;
 
 import org.junit.Test;
 import xmlparser.XmlParser;
-import xmlparser.model.XmlElement;
 
 import static org.junit.Assert.*;
 import static xmlparser.model.XmlElement.newElement;

@@ -2,7 +2,6 @@ package unittests;
 
 import model.Pojo;
 import model.PojoSelfClosed;
-import model.PojoWithText;
 import org.junit.Test;
 import xmlparser.XmlParser;
 

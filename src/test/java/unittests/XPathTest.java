@@ -1,11 +1,8 @@
 package unittests;
 
 import org.junit.Test;
-import xmlparser.model.XmlElement;
 import xmlparser.model.XmlElement.XmlTextElement;
 import xmlparser.xpath.XPathExpression;
-
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static xmlparser.model.XmlElement.newElement;

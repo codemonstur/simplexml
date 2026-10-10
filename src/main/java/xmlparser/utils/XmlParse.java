@@ -6,15 +6,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import static xmlparser.utils.Constants.CHAR_FORWARD_SLASH;
-import static xmlparser.utils.Constants.CHAR_SPACE;
 import static xmlparser.utils.Trimming.Trim;
 
 public enum XmlParse {;
 
-    public static String getNameOfTag(final String tag) {
+    public static String getNameOfTag(final String tag, final Trim trimmer) {
         int offset = 0;
         for (; offset < tag.length(); offset++) {
-            if (tag.charAt(offset) == CHAR_SPACE || tag.charAt(offset) == CHAR_FORWARD_SLASH)
+            if (trimmer.isWhitespace(tag.charAt(offset)) || tag.charAt(offset) == CHAR_FORWARD_SLASH)
                 break;
         }
         return tag.substring(0, offset);

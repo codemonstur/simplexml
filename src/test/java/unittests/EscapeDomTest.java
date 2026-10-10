@@ -1,10 +1,7 @@
 package unittests;
 
-import model.Pojo;
-import model.PojoWithAttribute;
 import org.junit.Test;
 import xmlparser.XmlParser;
-import xmlparser.model.XmlElement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

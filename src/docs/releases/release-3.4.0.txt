@@ -1,0 +1,5 @@
+3.4.0
+
+Fixed bug in DOM based parsing setting incorrect tag name
+Added some documentation
+Updated versions

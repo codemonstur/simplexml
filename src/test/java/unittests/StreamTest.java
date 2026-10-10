@@ -15,36 +15,39 @@ import static org.junit.Assert.assertNotNull;
 
 public class StreamTest {
 
-    private static final String STREAMABLE =
-            "<tag attribute=\"something\" bla=\"/\">\n" +
-            "    <child></child>\n" +
-            "</tag>\n" +
-            "\n" +
-            "<something />\n" +
-            "\n" +
-            "<else><child1></child1><child2></child2></else>\n";
+    private static final String STREAMABLE = """
+            <tag attribute="something" bla="/">
+                <child></child>
+            </tag>
+            
+            <something />
+            
+            <else><child1></child1><child2></child2></else>
+            """;
 
-    private static final String STREAMABLE_OBJECTS =
-            "<simplepojo>\n" +
-            "    <integer>1</integer>\n" +
-            "</simplepojo>\n" +
-            "\n" +
-            "<simplepojo />\n" +
-            "\n" +
-            "<simplepojo><string>test</string></simplepojo>\n";
+    private static final String STREAMABLE_OBJECTS = """
+            <simplepojo>
+                <integer>1</integer>
+            </simplepojo>
+            
+            <simplepojo />
+            
+            <simplepojo><string>test</string></simplepojo>
+            """;
 
-    private static final String INVALID_XML_STREAM =
-            "<tag attribute=\"something\" bla=\"/\">\n" +
-            "    <child></child>\n" +
-            "</tag>\n" +
-            "\n" +
-            "<" +
-            "\n" ;
+    private static final String INVALID_XML_STREAM = """
+            <tag attribute="something" bla="/">
+                <child></child>
+            </tag>
+            
+            <\
+            
+            """;
 
-    private static final String XML_ITEM_1 =
-            "<tag attribute=\"something\" bla=\"/\">\n" +
-            "    <child></child>\n" +
-            "</tag>";
+    private static final String XML_ITEM_1 = """
+            <tag attribute="something" bla="/">
+                <child></child>
+            </tag>""";
     private static final String XML_ITEM_2 = "<something />";
     private static final String XML_ITEM_3 = "<else><child1></child1><child2></child2></else>";
 

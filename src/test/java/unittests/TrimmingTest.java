@@ -14,7 +14,7 @@ public class TrimmingTest {
     @Test
     public void trimXmlWhiteSpace() {
         final var parser = newXmlParser().strictWhitespace().build();
-        final var input = "<pojo><name>\r Hello \t\n</name></pojo>";
+        final var input = "<pojo\n \r><name>\r Hello \t\n</name></\r\n\tpojo\t \r\n>";
 
         final var actual = parser.fromXml(input, Pojo.class);
 

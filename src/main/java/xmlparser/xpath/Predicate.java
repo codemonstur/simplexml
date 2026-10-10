@@ -8,8 +8,16 @@ import static xmlparser.utils.Constants.*;
 import static xmlparser.utils.Validator.hasExactLength;
 import static xmlparser.utils.Validator.partsAreNotEmpty;
 
+/**
+ * Represents a predicate that can be evaluated against an XmlElement.
+ */
 public interface Predicate {
 
+	/**
+	 * Performs the actual evaluation.
+	 * @param root The root tag to start the evaluation from
+	 * @return the result of the evaluation
+	 */
 	boolean evaluate(XmlElement root);
 
 	static Predicate parsePredicate(final String predicate) throws InvalidXPath {

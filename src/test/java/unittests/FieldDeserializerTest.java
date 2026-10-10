@@ -36,14 +36,14 @@ public class FieldDeserializerTest {
 
     @Test
     public void testFieldDeserializer() {
-        final var input =
-            "<fieldpojo>\n" +
-            "    <map>\n" +
-            "        <item name=\"ItemA\" value=\"123\" />\n" +
-            "        <item name=\"ItemB\" value=\"qwerty\" />\n" +
-            "        <item name=\"ItemC\" value=\"ABC\" />\n" +
-            "    </map>\n" +
-            "</fieldpojo>";
+        final var input = """
+            <fieldpojo>
+                <map>
+                    <item name="ItemA" value="123" />
+                    <item name="ItemB" value="qwerty" />
+                    <item name="ItemC" value="ABC" />
+                </map>
+            </fieldpojo>""";
 
         final var actual = parser.fromXml(input, FieldPojo.class);
 

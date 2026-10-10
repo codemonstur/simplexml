@@ -13,17 +13,39 @@ import static java.lang.String.format;
 import static xmlparser.model.XmlElement.findChildForName;
 import static xmlparser.utils.Reflection.ClassType.*;
 
+/**
+ * A helper class that uses reflection to introspect and construct various objects and classes.
+ */
 public enum Reflection {;
 
     // I would like to define T as 'T extends Record', haven't figured out how to get the generics to
     // understand what type I have. The XmlReader calls this using a Class<?> that has been checked with
     // an if. But how to upcast after that if?
+
+    /**
+     * Returns the canonical constructor for a given record.
+     * @param recordClass the record to find the constructor for
+     * @return the constructor
+     * @param <T> Any type really, but it does have to be a record
+     * @throws SecurityException Really shouldn't happen
+     * @throws NoSuchMethodException Really shouldn't happen
+     */
     public static <T> Constructor<T> canonicalConstructorOfRecord(final Class<T> recordClass) throws SecurityException, NoSuchMethodException {
         final var componentTypes = Arrays.stream(recordClass.getRecordComponents())
             .map(RecordComponent::getType).toArray(Class<?>[]::new);
         return recordClass.getDeclaredConstructor(componentTypes);
     }
 
+    /**
+     * Loops through all the fields of clazz and figures out what kind they are. Populates the
+     * attributes, and childnodes lists.
+     * @param clazz the class to take the fields of
+     * @param o the object to take the instances of
+     * @param attributes the list of attributes for this class
+     * @param childNodes the list of childnodes for this class
+     * @return the textnode, if any
+     * @throws IllegalAccessException Really shouldn't happen
+     */
     public static Field determineTypeOfFields(final Class<?> clazz, final Object o, final List<Field> attributes
             , final List<Field> childNodes) throws IllegalAccessException {
         Field textNode = null;
@@ -44,6 +66,12 @@ public enum Reflection {;
         return textNode;
     }
 
+    /**
+     * Looks up the value to put into XML for a given Enum instance. Usually just .name() but it
+     * may also be mapped to something else using the @XmlEnumValue annotation.
+     * @param o the enum instance to convert
+     * @return the XML value
+     */
     public static String toEnumValue(final Enum o) {
         try {
             final String name = o.name();

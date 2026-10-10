@@ -36,22 +36,24 @@
         <module.name>com.github.codemonstur.simplexml</module.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven.version>3.5.0</maven.version>
+        <maven.version>3.6.3</maven.version>
+
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <maven.compiler.release>19</maven.compiler.release>
 
-        <version.library.objenesis>3.4</version.library.objenesis>
+        <version.library.objenesis>3.6</version.library.objenesis>
         <version.library.junit>4.13.2</version.library.junit>
         <version.library.unitils-core>3.4.6</version.library.unitils-core>
-        <version.library.commons-text>1.13.1</version.library.commons-text>
+        <version.library.commons-text>1.15.0</version.library.commons-text>
 
-        <version.plugin.enforcer>3.6.0</version.plugin.enforcer>
+        <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
+        <version.plugin.surefire>3.6.0</version.plugin.surefire>
         <version.plugin.jar>3.3.0</version.plugin.jar>
         <version.plugin.source>3.3.0</version.plugin.source>
-        <version.plugin.javadoc>3.11.2</version.plugin.javadoc>
+        <version.plugin.javadoc>3.12.0</version.plugin.javadoc>
         <version.plugin.gpg>3.2.8</version.plugin.gpg>
-        <version.plugin.publish>0.8.0</version.plugin.publish>
+        <version.plugin.publish>0.11.0</version.plugin.publish>
     </properties>
 
     <build>
@@ -75,6 +77,15 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.plugin.surefire}</version>
+                <configuration>
+                    <argLine>-Xshare:off</argLine>
+                </configuration>
             </plugin>
 
             <plugin>

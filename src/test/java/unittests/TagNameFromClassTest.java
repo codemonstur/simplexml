@@ -37,11 +37,13 @@ public class TagNameFromClassTest {
 
     private final XmlParser parser = new XmlParser();
 
-    private static final String XML_GET_ACTION = "<envelope>\n" +
-            "  <get>\n" +
-            "    <id>1</id>\n" +
-            "  </get>\n" +
-            "</envelope>\n";
+    private static final String XML_GET_ACTION = """
+            <envelope>
+              <get>
+                <id>1</id>
+              </get>
+            </envelope>
+            """;
 
     @Test
     public void serializeEnvelopeWithGetAction() {
@@ -53,11 +55,13 @@ public class TagNameFromClassTest {
         assertEquals("Invalid serialized output", XML_GET_ACTION, actual);
     }
 
-    private static final String XML_EMAIL_ACTION = "<envelope>\n" +
-            "  <email>\n" +
-            "    <address>test@acme.org</address>\n" +
-            "  </email>\n" +
-            "</envelope>\n";
+    private static final String XML_EMAIL_ACTION = """
+            <envelope>
+              <email>
+                <address>test@acme.org</address>
+              </email>
+            </envelope>
+            """;
 
     @Test
     public void serializeEnvelopeWithEmailAction() {
@@ -69,9 +73,11 @@ public class TagNameFromClassTest {
         assertEquals("Invalid serialized output", XML_EMAIL_ACTION, actual);
     }
 
-    private static final String XML_OBJECT_ACTION = "<envelope>\n" +
-            "  <object />\n" +
-            "</envelope>\n";
+    private static final String XML_OBJECT_ACTION = """
+            <envelope>
+              <object />
+            </envelope>
+            """;
 
     @Test
     public void serializeEnvelopeWithObject() {

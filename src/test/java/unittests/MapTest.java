@@ -24,27 +24,28 @@ public class MapTest {
     }
 
     private static final MapPojo map = newDefaultMapPojo();
-    private static final String mapXml =
-        "<mappojo>\n" +
-        "  <map1>\n" +
-        "    <one>monkey</one>\n" +
-        "  </map1>\n" +
-        "  <map2 key=\"2\" value=\"thumb\" />\n" +
-        "  <map3>\n" +
-        "    <key>3</key>\n" +
-        "    <value>bonk</value>\n" +
-        "  </map3>\n" +
-        "  <map3>\n" +
-        "    <key>4</key>\n" +
-        "    <value>oiff</value>\n" +
-        "  </map3>\n" +
-        "  <map4 key=\"Mark\">Whatney</map4>\n" +
-        "  <map5>\n" +
-        "    <key>1</key>\n" +
-        "    monkey\n" +
-        "  </map5>\n" +
-        "  <item key=\"2\" value=\"thumb\" />\n" +
-        "</mappojo>\n";
+    private static final String mapXml = """
+        <mappojo>
+          <map1>
+            <one>monkey</one>
+          </map1>
+          <map2 key="2" value="thumb" />
+          <map3>
+            <key>3</key>
+            <value>bonk</value>
+          </map3>
+          <map3>
+            <key>4</key>
+            <value>oiff</value>
+          </map3>
+          <map4 key="Mark">Whatney</map4>
+          <map5>
+            <key>1</key>
+            monkey
+          </map5>
+          <item key="2" value="thumb" />
+        </mappojo>
+        """;
 
     private final XmlParser parser = new XmlParser();
 

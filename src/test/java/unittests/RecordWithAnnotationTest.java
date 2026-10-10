@@ -1,6 +1,5 @@
 package unittests;
 
-import model.RecordPojo;
 import model.RecordPojoWithAnnotation;
 import org.junit.Test;
 import xmlparser.XmlParser;

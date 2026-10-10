@@ -1,11 +1,9 @@
 package xmlparser;
 
 import xmlparser.error.InvalidXml;
-import xmlparser.utils.IO;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static xmlparser.utils.Constants.*;
@@ -38,13 +36,13 @@ public interface XmlCompress {
             // It might be a closing tag which is easy to deal with
             if (str.charAt(0) == CHAR_FORWARD_SLASH) {
                 out.write(CHAR_FORWARD_SLASH);
-                out.write(trimmer.trim(getNameOfTag(str.substring(1))));
+                out.write(getNameOfTag(str.substring(1), trimmer));
                 out.write(XML_TAG_END);
                 continue;
             }
 
             // Its an opening tag so we need the attributes and the whole thing
-            final String name = getNameOfTag(str);
+            final String name = getNameOfTag(str, trimmer);
             if (str.length() == name.length()) {
                 out.write(name);
                 out.write(XML_TAG_END);

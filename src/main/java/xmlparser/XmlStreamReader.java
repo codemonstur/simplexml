@@ -41,7 +41,7 @@ public interface XmlStreamReader {
             if (str.charAt(0) == CHAR_FORWARD_SLASH) parser.endNode(false);
             else if (!isValidTagName(str)) throw new InvalidXml("Found opening tag with invalid characters: " + str);
             else {
-                final String name = getNameOfTag(str);
+                final String name = getNameOfTag(str, trimmer);
                 if (str.length() == name.length()) {
                     parser.startNode(str, new HashMap<>());
                     continue;

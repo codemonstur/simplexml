@@ -13,10 +13,10 @@ developer:
   name: Jurgen Voorneveld
   email: jegvoorneveld@gmail.com
 dependencies:
-  - repository: org.objenesis:objenesis:3.4
+  - repository: org.objenesis:objenesis:3.6
   - repository: junit:junit:4.13.2
     scope: test
   - repository: org.unitils:unitils-core:3.4.6
     scope: test
-  - repository: org.apache.commons:commons-text:1.13.1
+  - repository: org.apache.commons:commons-text:1.15.0
     scope: test

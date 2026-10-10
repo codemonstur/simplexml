@@ -46,7 +46,7 @@ public class AbstractTest {
             </targetedMessage>""";
 
     @XmlName("targetedMessage")
-    public class TargetedMessage1 {
+    public static class TargetedMessage1 {
         String sender;
         @XmlAbstractClass(types={
             @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
@@ -55,7 +55,7 @@ public class AbstractTest {
     }
 
     @XmlName("targetedMessage")
-    public class TargetedMessage2 {
+    public static class TargetedMessage2 {
         String sender;
         @XmlAbstractClass(attribute="type", types={
             @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class),
@@ -64,7 +64,7 @@ public class AbstractTest {
         Payload payload;
     }
     @XmlName("targetedMessage")
-    public class TargetedMessage3 {
+    public static class TargetedMessage3 {
         String sender;
         @XmlAbstractClass(tag="class", types={
             @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
@@ -72,14 +72,14 @@ public class AbstractTest {
         Payload payload;
     }
 
-    abstract class Payload {
+    abstract static class Payload {
         private Integer id;
         Integer getId() {
             return id;
         }
     }
-    public class Foo extends Payload {}
-    public class Bar extends Payload {
+    public static class Foo extends Payload {}
+    public static class Bar extends Payload {
         String name;
     }
 

@@ -1,10 +1,8 @@
 package unittests;
 
 import model.Pojo;
-import model.ValidatorPojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
-import xmlparser.model.XmlElement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,6 +19,31 @@ public class WhiteSpaceTest {
 
         assertNotNull("Pojo is null", actual);
         assertEquals("Pojo has the wrong name", "Hello", actual.name);
+    }
+
+    @Test
+    public void multilineTagWithoutAttributes() {
+        final var parser = newXmlParser().build();
+        final var input = "<tag\n></tag>";
+
+        final var actual = parser.fromXml(input);
+
+        assertNotNull("XmlElement is null", actual);
+        assertEquals("XmlElement has the wrong name value", "tag", actual.name);
+        assertEquals("XmlElement has wrong attribute count", 0, actual.attributes.size());
+    }
+
+    @Test
+    public void multilineTagWithAttributes() {
+        final var parser = newXmlParser().build();
+        final var input = "<tag\n attr=true></tag>";
+
+        final var actual = parser.fromXml(input);
+
+        assertNotNull("XmlElement is null", actual);
+        assertEquals("XmlElement has the wrong name value", "tag", actual.name);
+        assertEquals("XmlElement has wrong attribute count", 1, actual.attributes.size());
+        assertEquals("XmlElement has wrong attribute", "true", actual.attributes.get("attr"));
     }
 
     @Test

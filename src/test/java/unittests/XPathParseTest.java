@@ -2,8 +2,6 @@ package unittests;
 
 import org.junit.Test;
 import xmlparser.error.InvalidXPath;
-import xmlparser.xpath.Predicate;
-import xmlparser.xpath.Segment;
 import xmlparser.xpath.TextSegment;
 import xmlparser.xpath.XPathExpression;
 

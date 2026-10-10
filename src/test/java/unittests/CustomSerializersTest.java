@@ -29,10 +29,12 @@ public class CustomSerializersTest {
     }
 
     private static final Container CONTAINER = new Container("container", new Special(1, "special"));
-    private static final String CONTAINER_XML = "<container>\n" +
-            "  <name>container</name>\n" +
-            "  <special>1:special</special>\n" +
-            "</container>\n";
+    private static final String CONTAINER_XML = """
+            <container>
+              <name>container</name>
+              <special>1:special</special>
+            </container>
+            """;
 
     private final XmlParser parser = newXmlParser()
         .addDeserializer(Special.class, value -> {

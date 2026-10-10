@@ -13,25 +13,27 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 public class WrappedTest {
 
     private static final WrappedPojo wrapped = newDefaultWrappedPojo();
-    private static final String wrappedXml = "<wrappedpojo>\n" +
-            "  <wrapper1>\n" +
-            "    <string>Hello</string>\n" +
-            "  </wrapper1>\n" +
-            "  <wrapper2>\n" +
-            "    <list>, world</list>\n" +
-            "  </wrapper2>\n" +
-            "  <wrapper3>\n" +
-            "    <map>\n" +
-            "      <Guybrush>Threepwood</Guybrush>\n" +
-            "    </map>\n" +
-            "  </wrapper3>\n" +
-            "  <wrapper4>\n" +
-            "    <set>Mêlée Island</set>\n" +
-            "  </wrapper4>\n" +
-            "  <wrapper5>\n" +
-            "    <array>monkey</array>\n" +
-            "  </wrapper5>\n" +
-            "</wrappedpojo>\n";
+    private static final String wrappedXml = """
+            <wrappedpojo>
+              <wrapper1>
+                <string>Hello</string>
+              </wrapper1>
+              <wrapper2>
+                <list>, world</list>
+              </wrapper2>
+              <wrapper3>
+                <map>
+                  <Guybrush>Threepwood</Guybrush>
+                </map>
+              </wrapper3>
+              <wrapper4>
+                <set>Mêlée Island</set>
+              </wrapper4>
+              <wrapper5>
+                <array>monkey</array>
+              </wrapper5>
+            </wrappedpojo>
+            """;
 
     private static final WrappedPojo wrappedNull = new WrappedPojo(null, null, null, null, null);
     private static final String wrappedXmlNull = "<wrappedpojo />\n";
@@ -79,7 +81,7 @@ public class WrappedTest {
         map.put("Guybrush", "Threepwood");
         final Set<String> set = new HashSet<>();
         set.add("Mêlée Island");
-        return new WrappedPojo("Hello", Arrays.asList(", world"), map, set, new String[]{"monkey"});
+        return new WrappedPojo("Hello", List.of(", world"), map, set, new String[]{"monkey"});
     }
 
 }
