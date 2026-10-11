@@ -1,6 +1,6 @@
 
-[![GitHub Release](https://img.shields.io/github/release/codemonstur/simplexml.svg)](https://github.com/codemonstur/simplexml/releases) 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.codemonstur/simplexml/badge.svg)](http://mvnrepository.com/artifact/com.github.codemonstur/simplexml)
+[![GitHub Release](https://img.shields.io/github/v/release/codemonstur/simplexml)](https://github.com/codemonstur/simplexml/releases) 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.codemonstur/simplexml)](https://search.maven.org/artifact/com.github.codemonstur/simplexml)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 # SimpleXml
