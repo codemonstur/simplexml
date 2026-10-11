@@ -18,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  *     enum MyEnum {
  *         one,
- *         \@XmlEnumDefaultValue
+ *         @XmlEnumDefaultValue
  *         two
  *     }
  * }

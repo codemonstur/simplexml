@@ -53,12 +53,12 @@ public class AbstractContainerTest {
             <items>
               <foo>
                 <Item>
-                    <id>56789012</content_id>
+                    <id>56789012</id>
                     <type>board</type>
                     <board_field>098765</board_field>
                 </Item>
                 <Item>
-                    <id>1234</content_id>
+                    <id>1234</id>
                     <type>role</type>
                     <role_field>90000</role_field>
                 </Item>

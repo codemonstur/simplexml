@@ -8,21 +8,47 @@ import java.util.List;
 import static xmlparser.utils.Constants.*;
 import static xmlparser.xpath.Predicate.parsePredicate;
 
+/**
+ * One step of an XPath: the name of the element to match, and the predicates that element has to
+ * satisfy before the walk continues down through it.
+ */
 public class Segment {
 
+	/**
+	 * The name of the element to match, empty for a step that has no name of its own.
+	 */
 	public final String elementName;
+	/**
+	 * The conditions the element has to satisfy, or null when the step was built without any.
+	 */
 	public final List<Predicate> predicates;
 
+	/**
+	 * Builds a step with an empty name and no predicates at all.
+	 */
 	public Segment() {
 		this("", null);
 	}
 
+	/**
+	 * Builds a step from parts that were parsed elsewhere, kept exactly as given.
+	 * @param elementName the name of the element to match, empty for a step without one
+	 * @param predicates the conditions to satisfy, or null for none
+	 */
 	public Segment(final String elementName, final List<Predicate> predicates) {
 		this.elementName = elementName;
 		this.predicates = predicates;
 	}
 
 
+    /**
+     * Parses one step of a path: the element name up to the first '[', then every bracketed
+     * predicate that follows the name. A step reading {@code text()} gives a {@link TextSegment}.
+     * @param segment the step to parse, with no separator in it
+     * @return the parsed step
+     * @throws InvalidXPath if the name holds a ']', a predicate does not open with '[' or close
+     *         with ']', or a predicate is not an equality of two non-empty parts
+     */
     public static Segment parseSegment(final String segment) throws InvalidXPath {
 		final String elementName = isValidElementName(segment.substring(0, indexOfPredicateSection(segment)));
         if (SEGMENT_EXPRESSION.equals(elementName)) return new TextSegment();

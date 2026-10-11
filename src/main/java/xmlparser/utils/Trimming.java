@@ -9,6 +9,11 @@ import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 import static xmlparser.utils.Constants.EMPTY;
 
+/**
+ * Decides what whitespace is, and offers three opinions on it. Four characters are whitespace by
+ * the XML standard, but a great many more look like it and turn up in documents from the wild, so
+ * which of those counts is left to the parser to be told.
+ */
 public enum Trimming {;
 
     // Retrieved from various sources, none of these sources have the complete list.
@@ -24,6 +29,11 @@ public enum Trimming {;
     // https://unicode-search.net/unicode-namesearch.pl?term=SEPARATOR
     // https://stackoverflow.com/questions/28295504/how-to-trim-no-break-space-in-java
     // https://www.fileformat.info/info/unicode/category/Zs/list.htm
+    /**
+     * Every character the lenient opinion counts as whitespace, each one keyed by a readable
+     * name: the control characters, the exotic spaces and the other look-alikes, on top of the
+     * four the XML standard allows.
+     */
     public static Map<String, Character> WHITESPACE_CHARS = ofEntries(
         entry("control character 0000", '\u0000'), entry("control character 0001", '\u0001'),
         entry("control character 0002", '\u0002'), entry("control character 0003", '\u0003'),
@@ -72,18 +82,40 @@ public enum Trimming {;
         entry("interlinear annotation separator", '\ufffa'), entry("terminator fffb", '\ufffb')
     );
 
+    /**
+     * The same characters as {@link #WHITESPACE_CHARS} without their names, for quick lookups.
+     */
     public static final Set<Character> ALL_WHITESPACE_CHARACTERS = new HashSet<>(WHITESPACE_CHARS.values());
 
+    /**
+     * Tells whether a character is whitespace under the lenient opinion, which is every character
+     * of {@link #ALL_WHITESPACE_CHARACTERS}.
+     * @param c the character to test
+     * @return true if a lenient trimmer would strip it
+     */
     public static boolean isLenientWhitespace(final char c) {
         return ALL_WHITESPACE_CHARACTERS.contains(c);
     }
 
     // Whitespace according to the XML standard
     // https://www.w3.org/TR/xml/#sec-common-syn
+    /**
+     * Tells whether a character is whitespace according to the XML standard, which allows four
+     * of them and no others.
+     * @param c the character to test
+     * @return true for space, tab, line feed and carriage return
+     */
     public static boolean isXmlWhitespace(final char c) {
         return c == ' ' || c == '\t' || c == '\n' || c == '\r';
     }
 
+    /**
+     * Strips whitespace from both ends of a string using the caller's own opinion of which
+     * characters count.
+     * @param value the string to strip
+     * @param isWhitespace decides which characters count as whitespace
+     * @return the stripped string, or the given string itself when nothing had to come off
+     */
     public static String trim(final String value, final Function<Character, Boolean> isWhitespace) {
         final char[] val = value.toCharArray();
 
@@ -99,12 +131,35 @@ public enum Trimming {;
         return ((start > 0) || (end < value.length())) ? value.substring(start, end) : value;
     }
 
+    /**
+     * One opinion about whitespace: what counts as it, and how to strip it from the ends of a string.
+     * The two halves have to agree, or a character that one call calls whitespace is one the other
+     * will leave behind.
+     */
     public interface Trim {
+        /**
+         * Removes whitespace from both ends of a string; a null input comes back as an empty
+         * string rather than as null.
+         * @param input the string to strip, which may be null
+         * @return the stripped string
+         */
         String trim(String input);
+        /**
+         * Says whether this opinion counts a character as whitespace, which is what decides what
+         * gets stripped from the ends.
+         * @param c the character to test
+         * @return true if the character counts as whitespace here
+         */
         boolean isWhitespace(char c);
     }
 
+    /**
+     * Uses the JDK's own idea of what whitespace is: Unicode aware, and not the same set as the XML
+     * standard. This is what a parser built without saying otherwise uses.
+     */
     public static final class NativeTrimmer implements Trim {
+        /** Trims with the JDK's own idea of whitespace. */
+        public NativeTrimmer() { }
         public String trim(final String input) {
             return input == null ? EMPTY : input.trim();
         }
@@ -113,7 +168,13 @@ public enum Trimming {;
         }
     }
 
+    /**
+     * Trims the four characters the XML standard allows, plus every other character that has any
+     * business looking like whitespace: exotic spaces, control characters and the like.
+     */
     public static final class LenientTrimmer implements Trim {
+        /** Trims with the lenient opinion: XML whitespace plus everything that looks like it. */
+        public LenientTrimmer() { }
         public String trim(final String input) {
             return input == null ? EMPTY : Trimming.trim(input, this::isWhitespace);
         }
@@ -122,7 +183,13 @@ public enum Trimming {;
         }
     }
 
+    /**
+     * Trims exactly the four characters the XML standard calls whitespace, space, tab, line feed and
+     * carriage return, and nothing else.
+     */
     public static final class XmlTrimmer implements Trim {
+        /** Trims with the XML standard's four whitespace characters and nothing else. */
+        public XmlTrimmer() { }
         public String trim(final String input) {
             return input == null ? EMPTY : Trimming.trim(input, this::isWhitespace);
         }

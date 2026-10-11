@@ -7,6 +7,12 @@ import java.util.Map;
 
 import static xmlparser.utils.Reflection.toObjectClass;
 
+/**
+ * Turns XML back into a value: the text of an element, or the value of an attribute, into an
+ * object of some type. Deserializers are registered per type on the parser, and the ones
+ * {@link #defaultDeserializers()} supplies cover the simple types. Write your own for a type the
+ * library has no way of working out for itself.
+ */
 public interface ObjectDeserializer {
     /**
      * Used for turning attributes and tag names into objects. XML that looks like this:
@@ -37,10 +43,26 @@ public interface ObjectDeserializer {
         if (text == null) return null;
         return convert(text);
     }
+    /**
+     * Converts the element through {@link #convert(XmlElement)} and gives the result back as the
+     * given type, boxing the class first when it is primitive. A null element or missing text
+     * stays null.
+     * @param <T> the type the value should come back as
+     * @param element the XML element to convert
+     * @param clazz the class to cast the converted value to
+     * @return the converted value, null is allowed
+     * @throws ClassCastException if the value is not an instance of clazz
+     */
     default <T> T convert(XmlElement element, Class<T> clazz) {
         return toObjectClass(clazz).cast(convert(element));
     }
 
+    /**
+     * Gives the deserializers the library ships with: String, Object as an identity, and the
+     * primitive and boxed forms of int, long, short, byte, float, double, char and boolean. It is
+     * the map a parser starts from, before any deserializer of your own is registered.
+     * @return a fresh map, safe to add to
+     */
     static Map<Class<?>, ObjectDeserializer> defaultDeserializers() {
         final Map<Class<?>, ObjectDeserializer> deserializers = new HashMap<>();
         deserializers.put(Integer.class, Integer::valueOf);

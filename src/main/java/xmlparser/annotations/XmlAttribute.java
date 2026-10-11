@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <pre>
  * {@code
  *     class Pojo {
- *         \@XmlAttribute
+ *         @XmlAttribute
  *         public String name = "Hello";
  *     }
  * }
@@ -24,5 +24,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 public @interface XmlAttribute {
+    /**
+     * A regular expression the read attribute value must match in full.
+     *
+     * @return the pattern, or the empty string for none; a value that does not match is an
+     *         InvalidXml
+     */
     String pattern() default "";
 }

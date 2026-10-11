@@ -5,6 +5,7 @@ import org.junit.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlMapTagIsKey;
 import xmlparser.annotations.XmlMapWithAttributes;
+import xmlparser.annotations.XmlMapWithChildNodes;
 import xmlparser.error.InvalidAnnotation;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 import static xmlparser.model.XmlElement.newElement;
 
@@ -21,6 +23,17 @@ public class MapTest {
         @XmlMapTagIsKey
         @XmlMapWithAttributes(keyName = "key")
         private Map<String, String> map;
+    }
+
+    private static class NullValuePojo {
+        @XmlMapWithAttributes(keyName = "key", valueName = "value")
+        private Map<String, Integer> attributes;
+        @XmlMapWithAttributes(keyName = "key")
+        private Map<String, Integer> textAttributes;
+        @XmlMapWithChildNodes(keyName = "key", valueName = "value")
+        private Map<String, Integer> childNodes;
+        @XmlMapWithChildNodes(keyName = "key")
+        private Map<String, Integer> textChildNodes;
     }
 
     private static final MapPojo map = newDefaultMapPojo();
@@ -74,6 +87,66 @@ public class MapTest {
     public void twoMapTagsThrowsExceptionDom() {
         final var xml = newElement("invalidpojo").child(newElement("map")).build();
         parser.fromXml(xml, InvalidPojo.class);
+    }
+
+    @Test
+    public void missingValueAttributeIsNull() {
+        final var actual = parser.fromXml(
+                "<nullvaluepojo><attributes key=\"k\"/></nullvaluepojo>", NullValuePojo.class);
+
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Map has the wrong contents", mapWith("k", null), actual.attributes);
+    }
+
+    @Test
+    public void missingValueTextIsNull() {
+        final var actual = parser.fromXml(
+                "<nullvaluepojo><textAttributes key=\"k\"/></nullvaluepojo>", NullValuePojo.class);
+
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Map has the wrong contents", mapWith("k", null), actual.textAttributes);
+    }
+
+    @Test
+    public void keyElementWithoutTextIsSkipped() {
+        final var actual = parser.fromXml(
+                "<nullvaluepojo><childNodes><key/><value>1</value></childNodes></nullvaluepojo>", NullValuePojo.class);
+
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Entry without a key should have been skipped", new HashMap<>(), actual.childNodes);
+    }
+
+    @Test
+    public void valueElementWithoutTextIsNull() {
+        final var actual = parser.fromXml(
+                "<nullvaluepojo><childNodes><key>k</key><value/></childNodes></nullvaluepojo>", NullValuePojo.class);
+
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Map has the wrong contents", mapWith("k", null), actual.childNodes);
+    }
+
+    @Test
+    public void nullMapValueRoundTrips() {
+        final var pojo = new NullValuePojo();
+        pojo.attributes = mapWith("k", null);
+        final var expected = """
+            <nullvaluepojo>
+              <attributes key="k" />
+            </nullvaluepojo>
+            """;
+
+        final var xml = parser.toXml(pojo);
+        assertEquals("Invalid serialized output", expected, xml);
+
+        final var actual = parser.fromXml(xml, NullValuePojo.class);
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Map has the wrong contents", mapWith("k", null), actual.attributes);
+    }
+
+    private static Map<String, Integer> mapWith(final String key, final Integer value) {
+        final Map<String, Integer> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 
     private static MapPojo newDefaultMapPojo() {

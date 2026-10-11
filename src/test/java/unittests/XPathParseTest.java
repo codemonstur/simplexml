@@ -191,5 +191,67 @@ public class XPathParseTest {
 
 		fail("Should throw an exception");
 	}
-	
+
+	@Test
+	public void testAbsolutePath() {
+		final var actual = XPathExpression.newXPath("/foo/bar");
+
+		assertNotNull(actual);
+		assertEquals(2, actual.segments.size());
+		assertNotNull(actual.segments.get(0));
+		assertEquals("foo", actual.segments.get(0).elementName);
+		assertNotNull(actual.segments.get(1));
+		assertEquals("bar", actual.segments.get(1).elementName);
+	}
+
+	@Test
+	public void testAbsoluteTextSegment() {
+		final var actual = XPathExpression.newXPath("/foo/text()");
+
+		assertEquals(2, actual.segments.size());
+		assertNotNull(actual.segments.get(1));
+		assertTrue(actual.segments.get(1) instanceof TextSegment);
+	}
+
+	@Test
+	public void testSingleSlashIsTheWholePath() {
+		final var actual = XPathExpression.newXPath("/");
+
+		assertNotNull(actual);
+		assertEquals(1, actual.segments.size());
+		assertEquals("", actual.segments.get(0).elementName);
+	}
+
+	@Test(expected = InvalidXPath.class)
+	public void testDoubleSlash() {
+		XPathExpression.newXPath("foo//bar");
+
+		fail("Empty segment not detected");
+	}
+
+	@Test(expected = InvalidXPath.class)
+	public void testLeadingDoubleSlash() {
+		XPathExpression.newXPath("//foo");
+
+		fail("Empty segment not detected");
+	}
+
+	@Test(expected = InvalidXPath.class)
+	public void testTrailingSlash() {
+		XPathExpression.newXPath("foo/");
+
+		fail("Empty segment not detected");
+	}
+
+	@Test
+	public void testEmptySegmentReportsTheWholePath() {
+		try {
+			XPathExpression.newXPath("foo//bar");
+			fail("Empty segment not detected");
+		} catch (final InvalidXPath e) {
+			assertEquals("Invalid error message",
+					"Path contains an empty segment: foo//bar", e.getMessage());
+		}
+	}
+
 }

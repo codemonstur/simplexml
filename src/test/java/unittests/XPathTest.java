@@ -517,4 +517,37 @@ public class XPathTest {
 		assertEquals(0, actual.size());
 	}
 
+	@Test
+	public void testAbsolutePathFindsTheSameElementsAsARelativeOne() {
+		final var doc = newElement("root")
+			.child(newElement("a").child(newElement("b")))
+			.child(newElement("a").text("foo"))
+			.build();
+
+		assertEquals("An absolute path did not match the same elements as a relative one",
+			XPathExpression.newXPath("root/a").evaluate(doc),
+			XPathExpression.newXPath("/root/a").evaluate(doc));
+	}
+
+	@Test
+	public void testAbsolutePathWithText() {
+		final var doc = newElement("root")
+			.child(newElement("a").child(newElement("b")))
+			.child(newElement("a").text("foo"))
+			.build();
+
+		final var actual = XPathExpression.newXPath("/root/a/text()").evaluateAsStrings(doc);
+
+		assertEquals("An absolute path did not reach the text", 1, actual.size());
+		assertTrue("An absolute path did not reach the text", actual.contains("foo"));
+	}
+
+	@Test
+	public void testAbsolutePathOfMissingElementIsEmpty() {
+		final var doc = newElement("root").child(newElement("a").text("foo")).build();
+
+		assertEquals("An absolute path to a missing element matched something",
+			0, XPathExpression.newXPath("/root/missing").evaluate(doc).size());
+	}
+
 }

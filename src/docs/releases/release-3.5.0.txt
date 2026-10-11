@@ -1,0 +1,9 @@
+3.5.0
+
+Default map implementation will now throw an exception if key values are invalid names
+Lowered targeted Java version to 17 from 19
+Added support for CData blocks
+Added javadoc everywhere
+Small API changes related to exception handling, no code rewriting necessary
+Many bugfixes related to invalid XML handling
+Many bugfixes related to misconfigured annotations

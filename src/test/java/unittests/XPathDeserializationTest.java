@@ -1,5 +1,6 @@
 package unittests;
 
+import model.Pojo;
 import model.XPathPojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
@@ -42,6 +43,25 @@ public class XPathDeserializationTest {
         assertNotNull("POJO not deserialized", actual);
         assertNotNull("POJO value not deserialized", actual.value);
         assertEquals("POJO values not equal", "value", actual.value);
+    }
+
+    @Test
+    public void deserializeWithAbsolutePath() {
+        final var input = "<root><a><pojo><name>Hello</name></pojo></a></root>";
+
+        final var actual = parser.fromXml(input, "/root/a/pojo", Pojo.class);
+
+        assertNotNull("Pojo not deserialized with an absolute path", actual);
+        assertEquals("Pojo values not equal", "Hello", actual.name);
+    }
+
+    @Test
+    public void deserializeWithAbsolutePathFindsTheSamePojoAsARelativeOne() {
+        final var input = "<root><a><pojo><name>Hello</name></pojo></a></root>";
+
+        assertEquals("Absolute and relative paths disagree",
+            parser.fromXml(input, "root/a/pojo", Pojo.class).name,
+            parser.fromXml(input, "/root/a/pojo", Pojo.class).name);
     }
 
 }

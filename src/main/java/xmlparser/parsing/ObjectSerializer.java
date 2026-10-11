@@ -14,6 +14,11 @@ public interface ObjectSerializer {
      */
     String convert(Object value);
 
+    /**
+     * Gives the serializer a parser starts from, used for any type without one of its own: it
+     * turns the object into text with its {@code toString()}.
+     * @return the fall-back serializer
+     */
     static ObjectSerializer defaultSerializer() {
         return Object::toString;
     }

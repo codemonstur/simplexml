@@ -4,6 +4,7 @@ import xmlparser.annotations.XmlMapTagIsKey;
 import xmlparser.annotations.XmlMapWithAttributes;
 import xmlparser.annotations.XmlMapWithChildNodes;
 import xmlparser.error.InvalidAnnotation;
+import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
 import xmlparser.model.XmlElement.XmlTextElement;
 import xmlparser.parsing.ObjectSerializer;
@@ -12,6 +13,7 @@ import xmlparser.utils.AccessSerializers;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
@@ -26,37 +28,128 @@ import static xmlparser.utils.Reflection.*;
 import static xmlparser.utils.Validator.multipleAreTrue;
 import static xmlparser.utils.XML.*;
 
+/**
+ * The writing half of the mapper: turns an object or a DOM tree into XML by reflecting over it
+ * and asking the serializer registered for each type how it wants to be written. It is an
+ * interface so that XmlParser can configure the escaping, the pretty printing and the line
+ * ending; writing a document usually goes through XmlParser rather than through here.
+ */
 public interface XmlWriter extends AccessSerializers {
 
+    /**
+     * The line ending an implementation wants after every tag when the output is pretty printed.
+     *
+     * @return the line ending to write, for example a line feed
+     */
     String newLine();
+
+    /**
+     * Escapes a text or an attribute value an implementation's way, so it can be written between
+     * tags or inside a quoted attribute without being read back as markup.
+     *
+     * @param input the raw text to escape
+     * @return the escaped form, safe to write into the document
+     */
     String escape(String input);
+
+    /**
+     * Whether an implementation wants the output indented and broken over lines; without it tags
+     * are written one after another with nothing between them.
+     *
+     * @return true to pretty print, false to write flat
+     */
     boolean shouldPrettyPrint();
 
+    /**
+     * Writes an object as a single element, named after its class, and returns it as a string. A
+     * DOM element goes out as the tree it is rather than being reflected over, whose parent pointer
+     * would walk the cycle forever; a field that cannot be read or a failure of the string itself
+     * comes back as {@link InvalidXml} rather than a checked exception.
+     *
+     * @param o the object to write
+     * @return the XML written for it
+     */
     default String toXml(final Object o) {
+        // A DOM tree points at its parent, so reflecting over one would walk the cycle forever
+        if (o instanceof XmlElement) return domToXml((XmlElement) o);
+
         final StringWriter output = new StringWriter();
 
+        // A failure part way through would otherwise hand back XML that is missing everything
+        // after it, so the two ways this can go wrong are turned into an error instead
         try { writeObject(output, toName(o.getClass()), o, EMPTY); }
-        catch (final IllegalArgumentException | IllegalAccessException | IOException ignored) { /* can't happen */ }
+        catch (final IllegalArgumentException | IllegalAccessException e) {
+            throw new InvalidXml("Could not read the fields of " + o.getClass().getName(), e);
+        }
+        catch (final IOException e) {
+            throw new InvalidXml("Failed to write the XML for " + o.getClass().getName(), e);
+        }
 
         return output.toString();
     }
+    /**
+     * Writes an object as a single element, named after its class, to the writer. A DOM element
+     * goes out as the tree it is rather than being reflected over, and a field that cannot be read
+     * comes back as {@link InvalidXml} rather than a checked exception.
+     *
+     * @param o the object to write
+     * @param writer the writer to write it to
+     * @throws IOException if the writer fails
+     */
     default void toXml(final Object o, final Writer writer) throws IOException {
+        if (o instanceof XmlElement) { domToXml((XmlElement) o, writer); return; }
+
         try { writeObject(writer, toName(o.getClass()), o, EMPTY); }
-        catch (final IllegalArgumentException | IllegalAccessException ignored) { /* can't happen */ }
+        catch (final IllegalArgumentException | IllegalAccessException e) {
+            throw new InvalidXml("Could not read the fields of " + o.getClass().getName(), e);
+        }
     }
 
+    /**
+     * Writes a DOM tree to a string, starting at no indentation. A failure to write to the string
+     * comes back as {@link InvalidXml} rather than a checked exception.
+     *
+     * @param node the element to write, the root of the tree
+     * @return the XML written for it
+     */
     default String domToXml(final XmlElement node) {
         final StringWriter output = new StringWriter();
 
         try { domToXml(node, output); }
-        catch (final IOException ignored) { /* can't happen */ }
+        catch (final IOException e) {
+            throw new InvalidXml("Failed to write the XML for <" + node.name + ">", e);
+        }
 
         return output.toString();
     }
+    /**
+     * Writes a DOM tree to the writer, starting at no indentation.
+     *
+     * @param node the element to write, the root of the tree
+     * @param writer the writer to write it to
+     * @throws IOException if the writer fails
+     */
     default void domToXml(final XmlElement node, final Writer writer) throws IOException {
         domToXml(node, writer, "");
     }
+
+    /**
+     * A text element holds no name, no attributes and no children of its own: it is the text
+     * itself, so it is written as that text and carries no tags. What comes out is a fragment
+     * rather than a document, because there is nothing to wrap it in, so it cannot be read back.
+     *
+     * @param node the element to write
+     * @param writer the writer to write it to
+     * @param indent the indentation to write it at, an empty string for none
+     * @throws IOException if the writer fails
+     */
     default void domToXml(final XmlElement node, final Writer writer, final String indent) throws IOException {
+        if (node instanceof XmlTextElement) {
+            final String text = ((XmlTextElement) node).text;
+            if (text != null && !text.isEmpty()) writer.append(escape(text));
+            return;
+        }
+
         final String text = node.getText();
         if (text == null && node.children.isEmpty()) {
             writeIndent(writer, indent);
@@ -70,20 +163,31 @@ public interface XmlWriter extends AccessSerializers {
             writeIndent(writer, indent);
             writeOpeningTag(writer, node.name, attributesToXml(node.attributes, this::escape));
             writeNewLine(writer);
+            // Children are written in the order they were read, and neighbouring text nodes are
+            // joined so that reading the output back produces the same text in the same place
+            final StringBuilder run = new StringBuilder();
             for (final XmlElement child : node.children) {
-                if (child instanceof XmlTextElement) continue;
-
+                if (child instanceof XmlTextElement) {
+                    run.append(((XmlTextElement) child).text);
+                    continue;
+                }
+                writeTextRun(writer, indent, run.toString());
+                run.setLength(0);
                 domToXml(child, writer, INDENT+indent);
             }
-            if (text != null) {
-                writeIndent(writer, INDENT+indent);
-                writer.append(escape(text));
-                writeNewLine(writer);
-            }
+            writeTextRun(writer, indent, run.toString());
             writeIndent(writer, indent);
             writeClosingTag(writer, node.name);
             writeNewLine(writer);
         }
+    }
+
+    private void writeTextRun(final Writer writer, final String indent, final String text) throws IOException {
+        if (text.isEmpty()) return;
+
+        writeIndent(writer, INDENT+indent);
+        writer.append(escape(text));
+        writeNewLine(writer);
     }
 
     private void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
@@ -102,23 +206,55 @@ public interface XmlWriter extends AccessSerializers {
 
     private void writeList(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
-        for (final Object item : (List<?>) o) {
-            writeField(item.getClass(), field, writer, name, item, indent);
+        for (final Object item : (Iterable<?>) o) {
+            writeItem(field, writer, name, item, indent);
         }
     }
 
     private void writeArray(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
-        for (final Object item : (Object[]) o) {
-            writeField(item.getClass(), field, writer, name, item, indent);
+        for (int i = 0; i < Array.getLength(o); i++) {
+            writeItem(field, writer, name, Array.get(o, i), indent);
         }
     }
 
     private void writeSet(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
         for (final Object item : (Set<?>) o) {
-            writeField(item.getClass(), field, writer, name, item, indent);
+            writeItem(field, writer, name, item, indent);
         }
+    }
+
+    /**
+     * Writes a single collection element, or a single map entry value. A null item is written as
+     * an empty tag, which reads back as a null value.
+     */
+    private void writeItem(final Field field, final Writer writer, final String name, final Object item, final String indent)
+            throws IllegalArgumentException, IllegalAccessException, IOException {
+        writeField(item == null ? Object.class : item.getClass(), field, writer, name, item, indent);
+    }
+
+    /**
+     * Serializes a map value, returning null when there is no value, so the caller can write an
+     * empty tag.
+     */
+    private String mapValueToXml(final ObjectSerializer serializer, final Object value) {
+        return value == null ? null : escape(toMapText(serializer, value));
+    }
+
+    /**
+     * Serializes a map key that is written as text: an attribute value or a tag name.
+     */
+    private String mapKeyToXml(final ObjectSerializer serializer, final Object key) {
+        return escape(toMapText(serializer, key));
+    }
+
+    /**
+     * Converts a map key or value that is written as text. Enums are written as their XmlEnumValue,
+     * the same way enum fields are, and everything else uses its serializer.
+     */
+    private String toMapText(final ObjectSerializer serializer, final Object value) {
+        return value instanceof Enum ? toEnumValue((Enum) value) : serializer.convert(value);
     }
 
     private void writeMap(final Writer writer, final Field field, final String name, final Object o, final String indent)
@@ -142,15 +278,18 @@ public interface XmlWriter extends AccessSerializers {
             final String valueName = annotation.valueName();
 
             for (final Entry<?, ?> entry : map.entrySet()) {
+                if (entry.getKey() == null) continue;
                 writeIndent(writer, indent);
                 if (valueName.isEmpty()) {
                     final StringBuilder builder = new StringBuilder();
-                    addAttribute(builder, keyName, escape(convKey.convert(entry.getKey())));
-                    writeTag(writer, name, builder.toString(), escape(convVal.convert(entry.getValue())));
+                    addAttribute(builder, keyName, mapKeyToXml(convKey, entry.getKey()));
+                    writeTag(writer, name, builder.toString(), mapValueToXml(convVal, entry.getValue()));
                 } else {
                     final StringBuilder builder = new StringBuilder();
-                    addAttribute(builder, keyName, escape(convKey.convert(entry.getKey())));
-                    addAttribute(builder, valueName, escape(convVal.convert(entry.getValue())));
+                    addAttribute(builder, keyName, mapKeyToXml(convKey, entry.getKey()));
+                    final String value = mapValueToXml(convVal, entry.getValue());
+                    // an absent attribute reads back as a null value, an empty one as an empty value
+                    if (value != null) addAttribute(builder, valueName, value);
                     writeSelfClosingTag(writer, name, builder.toString());
                 }
                 writeNewLine(writer);
@@ -164,16 +303,20 @@ public interface XmlWriter extends AccessSerializers {
             final String valueName = annotation.valueName();
 
             for (final Entry<?, ?> entry : map.entrySet()) {
+                if (entry.getKey() == null) continue;
                 writeIndent(writer, indent);
                 writeOpeningTag(writer, name);
                 writeNewLine(writer);
-                writeField(entry.getKey().getClass(), field, writer, keyName, entry.getKey(), indent+INDENT);
+                writeItem(field, writer, keyName, entry.getKey(), indent+INDENT);
                 if (valueName.isEmpty()) {
-                    writeIndent(writer, indent+INDENT);
-                    writer.append(escape(convVal.convert(entry.getValue())));
-                    writeNewLine(writer);
+                    final String value = mapValueToXml(convVal, entry.getValue());
+                    if (value != null) {
+                        writeIndent(writer, indent+INDENT);
+                        writer.append(value);
+                        writeNewLine(writer);
+                    }
                 } else {
-                    writeField(entry.getValue().getClass(), field, writer, valueName, entry.getValue(), indent+INDENT);
+                    writeItem(field, writer, valueName, entry.getValue(), indent+INDENT);
                 }
                 writeIndent(writer, indent);
                 writeClosingTag(writer, name);
@@ -186,7 +329,12 @@ public interface XmlWriter extends AccessSerializers {
         writeOpeningTag(writer, name);
         writeNewLine(writer);
         for (final Entry<?, ?> entry : map.entrySet()) {
-            writeField(entry.getValue().getClass(), field, writer, entry.getKey().toString(), entry.getValue(), indent+INDENT);
+            if (entry.getKey() == null) continue;
+            final String key = toMapText(convKey, entry.getKey());
+            // the key is a tag name, so a value that can not be one can not be written either
+            if (!isValidTagName(key))
+                throw new InvalidXml("Map key '" + key + "' is not a valid tag name");
+            writeItem(field, writer, key, entry.getValue(), indent+INDENT);
         }
         writeIndent(writer, indent);
         writeClosingTag(writer, name);
@@ -212,7 +360,7 @@ public interface XmlWriter extends AccessSerializers {
                 writeNewLine(writer);
             }
             else
-                writeSimple(writer, name, o, attributes, textNode.get(o), indent);
+                writeSimple(writer, name, o, attributes, toValue(textNode, o), indent);
             return;
         }
 
@@ -221,21 +369,26 @@ public interface XmlWriter extends AccessSerializers {
         writeNewLine(writer);
 
         for (final Field f : childNodes) {
+            final Object raw = f.get(o);
+            // a null field carries a @XmlDefaultValue, which is always a String, so dispatch on it
+            final Object value = raw != null ? raw : toValue(f, o);
+            final Class<?> type = raw == null ? value.getClass() : f.getType();
+            final String fieldName = toName(f, raw);
             if (isWrapped(f)) {
                 writeIndent(writer, indent+INDENT);
                 writeOpeningTag(writer, toWrappedName(f));
                 writeNewLine(writer);
-                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent+INDENT+INDENT);
+                writeField(type, f, writer, fieldName, value, indent+INDENT+INDENT);
                 writeIndent(writer, indent+INDENT);
                 writeClosingTag(writer, toWrappedName(f));
                 writeNewLine(writer);
             } else {
-                writeField(f.getType(), f, writer, toName(f, f.get(o)), toValue(f, o), indent+INDENT);
+                writeField(type, f, writer, fieldName, value, indent+INDENT);
             }
         }
         if (textNode != null) {
             writeIndent(writer, indent);
-            writer.append(escape(textNode.get(o).toString()));
+            writer.append(escape(toValue(textNode, o).toString()));
             writeNewLine(writer);
         }
         writeIndent(writer, indent);
@@ -246,6 +399,12 @@ public interface XmlWriter extends AccessSerializers {
     private void writeField(final Class<?> c, final Field field, final Writer writer,
             final String name, final Object value, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
+        if (value == null) {
+            writeIndent(writer, indent);
+            writeTag(writer, name, (String) null);
+            writeNewLine(writer);
+            return;
+        }
         switch (toClassType(c, this)) {
             case SIMPLE -> writeSimple(writer, name, value, indent);
             case ARRAY -> writeArray(writer, field, name, value, indent);

@@ -10,8 +10,9 @@ After a number of bad experiences with XML parsing in Java I decided to write my
 This project has the following characteristics; correct XML parsing, small, few dependencies, 
 thread-safe, user friendly API, secure.
 
-Version 3.x depends on Java 19. 
-For Java 8 support you have to use 2.x versions.
+Version 3.x depends on Java 17. 
+Java 8 is no longer supported. 
+The last version compatible with Java 8 is in the 2.x major versions range.
 
 ## How to use
 
@@ -52,7 +53,7 @@ It's in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>3.2.0</version>
+        <version>3.5.0</version>
     </dependency>
 
 ### Serializing

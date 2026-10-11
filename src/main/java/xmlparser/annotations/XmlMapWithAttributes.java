@@ -15,6 +15,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 public @interface XmlMapWithAttributes {
+    /**
+     * The name of the attribute on each item element that holds the map key.
+     *
+     * @return the attribute to read each key from
+     */
     String keyName();
+    /**
+     * The name of the attribute holding the map value.
+     *
+     * @return the attribute to read each value from; the empty default means the value is the
+     *         item element's text instead
+     */
     String valueName() default "";
 }

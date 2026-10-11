@@ -33,4 +33,14 @@ public class NativeFieldTest {
         assertEquals("Invalid serialized output", expected, actual);
     }
 
+    @Test
+    public void deserializeMissingInt() {
+        final var input = "<nativepojo/>";
+
+        final var actual = parser.fromXml(input, NativePojo.class);
+
+        assertNotNull("Pojo is null", actual);
+        assertEquals("Missing int should have its zero value", 0, actual.id);
+    }
+
 }

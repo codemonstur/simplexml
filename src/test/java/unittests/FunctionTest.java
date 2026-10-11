@@ -7,7 +7,6 @@ import xmlparser.utils.Reflection;
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
-import static org.objenesis.ObjenesisHelper.newInstance;
 import static xmlparser.utils.Functions.trim;
 import static xmlparser.utils.Validator.multipleAreTrue;
 
@@ -37,7 +36,7 @@ public class FunctionTest {
 
     @Test(expected = AssignmentFailure.class)
     public void settingFieldWithoutAccessThrowsException() throws NoSuchFieldException {
-        final FinalClass o = newInstance(FinalClass.class);
+        final FinalClass o = new FinalClass();
         final Field field = FinalClass.class.getDeclaredField("field");
 
         Reflection.setField(field, o, "newValue");

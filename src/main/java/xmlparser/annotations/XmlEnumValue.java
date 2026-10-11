@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  *     enum MyEnum {
  *         one,
- *         \@XmlEnumValue("123")
+ *         @XmlEnumValue("123")
  *         two
  *     }
  * }
@@ -35,5 +35,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 public @interface XmlEnumValue {
+    /**
+     * The text used in place of the enum constant.
+     *
+     * @return what is written on serialization and matched against on deserialization
+     */
     String value();
 }
