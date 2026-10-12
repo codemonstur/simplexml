@@ -38,7 +38,8 @@ public enum XML {;
      * Renders the attribute fields of an object as a run of name="value" pairs, each value passed
      * through the escaper. A field holding null falls back to the value of its @XmlDefaultValue.
      * The renderer turns a value into the text it is written as, so that an enum is written as its
-     * @XmlEnumValue and a type with a serializer as that serializer's text rather than as toString.
+     * {@code @XmlEnumValue} and a type with a serializer as that serializer's text rather than as
+     * toString.
      * @param fields the attribute fields to render
      * @param o the object to read the values from
      * @param escaper applied to each value before it is written

@@ -1,0 +1,12 @@
+3.6.0
+
+Bug fixes:
+- 6 wrong values in named-entities-map (&nbsp;, &DotDot;, &DownBreve;, &tdot;, …)
+- listFields skips synthetic members (this$0); toName falls back to the nearest named superclass for anonymous classes
+- Null-safe name comparisons over DOM children (text nodes have no name); rootClosed guard, blank-CDATA-after-root handling, someText/unfinished-tag now throw InvalidXml instead of NPE
+- Writer never writes null text; empty elements read back as null items (isEmptyValue); enum dispatch in reader/writer incl. List<Enum>, enum-constant bodies, Object-declared fields
+- @XmlDefaultValue honoured for attributes and text nodes; enum attributes; @XmlPath anchored at the document root; @XmlNameFromClass round trip; custom enum deserializers get their element
+- Shadowed fields: one value, subclass wins, hidden field left alone (never corrupted); every Collection/Iterable reads as a list (Queue works); findAbstractType throws InvalidAnnotation instead of NPE
+- Iterator gets a one-item pending buffer (hasNext idempotent, next() standalone) and skips comments/PIs/declarations between elements; finishTag/hasOpenSubset read past comments, DOCTYPE internal subsets and PIs with > in their data (stream reader, iterator and compressor share the logic); empty attribute into char → zero value, not StringIndexOutOfBoundsException
+- Compression escapes " when requoting single-quoted values; duplicate attribute names → InvalidXml
+- Locale.ROOT lowercasing; toNumber rejects 5f/0x10/123L; numeric references validated digit-by-digit (&#+65;) and rejected when they name a character XML forbids (&#0;); unescapeXml keeps the & of unknown references (matching unescapeHtml); newStreamReader(String, Charset) is a real StringReader — parsing signatures widened InputStreamReader→Reader (source-compatible, nothing uses getEncoding)

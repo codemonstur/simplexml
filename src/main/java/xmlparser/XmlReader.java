@@ -302,9 +302,9 @@ public interface XmlReader extends AccessDeserializers {
 
     /**
      * The value to use for a field the document gave nothing for: the value of its
-     * @XmlDefaultValue when it has one that applies when reading, and null when it has not, so
-     * that a default is honoured for an attribute or a text node the same way it is for an
-     * element.
+     * {@code @XmlDefaultValue} when it has one that applies when reading, and null when it has
+     * not, so that a default is honoured for an attribute or a text node the same way it is for
+     * an element.
      *
      * @param value what the document gave for the field, possibly null
      * @param type the field's declared type
