@@ -3,7 +3,6 @@ package unittests;
 import org.junit.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlMapTagIsKey;
-import xmlparser.annotations.XmlMapWithAttributes;
 import xmlparser.error.InvalidXml;
 
 import java.util.Map;
@@ -30,11 +29,13 @@ public class EscapeMapTagIsKeyTest {
     @Test
     public void serializeMapWithDangerousChars() {
         final var inputPojo = new PojoMap(Map.of("key", "<>&\"'"));
-        final var expected = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <key>&lt;&gt;&amp;&quot;&apos;</key>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final var expected = """
+                <pojomap>
+                  <map>
+                    <key>&lt;&gt;&amp;&quot;&apos;</key>
+                  </map>
+                </pojomap>
+                """;
 
         final var actual = parserDefault.toXml(inputPojo);
 
@@ -44,11 +45,13 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void deserializeMapWithEscapedChars() {
-        final var inputXml = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <key>&lt;&gt;&amp;&quot;&apos;</key>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final var inputXml = """
+                <pojomap>
+                  <map>
+                    <key>&lt;&gt;&amp;&quot;&apos;</key>
+                  </map>
+                </pojomap>
+                """;
         final var expected = new PojoMap(Map.of("key", "<>&\"'"));
 
         final var actual = parserDefault.fromXml(inputXml, PojoMap.class);
@@ -60,11 +63,13 @@ public class EscapeMapTagIsKeyTest {
     @Test
     public void serializeMapUTF8Characters() {
         final PojoMap inputPojo = new PojoMap(Map.of("key", "ƑƟƠƄǠȒ"));
-        final String expected = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <key>&#401;&#415;&#416;&#388;&#480;&#530;</key>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final String expected = """
+                <pojomap>
+                  <map>
+                    <key>&#401;&#415;&#416;&#388;&#480;&#530;</key>
+                  </map>
+                </pojomap>
+                """;
 
         final String actual = parserEncodeUTF8.toXml(inputPojo);
 
@@ -75,11 +80,13 @@ public class EscapeMapTagIsKeyTest {
     @Test
     public void dontSerializeMapUTF8Characters() {
         final PojoMap inputPojo = new PojoMap(Map.of("key", "ƑƟƠƄǠȒ"));
-        final String expected = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <key>ƑƟƠƄǠȒ</key>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final String expected = """
+                <pojomap>
+                  <map>
+                    <key>ƑƟƠƄǠȒ</key>
+                  </map>
+                </pojomap>
+                """;
 
         final String actual = parserDefault.toXml(inputPojo);
 
@@ -89,11 +96,13 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void deserializeMapUTF8Characters() {
-        final String inputXml = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <key>&#401;&#415;&#416;&#388;&#480;&#530;</key>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final String inputXml = """
+                <pojomap>
+                  <map>
+                    <key>&#401;&#415;&#416;&#388;&#480;&#530;</key>
+                  </map>
+                </pojomap>
+                """;
         final PojoMap expected = new PojoMap(Map.of("key", "ƑƟƠƄǠȒ"));
 
         final PojoMap actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
@@ -104,11 +113,13 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void serializeMapWithANameThatIsNotAnAsciiWord() {
-        final var expected = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <my-key.1>v</my-key.1>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final var expected = """
+                <pojomap>
+                  <map>
+                    <my-key.1>v</my-key.1>
+                  </map>
+                </pojomap>
+                """;
 
         assertEquals("A key that is a valid name was rejected",
                 expected, parserDefault.toXml(new PojoMap(Map.of("my-key.1", "v"))));
@@ -116,11 +127,13 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void serializeMapWithANamespacedKey() {
-        final var expected = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <ns:key>v</ns:key>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final var expected = """
+                <pojomap>
+                  <map>
+                    <ns:key>v</ns:key>
+                  </map>
+                </pojomap>
+                """;
 
         assertEquals("A namespaced key was rejected",
                 expected, parserDefault.toXml(new PojoMap(Map.of("ns:key", "v"))));
@@ -128,11 +141,13 @@ public class EscapeMapTagIsKeyTest {
 
     @Test
     public void serializeMapWithANonAsciiKey() {
-        final var expected = "<pojomap>\n" +
-                "  <map>\n" +
-                "    <é>v</é>\n" +
-                "  </map>\n" +
-                "</pojomap>\n";
+        final var expected = """
+                <pojomap>
+                  <map>
+                    <é>v</é>
+                  </map>
+                </pojomap>
+                """;
 
         assertEquals("A non-ascii key was rejected",
                 expected, parserDefault.toXml(new PojoMap(Map.of("é", "v"))));

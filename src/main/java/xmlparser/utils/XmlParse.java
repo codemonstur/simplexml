@@ -3,7 +3,7 @@ package xmlparser.utils;
 import xmlparser.error.InvalidXml;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 
 import static xmlparser.utils.Constants.CHAR_DOUBLE_QUOTE;
 import static xmlparser.utils.Constants.CHAR_EXCLAMATION_MARK;
@@ -11,8 +11,10 @@ import static xmlparser.utils.Constants.CHAR_FORWARD_SLASH;
 import static xmlparser.utils.Constants.CHAR_SINGLE_QUOTE;
 import static xmlparser.utils.Constants.GREATER_THAN;
 import static xmlparser.utils.Constants.XML_END_CDATA;
+import static xmlparser.utils.Constants.XML_END_COMMENT;
 import static xmlparser.utils.Constants.XML_PROLOG;
 import static xmlparser.utils.Constants.XML_START_CDATA;
+import static xmlparser.utils.Constants.XML_START_COMMENT;
 import static xmlparser.utils.Constants.XML_TAG_END;
 import static xmlparser.utils.Trimming.Trim;
 
@@ -52,7 +54,7 @@ public enum XmlParse {;
      * @throws IOException if the stream cannot be read
      * @throws InvalidXml if the input ran out with untagged text still to read
      */
-    public static String readLine(final InputStreamReader in, final Trim trimmer, final char end) throws IOException {
+    public static String readLine(final Reader in, final Trim trimmer, final char end) throws IOException {
         final StringBuilder chars = new StringBuilder();
         int data;
         while ((data = in.read()) != -1) {
@@ -80,7 +82,7 @@ public enum XmlParse {;
      * @throws IOException if the stream cannot be read
      * @throws InvalidXml if the section is never terminated
      */
-    public static String readCData(final InputStreamReader in, final String head) throws IOException {
+    public static String readCData(final Reader in, final String head) throws IOException {
         final String terminator = XML_END_CDATA + GREATER_THAN;
         String section = head + GREATER_THAN;
 
@@ -107,7 +109,7 @@ public enum XmlParse {;
      * @throws IOException if the stream cannot be read
      * @throws InvalidXml if the input runs out with a quoted value still open
      */
-    public static String readTag(final InputStreamReader in) throws IOException {
+    public static String readTag(final Reader in) throws IOException {
         int data = in.read();
         if (data == -1) return null;
         final boolean isCommentOrSection = data == CHAR_EXCLAMATION_MARK;
@@ -148,7 +150,7 @@ public enum XmlParse {;
      * @return everything read including end, or null when the input runs out before it appears
      * @throws IOException if the stream cannot be read
      */
-    public static String readUntil(final InputStreamReader in, final String end) throws IOException {
+    public static String readUntil(final Reader in, final String end) throws IOException {
         final StringBuilder chars = new StringBuilder();
 
         // read the first few bytes that can't match yet
@@ -172,6 +174,55 @@ public enum XmlParse {;
         final int start = chars.length() - postfix.length();
         final int end = chars.length();
         return chars.substring(start, end).equals(postfix);
+    }
+
+    /**
+     * Reads whatever carries on after a comment or a declaration whose first read ended at a
+     * '&gt;' that does not really close it: a comment runs to its '--&gt;', and a declaration
+     * that has opened an internal subset to the ']' after that subset. The '&gt;' which ended
+     * the first read belongs to the tag either way and has been consumed, so the caller puts it
+     * back between the head and whatever comes back here. A tag that was already read whole has
+     * nothing left to read.
+     *
+     * <p>A prolog is not finished here: it may be written with a bare '&gt;' rather than the
+     * '?&gt;' it is supposed to end with, and reading on for one that never appears would take
+     * the rest of the document with it. Its caller decides which of the two it was by looking
+     * for the '?&gt;' in the run of text that follows.</p>
+     *
+     * @param in the stream to read from, positioned just after the '&gt;' that ended the first read
+     * @param head everything read since the '&lt;' of the tag
+     * @return what carries on after that '&gt;', or null when the tag is already read whole
+     * @throws IOException if the stream cannot be read
+     */
+    public static String finishTag(final Reader in, final String head) throws IOException {
+        if (head.startsWith(XML_START_COMMENT))
+            return head.endsWith(XML_END_COMMENT) ? null : readUntil(in, XML_END_COMMENT + GREATER_THAN);
+
+        if (head.startsWith(String.valueOf(CHAR_EXCLAMATION_MARK)) && hasOpenSubset(head))
+            return readUntil(in, "]" + GREATER_THAN);
+
+        return null;
+    }
+
+    /**
+     * Tells whether a declaration has opened an internal subset, as a DOCTYPE does with the
+     * '[...]' that follows it, without one closing it again. A bracket inside a quoted value
+     * belongs to that value and opens nothing, so quotes are tracked while looking.
+     *
+     * @param head everything read since the '&lt;' of the declaration
+     * @return true when the subset is still open where the head ends
+     */
+    public static boolean hasOpenSubset(final String head) {
+        char quote = 0;
+        boolean isOpen = false;
+        for (int i = 0; i < head.length(); i++) {
+            final char c = head.charAt(i);
+            if (c == CHAR_SINGLE_QUOTE || c == CHAR_DOUBLE_QUOTE)
+                quote = quote == 0 ? c : (quote == c ? 0 : quote);
+            else if (quote == 0 && c == '[') isOpen = true;
+            else if (quote == 0 && c == ']') isOpen = false;
+        }
+        return isOpen;
     }
 
     /**

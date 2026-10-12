@@ -157,7 +157,8 @@ public interface XmlWriter extends AccessSerializers {
             writeNewLine(writer);
         } else if (!node.hasNonTextChildren() && node.attributes.isEmpty()) {
             writeIndent(writer, indent);
-            writeOpeningAndClosingTag(writer, node.name, escape(text));
+            // an element whose text children hold nothing has nothing to write between the tags
+            writeOpeningAndClosingTag(writer, node.name, text == null ? null : escape(text));
             writeNewLine(writer);
         } else {
             writeIndent(writer, indent);
@@ -199,7 +200,7 @@ public interface XmlWriter extends AccessSerializers {
     private void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
             , final Object text, final String indent) throws IOException, IllegalAccessException {
         writeIndent(writer, indent);
-        writeTag(writer, name, attributesToXml(attributes, value, this::escape),
+        writeTag(writer, name, attributesToXml(attributes, value, this::escape, this::render),
                 escape(getSerializer(text.getClass()).convert(text)));
         writeNewLine(writer);
     }
@@ -255,6 +256,18 @@ public interface XmlWriter extends AccessSerializers {
      */
     private String toMapText(final ObjectSerializer serializer, final Object value) {
         return value instanceof Enum ? toEnumValue((Enum) value) : serializer.convert(value);
+    }
+
+    /**
+     * Turns a value into the text it is written as: an enum by its @XmlEnumValue or its name, and
+     * everything else through the serializer registered for its type, which falls back to the
+     * value's own toString. Used for attributes and for text nodes, so that they are written the
+     * same way an element's text is.
+     * @param value the value to render, which is not null
+     * @return the text the value is written as
+     */
+    private String render(final Object value) {
+        return toMapText(getSerializer(value.getClass()), value);
     }
 
     private void writeMap(final Writer writer, final Field field, final String name, final Object o, final String indent)
@@ -356,7 +369,7 @@ public interface XmlWriter extends AccessSerializers {
         if (childNodes.isEmpty()) {
             if (textNode == null) {
                 writeIndent(writer, indent);
-                writeSelfClosingTag(writer, name, attributesToXml(attributes, o, this::escape));
+                writeSelfClosingTag(writer, name, attributesToXml(attributes, o, this::escape, this::render));
                 writeNewLine(writer);
             }
             else
@@ -365,14 +378,16 @@ public interface XmlWriter extends AccessSerializers {
         }
 
         writeIndent(writer, indent);
-        writeOpeningTag(writer, name, attributesToXml(attributes, o, this::escape));
+        writeOpeningTag(writer, name, attributesToXml(attributes, o, this::escape, this::render));
         writeNewLine(writer);
 
         for (final Field f : childNodes) {
             final Object raw = f.get(o);
             // a null field carries a @XmlDefaultValue, which is always a String, so dispatch on it
             final Object value = raw != null ? raw : toValue(f, o);
-            final Class<?> type = raw == null ? value.getClass() : f.getType();
+            // a field declared as Object says nothing about the value's own shape, so the value's
+            // class decides how it is written rather than the declared type
+            final Class<?> type = raw == null || f.getType().equals(Object.class) ? value.getClass() : f.getType();
             final String fieldName = toName(f, raw);
             if (isWrapped(f)) {
                 writeIndent(writer, indent+INDENT);
@@ -388,7 +403,7 @@ public interface XmlWriter extends AccessSerializers {
         }
         if (textNode != null) {
             writeIndent(writer, indent);
-            writer.append(escape(toValue(textNode, o).toString()));
+            writer.append(escape(render(toValue(textNode, o))));
             writeNewLine(writer);
         }
         writeIndent(writer, indent);

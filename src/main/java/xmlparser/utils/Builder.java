@@ -29,12 +29,49 @@ public enum Builder {;
             return Long.valueOf(text);
         } catch (final NumberFormatException ignore) { }
 
+        // Double.valueOf takes a type suffix such as '5f', a hex float and a handful of other
+        // spellings none of which is written in a document, so the text has to hold a plain
+        // number before it is worth parsing
+        if (!isPlainNumber(text)) return null;
+
         try {
             final double value = Double.valueOf(text);
             return Double.isFinite(value) ? value : null;
         } catch (final NumberFormatException ignore) {
             return null;
         }
+    }
+
+    // Tells whether the text is a plain number and nothing else: a sign, digits with at most one
+    // '.' between them, and an exponent that is an 'e' followed by digits and at most one sign.
+    // A leading '+' is allowed by Long.valueOf and Double.valueOf alike, and a '.' is allowed to
+    // stand where no digit does on either side of it.
+    private static boolean isPlainNumber(final String text) {
+        int i = 0;
+        if (text.startsWith("+") || text.startsWith("-")) i++;
+
+        boolean digits = false;
+        while (i < text.length() && isAsciiDigit(text.charAt(i))) { i++; digits = true; }
+
+        if (i < text.length() && text.charAt(i) == '.') {
+            i++;
+            while (i < text.length() && isAsciiDigit(text.charAt(i))) { i++; digits = true; }
+        }
+        if (!digits) return false;
+
+        if (i < text.length() && (text.charAt(i) == 'e' || text.charAt(i) == 'E')) {
+            i++;
+            if (i < text.length() && (text.charAt(i) == '+' || text.charAt(i) == '-')) i++;
+            boolean exponent = false;
+            while (i < text.length() && isAsciiDigit(text.charAt(i))) { i++; exponent = true; }
+            if (!exponent) return false;
+        }
+
+        return i == text.length();
+    }
+
+    private static boolean isAsciiDigit(final char c) {
+        return c >= '0' && c <= '9';
     }
 
 }

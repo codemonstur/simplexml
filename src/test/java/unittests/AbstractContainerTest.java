@@ -37,13 +37,13 @@ public class AbstractContainerTest {
         public Set<Item> items;
     }
 
-    abstract class Item {
+    public static abstract class Item {
         public Integer id;
     }
-    public class Foo extends Item {
+    public static class Foo extends Item {
         String board_field;
     }
-    public class Bar extends Item {
+    public static class Bar extends Item {
         String role_field;
     }
 

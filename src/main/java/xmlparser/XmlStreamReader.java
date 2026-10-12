@@ -6,7 +6,7 @@ import xmlparser.utils.Escaping.UnEscape;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -38,45 +38,72 @@ public interface XmlStreamReader {
      * @throws IOException if reading fails
      * @throws InvalidXml if the document is not well formed
      */
-    static void toXmlStream(final InputStreamReader in, final EventParser parser, final boolean conserveWhitespace,
+    static void toXmlStream(final Reader in, final EventParser parser, final boolean conserveWhitespace,
                             final Trim trimmer, final UnEscape escaper) throws IOException {
         boolean isStart = true;
         boolean rootClosed = false;
+        // a prolog whose read ended at a '>' in its data carries on into the text that follows,
+        // which is looked at rather than taken as content
+        boolean insideProlog = false;
         final var openTags = new ArrayDeque<String>();
         String str; while ((str = readLine(in, trimmer, XML_TAG_START)) != null) {
+            if (insideProlog) {
+                insideProlog = false;
+                // the '?>' that really ends the prolog is in this run of text, and everything
+                // up to it is the prolog's data rather than content of the document
+                final int end = str.indexOf(XML_END_PROLOG);
+                if (end >= 0) str = str.substring(end + XML_END_PROLOG.length());
+            }
             final String text = trimmer.trim(str);
             if (!text.isEmpty()) {
                 if (isStart) throw new InvalidXml("XML contains non-whitespace characters before opening tag");
                 if (rootClosed) throw new InvalidXml("Content after the end of the root element: " + text);
                 parser.someText(escaper.unescape( conserveWhitespace ? str : text));
-            } else if (!isStart && conserveWhitespace) {
+            } else if (!isStart && !rootClosed && conserveWhitespace) {
+                // whitespace after the root has closed belongs to no element, so it is dropped
+                // rather than handed to a builder that has no element to hold it
                 parser.someText(str);
             }
 
             final String head = readTag(in);
+            if (head == null) throw new InvalidXml("Unclosed tag");
             // A CDATA section is literal character data: it runs to its own terminator and is
             // neither unescaped nor trimmed, so it must be read before the tag is interpreted
-            if (head != null && head.startsWith(XML_START_CDATA)) {
+            if (head.startsWith(XML_START_CDATA)) {
                 final String cdata = readCData(in, head);
-                if (!isStart) {
-                    if (rootClosed) throw new InvalidXml("Content after the end of the root element: " + cdata);
+                final boolean isBlank = trimmer.trim(cdata).isEmpty();
+                if (isStart) {
+                    if (!isBlank)
+                        throw new InvalidXml("XML contains non-whitespace characters before opening tag");
+                } else if (rootClosed) {
+                    // a section holding nothing but whitespace after the root is not content
+                    if (!isBlank) throw new InvalidXml("Content after the end of the root element: " + cdata);
+                } else {
                     parser.someText(cdata);
                 }
-                else if (!trimmer.trim(cdata).isEmpty())
-                    throw new InvalidXml("XML contains non-whitespace characters before opening tag");
                 continue;
             }
 
             str = trimmer.trim(head);
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
-            if (str.startsWith(XML_START_COMMENT)) {
-                if (str.endsWith(XML_END_COMMENT))
-                    continue;
-                readUntil(in, XML_END_COMMENT + GREATER_THAN);
+            // A comment and a declaration are not content, and neither of the two is finished by
+            // the first '>' that is not inside a quoted value: a comment can hold one in its data
+            // and a declaration can carry on past it with the internal subset a DOCTYPE holds, so
+            // whatever is left of one of them is read past here rather than mistaken for the rest
+            // of the document.
+            if (head.startsWith(XML_START_COMMENT) || str.charAt(0) == CHAR_EXCLAMATION_MARK) {
+                finishTag(in, head);
                 continue;
             }
 
-            if (str.charAt(0) == XML_PROLOG) continue;
+            // A prolog ends at its '?>', but is allowed to end at a bare '>' instead. Which of
+            // the two this one did is decided by the run of text that follows: it holds the '?>'
+            // when the read above stopped at a '>' sitting in the prolog's data, and is content
+            // of the document when it does not.
+            if (str.charAt(0) == XML_PROLOG) {
+                insideProlog = !head.endsWith(String.valueOf(XML_PROLOG));
+                continue;
+            }
 
             isStart = false;
             if (str.charAt(0) == CHAR_FORWARD_SLASH) {
@@ -128,7 +155,7 @@ public interface XmlStreamReader {
      * @param trimmer the opinion of whitespace to trim names and values with
      * @param escaper the unescape the values go through
      * @return the attributes, an empty map when the tag has none
-     * @throws InvalidXml if a name is not followed by an '='
+     * @throws InvalidXml if a name is not followed by an '=', or a name is used twice
      */
     static HashMap<String, String> xmlToAttributes(String input, final Trim trimmer, final UnEscape escaper) {
         final HashMap<String, String> attributes = new HashMap<>();
@@ -160,7 +187,11 @@ public interface XmlStreamReader {
 
             input = input.substring(endValue+1);
 
-            attributes.put(name, escaper.unescape(value));
+            // a name used twice in one tag is not a document this library can read: XML allows
+            // it nowhere, and keeping the last of the two would hand back a value the document
+            // never meant in either place
+            if (attributes.put(name, escaper.unescape(value)) != null)
+                throw new InvalidXml("Duplicate attribute: '" + name + "'");
         }
 
         return attributes;

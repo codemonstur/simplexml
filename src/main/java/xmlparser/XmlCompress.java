@@ -51,8 +51,16 @@ public interface XmlCompress {
      * @throws IOException if reading or writing fails
      * @throws InvalidXml if the input ends inside a tag
      */
-    static void compressXML(final InputStreamReader in, final OutputStreamWriter out, final Trim trimmer) throws IOException {
+    static void compressXML(final Reader in, final OutputStreamWriter out, final Trim trimmer) throws IOException {
+        boolean insideProlog = false;
         String str; while ((str = readLine(in, trimmer, XML_TAG_START)) != null) {
+            if (insideProlog) {
+                // the prolog above ended at a '>' sitting in its data: the '?>' that really ends
+                // it is in this run of text, and only what follows it is content to write
+                insideProlog = false;
+                final int end = str.indexOf(XML_END_PROLOG);
+                if (end >= 0) str = str.substring(end + XML_END_PROLOG.length());
+            }
             // Probably a text node, remove the whitespace and write
             if (!str.isEmpty()) out.write(trimmer.trim(str));
 
@@ -66,17 +74,29 @@ public interface XmlCompress {
                 out.write(XML_TAG_END);
                 continue;
             }
+            if (head == null) throw new InvalidXml("Unclosed tag");
             str = trimmer.trim(head);
             if (str.isEmpty()) throw new InvalidXml("Unclosed tag");
-            // We don't care about comments, but they can contain a '>' so skip to the end of the comment
-            if (str.startsWith(XML_START_COMMENT)) {
-                if (!str.endsWith(XML_END_COMMENT)) readUntil(in, XML_END_COMMENT + GREATER_THAN);
+            // We don't care about comments, but the read above stops at the first '>' rather than
+            // at the '-->' that really ends one, so whatever carries on is read past here
+            if (head.startsWith(XML_START_COMMENT)) {
+                finishTag(in, head);
                 continue;
             }
-            // Prologs are dropped as well, and their attribute values can contain a '>' too
+            // Prologs are dropped as well, and their data can hold a '>' of its own: which of the
+            // two this one ended at is decided by the run of text that follows
             if (str.charAt(0) == XML_PROLOG) {
-                if (!str.endsWith(String.valueOf(XML_PROLOG)))
-                    readUntil(in, String.valueOf(XML_PROLOG) + GREATER_THAN);
+                insideProlog = !head.endsWith(String.valueOf(XML_PROLOG));
+                continue;
+            }
+            // A declaration is copied through as it is rather than dropped: keeping it keeps what
+            // the document declares, and a DOCTYPE can carry an internal subset past this read
+            if (str.charAt(0) == CHAR_EXCLAMATION_MARK) {
+                out.write(XML_TAG_START);
+                out.write(head);
+                out.write(XML_TAG_END);
+                final String rest = finishTag(in, head);
+                if (rest != null) out.write(rest);
                 continue;
             }
 
@@ -157,9 +177,21 @@ public interface XmlCompress {
             out.write(name);
             out.write(CHAR_EQUALS);
             out.write(CHAR_DOUBLE_QUOTE);
-            out.write(value);
+            out.write(escapeDoubleQuotes(value));
             out.write(CHAR_DOUBLE_QUOTE);
         }
+    }
+
+    /**
+     * Writes a value inside double quotes, so that the double quotes it holds are written as
+     * {@code &quot;} rather than ending the value early: a value written with single quotes can
+     * hold them, and quoting it again has to leave it one value.
+     *
+     * @param value the value as the document wrote it
+     * @return the value with its double quotes escaped
+     */
+    static String escapeDoubleQuotes(final String value) {
+        return value.replace(String.valueOf(CHAR_DOUBLE_QUOTE), ENCODED_DOUBLE_QUOTE);
     }
 
 }

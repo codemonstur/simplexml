@@ -200,7 +200,8 @@ public enum Reflection {;
      * @return the class's kind
      */
     public static ClassType toClassType(final Class<?> c, final AccessSerializers s) {
-        if (c.isEnum()) return ENUM;
+        // a constant with a body of its own has a class of its own, which is not itself an enum
+        if (c.isEnum() || isEnumConstantClass(c)) return ENUM;
         if (isSimple(c) || s.hasSerializer(c)) return SIMPLE;
         if (c.isArray()) return ARRAY;
         if (isList(c)) return LIST;
@@ -210,8 +211,22 @@ public enum Reflection {;
     }
 
     /**
+     * Tells whether a class is the one a constant with a body of its own is compiled into: the
+     * class itself is not an enum, but the class it extends is, and its instances are still
+     * constants of that enum.
+     * @param c the class to check
+     * @return true for the anonymous class of an enum constant
+     */
+    private static boolean isEnumConstantClass(final Class<?> c) {
+        return c.getSuperclass() != null && c.getSuperclass().isEnum();
+    }
+
+    /**
      * Collects the declared fields of a class and of every class it extends, including the static
-     * and transient ones that callers filter out later.
+     * and transient ones that callers filter out later. Synthetic fields, which the compiler adds
+     * for things like the outer instance of an inner class, are left out: they are not part of the
+     * object's data and would otherwise be written as an element of their own, or loop back into
+     * the enclosing object forever.
      * @param type the class to take the fields of
      * @return the fields of the class and its superclasses, subclass first
      */
@@ -220,14 +235,25 @@ public enum Reflection {;
     }
     /**
      * Appends the declared fields of a class and of every class it extends to the given list,
-     * walking up the hierarchy one class at a time.
+     * walking up the hierarchy one class at a time. Synthetic fields are skipped for the reason
+     * {@link #listFields(Class)} gives, and so is a field whose name a class nearer the object's
+     * own class has already declared: the nearer field hides the one it shadows, which would
+     * otherwise be written under the same name and read back from the one element into both.
      * @param fields the list to add to, which already holds the fields of any subclass
      * @param type the class to take the fields of
      * @return the same list
      */
     public static List<Field> listFields(final List<Field> fields, final Class<?> type) {
-        fields.addAll(Arrays.asList(type.getDeclaredFields()));
-        if (type.getSuperclass() != null) listFields(fields, type.getSuperclass());
+        for (final Field f : type.getDeclaredFields()) {
+            if (f.isSynthetic()) continue;
+            fields.add(f);
+        }
+        if (type.getSuperclass() == null) return fields;
+
+        final Set<String> names = new HashSet<>();
+        for (final Field f : fields) names.add(f.getName());
+        for (final Field inherited : listFields(new ArrayList<>(), type.getSuperclass()))
+            if (names.add(inherited.getName())) fields.add(inherited);
         return fields;
     }
 
@@ -258,13 +284,15 @@ public enum Reflection {;
     }
     /**
      * These return true for the interface a field is declared as, as well as for every concrete
-     * implementation. A field declared as Collection/Iterable is treated as a List, since that is
-     * the only sane way to serialize it.
+     * implementation. A Collection that is neither a Set nor a Map is treated as a List, as is
+     * the Iterable interface itself, so that a Queue or any other Iterable is written as the
+     * sequence of items it reads back as.
      * @param c the class to check
-     * @return true for List and its implementations, plus the Collection and Iterable interfaces
+     * @return true for every Collection and Iterable that is not a Set or a Map
      */
     public static boolean isList(final Class<?> c) {
-        return List.class.isAssignableFrom(c) || c.equals(Collection.class) || c.equals(Iterable.class);
+        if (Set.class.isAssignableFrom(c) || Map.class.isAssignableFrom(c)) return false;
+        return Collection.class.isAssignableFrom(c) || Iterable.class.isAssignableFrom(c);
     }
     /**
      * Tells whether values of this class are serialized as a set, which is the Set interface and
@@ -337,10 +365,17 @@ public enum Reflection {;
     }
     private static String findAbstractTypeName(final XmlAbstractClass annotation, final XmlElement node) {
         if (!annotation.tag().isEmpty()) {
+            if (node == null)
+                throw new InvalidAnnotation(format("Missing tag '%s': there is no element to read it from", annotation.tag()));
             final XmlElement child = findChildForName(node, annotation.tag(), null);
             if (child == null) throw new InvalidAnnotation(format("Missing tag '%s' in element '%s'", annotation.tag(), node.name));
-            return child.getText();
+            final String typeName = child.getText();
+            if (typeName == null)
+                throw new InvalidAnnotation(format("Empty tag '%s' in element '%s' holds no type name", annotation.tag(), node.name));
+            return typeName;
         }
+        if (node == null)
+            throw new InvalidAnnotation(format("Missing attribute '%s': there is no element to read it from", annotation.attribute()));
         final var attribute = node.attributes.get(annotation.attribute());
         if (attribute == null) throw new InvalidAnnotation(format("Missing attribute '%s' in element '%s'", annotation.attribute(), node.name));
         return attribute;
@@ -362,14 +397,18 @@ public enum Reflection {;
     }
     /**
      * The tag name for a class: the value of its @XmlName annotation when it has one, and its
-     * simple class name in lower case when it does not.
+     * simple class name in lower case when it does not. An anonymous or local class has no simple
+     * name, so the name of the nearest class that has one is used instead of an empty tag.
      * @param o the class to take the name of
      * @return the tag name
      */
     public static String toName(final Class<?> o) {
-        if (!o.isAnnotationPresent(XmlName.class))
-            return o.getSimpleName().toLowerCase();
-        return o.getAnnotation(XmlName.class).value();
+        if (o.isAnnotationPresent(XmlName.class))
+            return o.getAnnotation(XmlName.class).value();
+        // lower case the same wherever the program runs: the default locale maps an 'I' to a
+        // dotless one in some places, and a tag name has to read the same everywhere
+        final String name = o.getSimpleName().toLowerCase(Locale.ROOT);
+        return name.isEmpty() && o.getSuperclass() != null ? toName(o.getSuperclass()) : name;
     }
     /**
      * The name of a field: the value of its @XmlName annotation when it has one, and the field's

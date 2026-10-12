@@ -32,10 +32,28 @@ public enum XML {;
      */
     public static String attributesToXml(final List<Field> fields, final Object o
             , final Function<String, String> escaper) throws IllegalArgumentException, IllegalAccessException {
+        return attributesToXml(fields, o, escaper, Object::toString);
+    }
+    /**
+     * Renders the attribute fields of an object as a run of name="value" pairs, each value passed
+     * through the escaper. A field holding null falls back to the value of its @XmlDefaultValue.
+     * The renderer turns a value into the text it is written as, so that an enum is written as its
+     * @XmlEnumValue and a type with a serializer as that serializer's text rather than as toString.
+     * @param fields the attribute fields to render
+     * @param o the object to read the values from
+     * @param escaper applied to each value before it is written
+     * @param renderer turns a value into the text it is written as
+     * @return the attributes as text, ready to sit just inside a tag
+     * @throws IllegalArgumentException if the field is not declared by the object's class
+     * @throws IllegalAccessException if a field cannot be read
+     */
+    public static String attributesToXml(final List<Field> fields, final Object o
+            , final Function<String, String> escaper, final Function<Object, String> renderer)
+            throws IllegalArgumentException, IllegalAccessException {
         final var attr = new StringBuilder(6 * fields.size());
         for (final var field : fields) {
             // a null field carries @XmlDefaultValue(serialize=true), so use it instead of the value
-            addAttribute(attr, toName(field), escaper.apply(toValue(field, o).toString()));
+            addAttribute(attr, toName(field), escaper.apply(renderer.apply(toValue(field, o))));
         }
         return attr.toString();
     }
@@ -174,7 +192,8 @@ public enum XML {;
      */
     public static void writeOpeningAndClosingTag(final Writer writer, final String name, final String text) throws IOException {
         writeOpeningTag(writer, name);
-        writer.append(text);
+        // Writer.append(null) writes the four characters "null", so a null text writes nothing
+        if (text != null) writer.append(text);
         writeClosingTag(writer, name);
     }
     /**

@@ -13,7 +13,7 @@ import xmlparser.utils.Escaping.UnEscape;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -51,10 +51,40 @@ public interface XmlReader extends AccessDeserializers {
         final ObjectDeserializer c = getDeserializer(clazz);
         if (c != null) return c.convert(node, clazz);
 
+        // an enum is named by the text it is written as rather than filled in field by field:
+        // reflecting over one would reach into java.lang.Enum itself, which is not open to us
+        final Class<?> enumType = asEnumType(clazz);
+        if (enumType != null) return (T) enumFromText(enumType, node.getText());
+
         final T object = clazz.isRecord() ? domToRecord(node, clazz) : domToClass(node, clazz);
         runValidators(object, clazz);
 
         return object;
+    }
+
+    /**
+     * The enum class a type is a constant of: the type itself when it is an enum, the type it
+     * extends when it is the anonymous class of a constant with a body of its own, and null for
+     * anything that is not an enum at all.
+     * @param type the type to look at
+     * @return the enum class the constants are declared in, or null
+     */
+    private static Class<?> asEnumType(final Class<?> type) {
+        if (type.isEnum()) return type;
+        final Class<?> parent = type.getSuperclass();
+        return parent != null && parent.isEnum() ? parent : null;
+    }
+
+    /**
+     * The constant whose document name or @XmlEnumValue is the given text, or null for a text
+     * that is absent, which is how a null value is written.
+     * @param enumType the enum class to take the constant from
+     * @param text the text the document holds
+     * @return the constant, or null
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T enumFromText(final Class<?> enumType, final String text) {
+        return text == null ? null : (T) valueOfEnum((Class<? extends Enum>) enumType, text);
     }
 
     /**
@@ -86,7 +116,6 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     private <T> T domToRecord(final XmlElement node, final Class<T> clazz) {
-        final String parentName = toName(clazz);
         XmlElement selectedNode;
 
         final RecordComponent[] fields = clazz.getRecordComponents();
@@ -97,18 +126,18 @@ public interface XmlReader extends AccessDeserializers {
 
             selectedNode = node;
             if (f.isAnnotationPresent(XmlPath.class)) {
-                selectedNode = newXPath(parentName + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
+                selectedNode = newXPath(node.name + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
             }
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXT_NODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
-                case ANNOTATED_ATTRIBUTE -> attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f));
+                case TEXT_NODE -> withDefault(textNodeToValue(toPattern(f), f.getType(), selectedNode), f.getType(), f);
+                case ANNOTATED_ATTRIBUTE -> withDefault(attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f)), f.getType(), f);
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case ARRAY -> domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f));
                 case MAP -> domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f));
-                case ENUM -> enumNodeToValue(toEnumType(f), toName(f), deWrap(selectedNode, f));
+                case ENUM -> enumNodeToValue(toEnumType(f), childFor(deWrap(selectedNode, f), f));
                 default -> {
                     final String name = toName(f);
                     if (selectedNode == null) yield null;
@@ -123,15 +152,10 @@ public interface XmlReader extends AccessDeserializers {
                         yield domToObject(child, findAbstractType(isAbstract, child));
                     }
 
-                    final var childForName = findChildForName(deWrap(selectedNode, f), name, null);
+                    final var childForName = childFor(deWrap(selectedNode, f), f);
                     if (childForName != null) yield domToObject(childForName, f.getType());
 
-                    final var hasDefault = f.getAnnotation(XmlDefaultValue.class);
-                    if (hasDefault != null && hasDefault.deserialize()) {
-                        yield stringToValue(f.getType(), hasDefault.value());
-                    }
-
-                    yield null;
+                    yield withDefault(null, f.getType(), f);
                 }
             };
             fieldValues[i] = fieldValue;
@@ -153,7 +177,6 @@ public interface XmlReader extends AccessDeserializers {
     private <T> T domToClass(final XmlElement node, final Class<T> clazz) {
         final T o = newInstanceWithoutConstructor(clazz);
 
-        final String parentName = toName(clazz);
         XmlElement selectedNode;
         for (final Field f : listFields(clazz)) {
             f.setAccessible(true);
@@ -162,18 +185,18 @@ public interface XmlReader extends AccessDeserializers {
 
             selectedNode = node;
             if (f.isAnnotationPresent(XmlPath.class)) {
-                selectedNode = newXPath(parentName + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
+                selectedNode = newXPath(node.name + "/" + f.getAnnotation(XmlPath.class).value()).evaluateAny(node);
             }
 
             final Object fieldValue = switch (toFieldType(f)) {
                 case FIELD_DESERIALIZER -> invokeFieldDeserializer(f, selectedNode);
-                case TEXT_NODE -> textNodeToValue(toPattern(f), f.getType(), selectedNode);
-                case ANNOTATED_ATTRIBUTE -> attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f));
+                case TEXT_NODE -> withDefault(textNodeToValue(toPattern(f), f.getType(), selectedNode), f.getType(), f);
+                case ANNOTATED_ATTRIBUTE -> withDefault(attributeToValue(toPattern(f), f.getType(), toName(f), deWrap(selectedNode, f)), f.getType(), f);
                 case SET -> domToSet(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case LIST -> domToList(f, toClassOfCollection(f), toName(f), deWrap(selectedNode, f));
                 case ARRAY -> domToArray(f.getType().getComponentType(), toName(f), deWrap(selectedNode, f));
                 case MAP -> domToMap(f, (ParameterizedType) f.getGenericType(), toName(f), deWrap(selectedNode, f));
-                case ENUM -> enumNodeToValue(toEnumType(f), toName(f), deWrap(selectedNode, f));
+                case ENUM -> enumNodeToValue(toEnumType(f), childFor(deWrap(selectedNode, f), f));
                 default -> {
                     final String name = toName(f);
                     if (selectedNode == null) yield null;
@@ -187,15 +210,10 @@ public interface XmlReader extends AccessDeserializers {
                         final XmlElement child = selectedNode.findChildForName(name, null);
                         yield domToObject(child, findAbstractType(isAbstract, child));
                     }
-                    final var childForName = findChildForName(deWrap(selectedNode, f), name, null);
+                    final var childForName = childFor(deWrap(selectedNode, f), f);
                     if (childForName != null) yield domToObject(childForName, f.getType());
 
-                    final var hasDefault = f.getAnnotation(XmlDefaultValue.class);
-                    if (hasDefault != null && hasDefault.deserialize()) {
-                        yield stringToValue(f.getType(), hasDefault.value());
-                    }
-
-                    yield null;
+                    yield withDefault(null, f.getType(), f);
                 }
             };
             setField(f, o, fieldValue == null ? zeroValueOf(f.getType()) : fieldValue);
@@ -211,20 +229,117 @@ public interface XmlReader extends AccessDeserializers {
         if (!isWrapped(field) || element == null) return element;
         return element.findChildForName(toWrappedName(field), null);
     }
+
+    /**
+     * The element a field's value is read from: the child named after the field, or, when the
+     * field carries @XmlNameFromClass, the one named after the class of its value instead. The
+     * writer names such an element after the value's class, which the reader can not know before
+     * it has read anything, so the declared type names it when that type has a name of its own,
+     * the field's own name is tried next, and a child that no other field claims is taken last.
+     *
+     * @param parent the element to look in, possibly null
+     * @param field the field being read
+     * @return the element to read the field from, or null when there is none
+     */
+    private XmlElement childFor(final XmlElement parent, final Field field) {
+        if (parent == null) return null;
+        final String name = toName(field);
+        if (!field.isAnnotationPresent(XmlNameFromClass.class))
+            return findChildForName(parent, name, null);
+
+        final Set<String> claimed = new HashSet<>();
+        for (final Field other : listFields(field.getDeclaringClass()))
+            if (!other.equals(field)) claimed.add(toName(other));
+        return classNamedChildFor(parent, field.getType(), name, claimed);
+    }
+    /**
+     * The same for a record component, whose name and type are read the same way and whose
+     * siblings come from the record itself.
+     *
+     * @param parent the element to look in, possibly null
+     * @param field the record component being read
+     * @return the element to read the component from, or null when there is none
+     */
+    private XmlElement childFor(final XmlElement parent, final RecordComponent field) {
+        if (parent == null) return null;
+        final String name = toName(field);
+        if (!field.isAnnotationPresent(XmlNameFromClass.class))
+            return findChildForName(parent, name, null);
+
+        final Set<String> claimed = new HashSet<>();
+        for (final RecordComponent other : field.getDeclaringRecord().getRecordComponents())
+            if (!other.equals(field)) claimed.add(toName(other));
+        return classNamedChildFor(parent, field.getType(), name, claimed);
+    }
+    private XmlElement classNamedChildFor(final XmlElement parent, final Class<?> type, final String name
+            , final Set<String> claimed) {
+        if (!type.isPrimitive() && !type.equals(Object.class) && !type.isInterface()) {
+            final XmlElement byClass = findChildForName(parent, toName(type), null);
+            if (byClass != null) return byClass;
+        }
+        final XmlElement byName = findChildForName(parent, name, null);
+        if (byName != null) return byName;
+        return unclaimedChild(parent, claimed);
+    }
+    /**
+     * The one child element no other field asks for, which is how a value written under a name
+     * taken from a class the declared type does not name is found. More than one candidate means
+     * the document does not say which is which, so none is taken.
+     *
+     * @param parent the element to look in
+     * @param claimed the names the other fields of the type read
+     * @return the unclaimed child, or null when there is not exactly one
+     */
+    private XmlElement unclaimedChild(final XmlElement parent, final Set<String> claimed) {
+        XmlElement found = null;
+        for (final XmlElement child : parent.children) {
+            if (child.name == null || claimed.contains(child.name)) continue;
+            if (found != null) return null;
+            found = child;
+        }
+        return found;
+    }
+
+    /**
+     * The value to use for a field the document gave nothing for: the value of its
+     * @XmlDefaultValue when it has one that applies when reading, and null when it has not, so
+     * that a default is honoured for an attribute or a text node the same way it is for an
+     * element.
+     *
+     * @param value what the document gave for the field, possibly null
+     * @param type the field's declared type
+     * @param field the field itself
+     * @return the value to give the field, or null when it has no default
+     */
+    private Object withDefault(final Object value, final Class<?> type, final AnnotatedElement field) {
+        if (value != null) return value;
+        final var hasDefault = field.getAnnotation(XmlDefaultValue.class);
+        return hasDefault == null || !hasDefault.deserialize() ? null : stringToValue(type, hasDefault.value());
+    }
     private Object textNodeToValue(final String pattern, final Class<?> type, final XmlElement node) {
+        if (node == null) return null;
         final ObjectDeserializer conv = getDeserializer(type);
         final Object value = (conv != null) ? conv.convert(node) : null;
         if (!isNullOrEmpty(pattern) && value != null)
             validatePattern(pattern, value);
         return value;
     }
-    private Object enumNodeToValue(final Class<? extends Enum> type, final String name, final XmlElement node) {
-        final XmlElement text = findChildForName(node, name, null);
+
+    /**
+     * The value an enum field is given from the element that holds it: the type's own deserializer
+     * when it has one, which is handed that element rather than the element it sits in, and the
+     * constant the element's text names otherwise. An element with no text is a null value, not a
+     * constant, because that is how a null enum is written.
+     *
+     * @param type the enum class to take the constant from
+     * @param text the element holding the enum value, possibly null
+     * @return the constant, or null
+     */
+    private Object enumNodeToValue(final Class<? extends Enum> type, final XmlElement text) {
         if (text == null) return null;
-        final String value = text.getText();
-        if (value == null) return null;
         final ObjectDeserializer conv = getDeserializer(type);
-        return (conv == null) ? valueOfEnum(type, value) : conv.convert(node);
+        if (conv != null) return conv.convert(text);
+        return enumFromText(type, text.getText());
     }
 
     /**
@@ -309,17 +424,25 @@ public interface XmlReader extends AccessDeserializers {
 
     private Object attributeToValue(final String pattern, final Class<?> type, final String name, final XmlElement node) {
         if (node == null) return null;
-        final ObjectDeserializer conv = getDeserializer(type);
-        if (conv == null) return null;
         final String value = node.attributes.get(name);
         if (value == null) return null;
+
+        final ObjectDeserializer conv = getDeserializer(type);
+        // an enum is read from an attribute the same way it is read from an element: by the
+        // constant its text names, since no deserializer is registered for one by default
+        final Class<?> enumType = asEnumType(type);
+        if (conv == null && enumType == null) return null;
+
         if (!isNullOrEmpty(pattern))
             validatePattern(pattern, value);
-        return conv.convert(value);
+        return (conv != null) ? conv.convert(value) : enumFromText(enumType, value);
     }
     private Object stringToValue(final Class<?> type, final String value) {
+        if (value == null) return null;
         final ObjectDeserializer conv = getDeserializer(type);
-        return (conv != null) ? conv.convert(value) : null;
+        if (conv != null) return conv.convert(value);
+        final Class<?> enumType = asEnumType(type);
+        return enumType == null ? null : enumFromText(enumType, value);
     }
     @SuppressWarnings("unchecked")
     private static Class<? extends Enum> toEnumClass(final Class<?> type) {
@@ -339,6 +462,18 @@ public interface XmlReader extends AccessDeserializers {
     private Set<Object> domToSet(final RecordComponent field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         return node == null ? null : domToSet(field.getAnnotation(XmlAbstractClass.class), field.getType(), type, name, node);
     }
+    /**
+     * Tells whether an element is one the writer left empty, which is how a null item, list
+     * element or map value is written. Such an element carries no attributes, no children and no
+     * text, so there is nothing in it to build a value from: reading it back gives null rather
+     * than an object whose every field is null.
+     * @param element the element to look at
+     * @return true when the element holds nothing at all
+     */
+    private static boolean isEmptyValue(final XmlElement element) {
+        return element.children.isEmpty() && element.attributes.isEmpty() && element.getText() == null;
+    }
+
     private Set<Object> domToSet(final Field field, final Class<?> type, final String name, final XmlElement node) throws InvalidXPath {
         return node == null ? null : domToSet(field.getAnnotation(XmlAbstractClass.class), field.getType(), type, name, node);
     }
@@ -348,7 +483,11 @@ public interface XmlReader extends AccessDeserializers {
 
         final Set<Object> set = newSet(declaredType);
         for (final XmlElement n : node.children) {
-            if (!n.name.equals(name)) continue;
+            if (!name.equals(n.name)) continue;
+            if (elementConv == null && isEmptyValue(n)) {
+                set.add(null);
+                continue;
+            }
             if (isAbstract != null) {
                 set.add(domToObject(n, findAbstractType(isAbstract, n)));
                 continue;
@@ -372,7 +511,11 @@ public interface XmlReader extends AccessDeserializers {
 
         final List<Object> list = newList(declaredType);
         for (final XmlElement n : node.children) {
-            if (!n.name.equals(name)) continue;
+            if (!name.equals(n.name)) continue;
+            if (elementConv == null && isEmptyValue(n)) {
+                list.add(null);
+                continue;
+            }
             if (isAbstract != null) {
                 list.add(domToObject(n, findAbstractType(isAbstract, n)));
                 continue;
@@ -389,8 +532,10 @@ public interface XmlReader extends AccessDeserializers {
         final Object array = Array.newInstance(type, node.numChildrenWithName(name));
         int i = 0;
         for (final XmlElement n : node.children) {
-            if (n.name.equals(name)) {
-                Array.set(array, i, (elementConv == null) ? domToObject(n, type) : elementConv.convert(n, type));
+            if (name.equals(n.name)) {
+                final Object value = (elementConv != null) ? elementConv.convert(n, type)
+                        : (isEmptyValue(n) ? null : domToObject(n, type));
+                Array.set(array, i, value);
                 i++;
             }
         }
@@ -466,9 +611,12 @@ public interface XmlReader extends AccessDeserializers {
                                 : domToObject(key, keyType));
                 if (mapKey == null) continue;
 
-                final Object mapValue = (convVal != null) ? (valueText == null ? null : convVal.convert(valueText))
-                        : (valueType.isEnum() && valueText != null ? valueOfEnum(toEnumClass(valueType), valueText)
-                                : domToObject(value, valueType));
+                final Object mapValue;
+                if (convVal != null) mapValue = (valueText == null ? null : convVal.convert(valueText));
+                else if (isEmptyValue(value)) mapValue = null;
+                else if (valueType.isEnum())
+                    mapValue = (valueText == null ? null : valueOfEnum(toEnumClass(valueType), valueText));
+                else mapValue = domToObject(value, valueType);
                 map.put(mapKey, mapValue);
             }
             return map;
@@ -483,9 +631,13 @@ public interface XmlReader extends AccessDeserializers {
             final Object mapKey = toMapTextValue(convKey, keyType, child.name);
             if (mapKey == null) continue;
 
-            final Object mapValue = (convVal != null) ? convVal.convert(child)
-                    : (valueType.isEnum() ? valueOfEnum(toEnumClass(valueType), child.getText())
-                            : domToObject(child, valueType));
+            final String valueText = child.getText();
+            final Object mapValue;
+            if (convVal != null) mapValue = convVal.convert(child);
+            else if (isEmptyValue(child)) mapValue = null;
+            else if (valueType.isEnum())
+                mapValue = (valueText == null ? null : valueOfEnum(toEnumClass(valueType), valueText));
+            else mapValue = domToObject(child, valueType);
             map.put(mapKey, mapValue);
         }
         return map;
@@ -565,7 +717,7 @@ public interface XmlReader extends AccessDeserializers {
      * @return the root element of the built tree
      * @throws IOException if the stream cannot be read
      */
-    static XmlElement toXmlDom(final InputStreamReader in, final boolean conserveWhitespace,
+    static XmlElement toXmlDom(final Reader in, final boolean conserveWhitespace,
                                final Trim trimmer, final UnEscape escaper) throws IOException {
         final DomBuilder p = new DomBuilder();
         XmlStreamReader.toXmlStream(in, p, conserveWhitespace, trimmer, escaper);

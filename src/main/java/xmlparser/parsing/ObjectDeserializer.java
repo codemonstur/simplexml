@@ -73,8 +73,8 @@ public interface ObjectDeserializer {
         deserializers.put(float.class, Float::valueOf);
         deserializers.put(Byte.class, Byte::valueOf);
         deserializers.put(byte.class, Byte::valueOf);
-        deserializers.put(Character.class, value -> value.charAt(0));
-        deserializers.put(char.class, value -> value.charAt(0));
+        deserializers.put(Character.class, ObjectDeserializer::toCharacter);
+        deserializers.put(char.class, ObjectDeserializer::toCharacter);
         deserializers.put(Long.class, Long::valueOf);
         deserializers.put(long.class, Long::valueOf);
         deserializers.put(Short.class, Short::valueOf);
@@ -84,6 +84,18 @@ public interface ObjectDeserializer {
         deserializers.put(Boolean.class, Boolean::valueOf);
         deserializers.put(Object.class, value -> value);
         return deserializers;
+    }
+
+    /**
+     * Takes the character text holds, or gives back nothing when the text is empty: an attribute
+     * or an element holding no characters is no value for a char field, so it reads the way a
+     * missing one does rather than failing on a character that is not there.
+     *
+     * @param value the text to take the character from
+     * @return the first character of the text, or null when it holds none
+     */
+    static Character toCharacter(final String value) {
+        return value.isEmpty() ? null : value.charAt(0);
     }
 
 }

@@ -113,8 +113,8 @@ public enum Escaping {;
      * the characters they stand for. A reference to a surrogate is joined with the partner
      * reference that follows it, and one left on its own is kept as plain text.
      * @param text the text to read back
-     * @return the text with the references decoded; an invalid numeric reference is kept as it
-     *         was, while a named reference that is not known loses the leading ampersand
+     * @return the text with the references decoded; a reference that is not known, named or
+     *         numeric, is kept as the plain text it was written as
      */
     public static String unescapeXml(final String text) {
         final var result = new StringBuilder(text.length());
@@ -151,7 +151,12 @@ public enum Escaping {;
                         i = end;
                     }
                 }
-                else i++;
+                else {
+                    // not a reference this knows of, so it is kept as it was written rather than
+                    // losing the ampersand that starts it
+                    result.append(CHAR_AMPERSAND);
+                    i++;
+                }
             }
         }
         return result.toString();
@@ -250,6 +255,10 @@ public enum Escaping {;
         if (isSurrogateCodePoint(codePoint))
             return appendSurrogatePair(text, semicolon+1, codePoint, result);
 
+        // a reference to a character no document may hold would put one into it that no parser
+        // reads back, so it is left as the plain text it was written as
+        if (!isLegalXmlCharacter(codePoint)) return -1;
+
         result.appendCodePoint(codePoint);
         return semicolon+1;
     }
@@ -278,9 +287,25 @@ public enum Escaping {;
         return codePoint >= Character.MIN_LOW_SURROGATE && codePoint <= Character.MAX_LOW_SURROGATE;
     }
 
+    // Tells whether a code point is one a document may hold at all, which is what the character
+    // production of XML allows: a tab, a line feed and a carriage return, then everything from a
+    // space upwards that stops short of the surrogates, and everything past them up to the end of
+    // the last plane. The character just below the surrogate block and the two at the end of the
+    // basic plane are left out, being unassigned, and everything else outside the ranges would
+    // make the document ill formed.
+    private static boolean isLegalXmlCharacter(final int codePoint) {
+        return codePoint == 0x9 || codePoint == 0xA || codePoint == 0xD
+                || (codePoint >= 0x20 && codePoint < Character.MIN_SURROGATE)
+                || (codePoint > Character.MAX_SURROGATE && codePoint <= 0xFFFD)
+                || (codePoint >= 0x10000 && codePoint <= Character.MAX_CODE_POINT);
+    }
+
     // Decodes the body of a numeric character reference, which is either decimal or, when it is
     // prefixed with an x, hexadecimal. Returns INVALID_CODE_POINT when the body is not a valid
-    // number or not a valid code point; the callers keep such a reference as plain text.
+    // number or not a valid code point; the callers keep such a reference as plain text. The
+    // body is checked one character at a time rather than left to Integer.parseInt, which takes
+    // a leading sign, a space around the digits and a few other spellings that no document
+    // writes in a reference.
     private static int decodeNumericEntity(final String text, final int start, final int end) {
         if (start > end) return INVALID_CODE_POINT;
 
@@ -288,12 +313,23 @@ public enum Escaping {;
         final String body = isHex ? text.substring(start+1, end) : text.substring(start, end);
         if (body.isEmpty()) return INVALID_CODE_POINT;
 
+        for (int i = 0; i < body.length(); i++)
+            if (!isDigit(body.charAt(i), isHex)) return INVALID_CODE_POINT;
+
         try {
             final int codePoint = Integer.parseInt(body, isHex ? 16 : 10);
             return Character.isValidCodePoint(codePoint) ? codePoint : INVALID_CODE_POINT;
         } catch (final NumberFormatException e) {
             return INVALID_CODE_POINT;
         }
+    }
+
+    // Tells whether a character is one the body of a numeric reference may hold: a digit, and a
+    // letter from a to f in either case when the number is hexadecimal.
+    private static boolean isDigit(final char c, final boolean isHex) {
+        if (c >= '0' && c <= '9') return true;
+        if (!isHex) return false;
+        return c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';
     }
 
 }

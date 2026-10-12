@@ -7,11 +7,13 @@ import xmlparser.utils.Escaping.UnEscape;
 import xmlparser.utils.Trimming.Trim;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.NoSuchElementException;
 
 import static xmlparser.utils.Constants.*;
 import static xmlparser.utils.IO.newStreamReader;
+import static xmlparser.utils.XmlParse.finishTag;
 import static xmlparser.utils.XmlParse.readCData;
 import static xmlparser.utils.XmlParse.readTag;
 
@@ -31,17 +33,26 @@ public interface XmlIterator {
      * @param in the stream to read the elements from
      * @return an iterator over the elements, ending at the end of the stream
      */
-    default CheckedIterator<String> iterateXml(final InputStreamReader in) {
+    default CheckedIterator<String> iterateXml(final Reader in) {
         return new CheckedIterator<>() {
+            private String pending;
+
             public boolean hasNext() throws IOException {
+                if (pending != null) return true;
                 final Character next = readFirstNonWhiteChar(in);
                 if (next == null) return false;
-                if (next == '<') return true;
-                throw new InvalidXml();
+                if (next != '<') throw new InvalidXml();
+                // the item is read in full here so that hasNext() can be called twice, or next()
+                // called without it, without reading past the item being looked at
+                pending = readUntilCurrentTagIsClosed(in);
+                return true;
             }
 
             public String next() throws IOException {
-                return readUntilCurrentTagIsClosed(in);
+                if (!hasNext()) throw new NoSuchElementException("No more items to read");
+                final String xml = pending;
+                pending = null;
+                return xml;
             }
         };
     }
@@ -58,20 +69,33 @@ public interface XmlIterator {
      * @param escaper how entities in text and attributes are unescaped
      * @return an iterator over one DOM element at a time
      */
-    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset
+    default CheckedIterator<XmlElement> iterateDom(final Reader in, final Charset charset
             , final boolean conserveWhitespace, final Trim trimmer, final UnEscape escaper) {
         return new CheckedIterator<>() {
+            private String pending;
+
             public boolean hasNext() throws Exception {
-                final Character next = readFirstNonWhiteChar(in);
-                if (next == null) return false;
-                if (next == '<') return true;
-                throw new InvalidXml();
+                if (pending != null) return true;
+                while (true) {
+                    final Character next = readFirstNonWhiteChar(in);
+                    if (next == null) return false;
+                    if (next != '<') throw new InvalidXml();
+                    final String xml = readUntilCurrentTagIsClosed(in);
+                    // a comment, prolog, declaration or section sitting between two elements
+                    // belongs to neither, and an element is what this iterator hands back, so
+                    // whatever was read past looking for one is read past again
+                    if (isBetweenContent(xml)) continue;
+                    pending = xml;
+                    return true;
+                }
             }
 
             public XmlElement next() throws Exception {
-                final String xml = readUntilCurrentTagIsClosed(in);
-                try (final InputStreamReader in = newStreamReader(xml, charset)) {
-                    return XmlReader.toXmlDom(in, conserveWhitespace, trimmer, escaper);
+                if (!hasNext()) throw new NoSuchElementException("No more elements to read");
+                final String xml = pending;
+                pending = null;
+                try (final var reader = newStreamReader(xml, charset)) {
+                    return XmlReader.toXmlDom(reader, conserveWhitespace, trimmer, escaper);
                 }
             }
         };
@@ -92,20 +116,32 @@ public interface XmlIterator {
      * @param escaper how entities in text and attributes are unescaped
      * @return an iterator over one object at a time
      */
-    default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
+    default <T> CheckedIterator<T> iterateObject(final Reader in, final Charset charset, final XmlReader reader
             , final Class<T> clazz, final boolean conserveWhitespace, final Trim trimmer, final UnEscape escaper) {
         return new CheckedIterator<>() {
+            private String pending;
+
             public boolean hasNext() throws Exception {
-                final Character next = readFirstNonWhiteChar(in);
-                if (next == null) return false;
-                if (next == '<') return true;
-                throw new InvalidXml();
+                if (pending != null) return true;
+                while (true) {
+                    final Character next = readFirstNonWhiteChar(in);
+                    if (next == null) return false;
+                    if (next != '<') throw new InvalidXml();
+                    final String xml = readUntilCurrentTagIsClosed(in);
+                    // an element is what this iterator hands back, so a comment, prolog or
+                    // declaration sitting between two of them is read past again
+                    if (isBetweenContent(xml)) continue;
+                    pending = xml;
+                    return true;
+                }
             }
 
             public T next() throws Exception {
-                final String xml = readUntilCurrentTagIsClosed(in);
-                try (final var in = newStreamReader(xml, charset)) {
-                    final XmlElement element = XmlReader.toXmlDom(in, conserveWhitespace, trimmer, escaper);
+                if (!hasNext()) throw new NoSuchElementException("No more elements to read");
+                final String xml = pending;
+                pending = null;
+                try (final var item = newStreamReader(xml, charset)) {
+                    final XmlElement element = XmlReader.toXmlDom(item, conserveWhitespace, trimmer, escaper);
                     return reader.domToObject(element, clazz);
                 }
             }
@@ -120,7 +156,7 @@ public interface XmlIterator {
      * @return the first non-white character, or null at the end of the stream
      * @throws IOException if the stream cannot be read
      */
-    static Character readFirstNonWhiteChar(final InputStreamReader in) throws IOException {
+    static Character readFirstNonWhiteChar(final Reader in) throws IOException {
         int r;
         while ((r = in.read()) != -1) {
             final char c = (char) r;
@@ -140,10 +176,12 @@ public interface XmlIterator {
      * @return the element as it was written, or what was read past when no element was found
      * @throws IOException if the stream cannot be read
      */
-    static String readUntilCurrentTagIsClosed(final InputStreamReader in) throws IOException {
+    static String readUntilCurrentTagIsClosed(final Reader in) throws IOException {
         final StringBuilder element = new StringBuilder();
         final StringBuilder between = new StringBuilder();
         int numberOfTagsOpened = 0;
+        // a prolog whose read ended at a '>' in its data carries on into the text that follows
+        boolean insideProlog = false;
 
         // the '<' of the first tag has been taken in, so its tag is read from here on
         String head = readTag(in);
@@ -167,9 +205,19 @@ public interface XmlIterator {
                 // a comment holds anything at all, so it is finished off before it is sorted out
                 outer.append(finishComment(in, head));
 
-            } else if (trimmed.charAt(0) == XML_PROLOG || trimmed.charAt(0) == CHAR_EXCLAMATION_MARK) {
-                // a prolog or a declaration belongs to no element at all
+            } else if (trimmed.charAt(0) == XML_PROLOG) {
+                // a prolog belongs to no element at all, and it is not necessarily finished by
+                // the '>' the read above stopped at: whether it carried on is decided by the
+                // run of text that follows
                 outer.append(LESS_THAN).append(head).append(GREATER_THAN);
+                insideProlog = !head.endsWith(String.valueOf(XML_PROLOG));
+
+            } else if (trimmed.charAt(0) == CHAR_EXCLAMATION_MARK) {
+                // neither does a declaration, and a DOCTYPE's internal subset carries on past
+                // the '>' that ended this read
+                outer.append(LESS_THAN).append(head).append(GREATER_THAN);
+                final String rest = finishTag(in, head);
+                if (rest != null) outer.append(rest);
 
             } else if (trimmed.charAt(0) == CHAR_FORWARD_SLASH) {
                 element.append(LESS_THAN).append(head).append(GREATER_THAN);
@@ -188,13 +236,31 @@ public interface XmlIterator {
                 throw new InvalidXml("Unbalanced tags: closing tag without a matching opening tag");
 
             // the element carries on with its character data, and then with its next tag
-            final String text = readText(in);
+            String text = readText(in);
             if (text == null) break;
+            if (insideProlog) {
+                // only what follows the '?>' that really ends the prolog belongs to the document
+                insideProlog = false;
+                final int end = text.indexOf(XML_END_PROLOG);
+                if (end >= 0) text = text.substring(end + XML_END_PROLOG.length());
+            }
             holderOf(element, between, numberOfTagsOpened).append(text);
             head = readTag(in);
         }
 
         return element.length() > 0 ? element.toString() : between.toString();
+    }
+
+    /**
+     * Tells whether what was read is only what sits between two elements rather than an element
+     * itself: a comment, a prolog, a declaration or a section, none of which starts with the
+     * name of an element.
+     *
+     * @param xml what was read
+     * @return true when it holds no element
+     */
+    private static boolean isBetweenContent(final String xml) {
+        return xml.startsWith(LESS_THAN + XML_PROLOG) || xml.startsWith(LESS_THAN + CHAR_EXCLAMATION_MARK);
     }
 
     /** What has been read belongs to the element only once one of them is open. */
@@ -213,7 +279,7 @@ public interface XmlIterator {
      *
      * @return everything read, without the '&lt;' that starts the next tag, or null at the end
      */
-    private static String readText(final InputStreamReader in) throws IOException {
+    private static String readText(final Reader in) throws IOException {
         final StringBuilder chars = new StringBuilder();
         int data; while ((data = in.read()) != -1) {
             if (data == XML_TAG_START) return chars.toString();
@@ -230,7 +296,7 @@ public interface XmlIterator {
      * @param head everything read since the '&lt;' of the comment
      *         the whole comment, from that '&lt;' up to the '&gt;' which ends it
      */
-    private static String finishComment(final InputStreamReader in, final String head) throws IOException {
+    private static String finishComment(final Reader in, final String head) throws IOException {
         final StringBuilder comment = new StringBuilder(LESS_THAN).append(head);
         if (head.endsWith(XML_END_COMMENT)) return comment.append(GREATER_THAN).toString();
 

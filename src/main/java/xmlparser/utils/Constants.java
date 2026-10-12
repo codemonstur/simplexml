@@ -120,6 +120,10 @@ public enum Constants {;
      */
     public static final String GREATER_THAN = ">";
     /**
+     * The {@code "?>"} that ends a prolog or processing instruction.
+     */
+    public static final String XML_END_PROLOG = String.valueOf(XML_PROLOG) + GREATER_THAN;
+    /**
      * The {@code "&"} string.
      */
     public static final String AMPERSAND = "&";

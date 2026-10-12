@@ -390,7 +390,7 @@
 &dopf;f09d9595
 &Dot;c2a8
 &dot;cb99
-&DotDot;e2839ce2839c
+&DotDot;e2839c
 &doteq;e28990
 &doteqdot;e28991
 &DotEqual;e28990
@@ -417,7 +417,7 @@
 &Downarrow;e28793
 &DownArrowBar;e2a493
 &DownArrowUpArrow;e287b5
-&DownBreve;cc91cc91
+&DownBreve;cc91
 &downdownarrows;e2878a
 &downharpoonleft;e28783
 &downharpoonright;e28782
@@ -1079,7 +1079,7 @@
 &natur;e299ae
 &natural;e299ae
 &naturals;e28495
-&nbsp;20
+&nbsp;c2a0
 &nbump;e2898eccb8
 &nbumpe;e2898fccb8
 &ncap;e2a983
@@ -1158,7 +1158,7 @@
 &nLtv;e289aaccb8
 &nmid;e288a4
 &NoBreak;e281a0
-&NonBreakingSpace;20
+&NonBreakingSpace;c2a0
 &Nopf;e28495
 &nopf;f09d959f
 &not;c2ac
@@ -1826,7 +1826,7 @@
 &tcedil;c5a3
 &Tcy;d0a2
 &tcy;d182
-&tdot;e2839be2839b
+&tdot;e2839b
 &telrec;e28c95
 &Tfr;f09d9497
 &tfr;f09d94b1
@@ -1876,7 +1876,7 @@
 &tridot;e297ac
 &trie;e2899c
 &triminus;e2a8ba
-&TripleDot;e2839be2839b
+&TripleDot;e2839b
 &triplus;e2a8b9
 &trisb;e2a78d
 &tritime;e2a8bb

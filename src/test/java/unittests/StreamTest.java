@@ -109,7 +109,7 @@ public class StreamTest {
     public void invalidXmlStreamRawThrowsException() throws Exception {
         try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
             final var it = parser.iterateXml(in);
-            while (it.hasNext()) {}
+            while (it.hasNext()) it.next();
         }
     }
 
@@ -117,7 +117,7 @@ public class StreamTest {
     public void invalidXmlStreamDomThrowsException() throws Exception {
         try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
             final var it = parser.iterateDom(in);
-            while (it.hasNext()) {}
+            while (it.hasNext()) it.next();
         }
     }
 
@@ -125,7 +125,7 @@ public class StreamTest {
     public void invalidXmlStreamObjectThrowsException() throws Exception {
         try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
             final var it = parser.iterateObject(in, SimplePojo.class);
-            while (it.hasNext()) {}
+            while (it.hasNext()) it.next();
         }
     }
 

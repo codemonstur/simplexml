@@ -34,6 +34,8 @@ public class DomBuilder implements EventParser {
     }
     public void someText(final String txt) {
         if (txt == null) return;
+        if (this.current == null)
+            throw new InvalidXml("Character data outside of any element: " + txt);
 
         this.current.children.add(new XmlTextElement(this.current, txt));
     }
