@@ -35,6 +35,8 @@
     <properties>
         <module.name>com.github.codemonstur.simplexml</module.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- default for @{argLine}; jacoco's prepare-agent appends the agent when it runs -->
+        <argLine></argLine>
 
         <maven.version>3.6.3</maven.version>
 
@@ -87,7 +89,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${version.plugin.surefire}</version>
                 <configuration>
-                    <argLine>-Xshare:off</argLine>
+                    <argLine>@{argLine} -Xshare:off</argLine>
                 </configuration>
             </plugin>
 
