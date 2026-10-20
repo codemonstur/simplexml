@@ -283,7 +283,10 @@
                             <rules>
                                 <rule>url:equal:http://www.opensource.org/licenses/bsd-license.php</rule>
                                 <rule>url:equal:http://opensource.org/licenses/BSD-3-Clause</rule>
+                                <rule>name:regex:(?i)BSD(-|\s)?3(-|\s)?cl.?ause.*</rule>
                                 <rule>url:regex:(http|https)://(www.)?opensource.org/licenses/(MIT|mit-license.php)</rule>
+                                <rule>url:equal:http://openjdk.java.net/legal/gplv2+ce.html</rule>
+                                <rule>name:equal:GNU General Public License (GPL), version 2, with the Classpath exception</rule>
                                 <rule>name:equal:The MIT License</rule>
                                 <rule>url:equal:https://opensource.org/license/mit</rule>
                                 <rule>name:regex:(The )?Apache(\s|-)(Software )?(License |License, )?(Version |version )?2\.0</rule>
