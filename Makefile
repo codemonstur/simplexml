@@ -48,6 +48,7 @@ validate: ## Check dependency versions, cves, and licenses
 	@mvn validate -P licenses
 
 release-notes:
+	@mkdir -p src/docs/releases
 	@$(INFO) "Writing release notes to src/docs/releases/release-$(VERSION).txt"
 	@echo "$(VERSION)" >> src/docs/releases/release-$(VERSION).txt
 	@echo "" >> src/docs/releases/release-$(VERSION).txt
