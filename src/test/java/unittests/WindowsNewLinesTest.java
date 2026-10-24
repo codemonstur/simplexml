@@ -1,11 +1,11 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class WindowsNewLinesTest {
@@ -19,8 +19,8 @@ public class WindowsNewLinesTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
 }

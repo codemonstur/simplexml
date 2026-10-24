@@ -1,7 +1,7 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.XmlWriter;
 import xmlparser.error.InvalidXml;
@@ -10,9 +10,7 @@ import xmlparser.parsing.ObjectSerializer;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WriterFailureTest {
 
@@ -39,7 +37,7 @@ public class WriterFailureTest {
 
             fail("XML that was never written was returned: " + actual);
         } catch (final InvalidXml e) {
-            assertEquals("Invalid error message", MESSAGE, e.getMessage());
+            assertEquals(MESSAGE, e.getMessage(), "Invalid error message");
         }
     }
 
@@ -55,8 +53,8 @@ public class WriterFailureTest {
 
                 fail("XML that was never written was written");
             } catch (final InvalidXml fromTheWriterOverload) {
-                assertEquals("The overloads report a failure differently",
-                        fromTheStringOverload.getMessage(), fromTheWriterOverload.getMessage());
+                assertEquals(fromTheStringOverload.getMessage(), fromTheWriterOverload.getMessage(),
+                        "The overloads report a failure differently");
             }
         }
     }
@@ -68,22 +66,22 @@ public class WriterFailureTest {
 
             fail("XML that was never written was returned");
         } catch (final InvalidXml e) {
-            assertNotNull("The cause of the failure was dropped", e.getCause());
-            assertEquals("Invalid cause", IllegalArgumentException.class, e.getCause().getClass());
+            assertNotNull(e.getCause(), "The cause of the failure was dropped");
+            assertEquals(IllegalArgumentException.class, e.getCause().getClass(), "Invalid cause");
         }
     }
 
     @Test
     public void writingWithoutAFailureIsUnaffected() {
-        assertEquals("Writing changed", "<pojo>\n  <name>hello</name>\n</pojo>\n", parser.toXml(new Pojo("hello")));
+        assertEquals("<pojo>\n  <name>hello</name>\n</pojo>\n", parser.toXml(new Pojo("hello")), "Writing changed");
     }
 
     @Test
     public void theCauseOfAFailureWhileReadingIsKept() {
         final var withCause = new InvalidXml("message", new IOException("because"));
 
-        assertEquals("The message was not kept", "message", withCause.getMessage());
-        assertNotNull("The cause of the failure was dropped", withCause.getCause());
+        assertEquals("message", withCause.getMessage(), "The message was not kept");
+        assertNotNull(withCause.getCause(), "The cause of the failure was dropped");
     }
 
 }

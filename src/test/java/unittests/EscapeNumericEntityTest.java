@@ -1,79 +1,78 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
-import xmlparser.utils.Escaping;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
+import static xmlparser.utils.Escaping.*;
 
 public class EscapeNumericEntityTest {
 
     @Test
     public void unescapeDecimalXml() {
-        assertEquals("Invalid decimal entity", "A", Escaping.unescapeXml("&#65;"));
-        assertEquals("Invalid decimal entity", "©{&", Escaping.unescapeXml("&#169;&#123;&#38;"));
+        assertEquals("A", unescapeXml("&#65;"), "Invalid decimal entity");
+        assertEquals("©{&", unescapeXml("&#169;&#123;&#38;"), "Invalid decimal entity");
     }
 
     @Test
     public void unescapeHexXml() {
-        assertEquals("Invalid hexadecimal entity", "A", Escaping.unescapeXml("&#x41;"));
-        assertEquals("Invalid hexadecimal entity", "J", Escaping.unescapeXml("&#x4a;"));
-        assertEquals("Invalid hexadecimal entity", "&", Escaping.unescapeXml("&#x0026;"));
+        assertEquals("A", unescapeXml("&#x41;"), "Invalid hexadecimal entity");
+        assertEquals("J", unescapeXml("&#x4a;"), "Invalid hexadecimal entity");
+        assertEquals("&", unescapeXml("&#x0026;"), "Invalid hexadecimal entity");
     }
 
     @Test
     public void unescapeCodePointsBeyondBmpXml() {
-        assertEquals("Invalid code point", "\ud83d\ude00", Escaping.unescapeXml("&#128512;"));
-        assertEquals("Invalid code point", "\ud83d\ude00", Escaping.unescapeXml("&#x1f600;"));
+        assertEquals("\ud83d\ude00", unescapeXml("&#128512;"), "Invalid code point");
+        assertEquals("\ud83d\ude00", unescapeXml("&#x1f600;"), "Invalid code point");
     }
 
     @Test
     public void unescapeSurrogateReferencesAreJoinedIntoOneCharacter() {
         // A supplementary character used to be escaped as two references, one to each half
-        assertEquals("Surrogate references were not joined", "\ud83d\ude00",
-                Escaping.unescapeXml("&#55357;&#56832;"));
-        assertEquals("Surrogate references were not joined", "\ud83d\ude00",
-                Escaping.unescapeXml("&#xD83D;&#xDE00;"));
-        assertEquals("Surrogate references were not joined", "\ud83d\ude00",
-                Escaping.unescapeHtml("&#55357;&#56832;"));
+        assertEquals("\ud83d\ude00", unescapeXml("&#55357;&#56832;"),
+                "Surrogate references were not joined");
+        assertEquals( "\ud83d\ude00", unescapeXml("&#xD83D;&#xDE00;"),
+                "Surrogate references were not joined");
+        assertEquals("\ud83d\ude00", unescapeHtml("&#55357;&#56832;"),
+                "Surrogate references were not joined");
     }
 
     @Test
     public void unescapeLoneSurrogateReferenceIsKeptAsText() {
-        assertEquals("A surrogate without its partner was decoded", "&#55296;", Escaping.unescapeXml("&#55296;"));
-        assertEquals("A surrogate without its partner was decoded", "&#56320;", Escaping.unescapeXml("&#56320;"));
-        assertEquals("A high surrogate was joined to a character that is not its partner", "&#55357;A",
-                Escaping.unescapeXml("&#55357;&#65;"));
-        assertEquals("A surrogate without its partner was decoded", "&#55296;", Escaping.unescapeHtml("&#55296;"));
+        assertEquals("&#55296;", unescapeXml("&#55296;"), "A surrogate without its partner was decoded");
+        assertEquals("&#56320;", unescapeXml("&#56320;"), "A surrogate without its partner was decoded");
+        assertEquals("&#55357;A", unescapeXml("&#55357;&#65;"), "A high surrogate was joined to a character that is not its partner");
+        assertEquals("&#55296;", unescapeHtml("&#55296;"), "A surrogate without its partner was decoded");
     }
 
     @Test
     public void escapeSupplementaryCharacterIsASingleReference() {
-        assertEquals("A surrogate pair was escaped as a reference to each half", "&#128512;",
-                Escaping.escapeXml("\ud83d\ude00", true));
-        assertEquals("A surrogate pair was escaped as a reference to each half", "&#128512;",
-                Escaping.escapeHtml("\ud83d\ude00", true));
-        assertEquals("A surrogate pair was changed", "\ud83d\ude00",
-                Escaping.escapeXml("\ud83d\ude00", false));
+        assertEquals("&#128512;", escapeXml("\ud83d\ude00", true),
+                "A surrogate pair was escaped as a reference to each half");
+        assertEquals("&#128512;", escapeHtml("\ud83d\ude00", true),
+                "A surrogate pair was escaped as a reference to each half");
+        assertEquals("\ud83d\ude00", escapeXml("\ud83d\ude00", false),
+                "A surrogate pair was changed");
     }
 
     @Test
     public void escapeLoneSurrogateIsReplaced() {
-        assertEquals("An unpaired surrogate was written to the document", "a\uFFFDb",
-                Escaping.escapeXml("a\uD800b", false));
-        assertEquals("An unpaired surrogate was written to the document", "a\uFFFDb",
-                Escaping.escapeXml("a\uD800b", true));
-        assertEquals("An unpaired surrogate was written to the document", "a\uFFFDb",
-                Escaping.escapeXml("a\uDC00b", false));
-        assertEquals("An unpaired surrogate was written to the document", "a\uFFFDb",
-                Escaping.escapeHtml("a\uD800b", true));
-        assertEquals("A trailing unpaired surrogate was written to the document", "\uFFFD",
-                Escaping.escapeXml("\uD800", false));
-        assertEquals("An unpaired surrogate ahead of a character was written to the document", "\uFFFD\ud83d\ude00",
-                Escaping.escapeXml("\uD800\ud83d\ude00", false));
+        assertEquals("a\uFFFDb", escapeXml("a\uD800b", false),
+                "An unpaired surrogate was written to the document");
+        assertEquals("a\uFFFDb", escapeXml("a\uD800b", true),
+                "An unpaired surrogate was written to the document");
+        assertEquals("a\uFFFDb", escapeXml("a\uDC00b", false),
+                "An unpaired surrogate was written to the document");
+        assertEquals("a\uFFFDb", escapeHtml("a\uD800b", true),
+                "An unpaired surrogate was written to the document");
+        assertEquals("\uFFFD", escapeXml("\uD800", false),
+                "A trailing unpaired surrogate was written to the document");
+        assertEquals("\uFFFD\ud83d\ude00", escapeXml("\uD800\ud83d\ude00", false),
+                "An unpaired surrogate ahead of a character was written to the document");
     }
 
     @Test
@@ -82,53 +81,51 @@ public class EscapeNumericEntityTest {
 
         final var actual = parser.toXml(new Pojo("Mêlée \ud83d\ude00"));
 
-        assertEquals("The document holds references to surrogate code points",
-                "<pojo><name>M&#234;l&#233;e &#128512;</name></pojo>", actual);
-        assertEquals("Round trip lost information", "Mêlée \ud83d\ude00",
-                parser.fromXml(actual, Pojo.class).name);
+        assertEquals("<pojo><name>M&#234;l&#233;e &#128512;</name></pojo>", actual, "The document holds references to surrogate code points");
+        assertEquals("Mêlée \ud83d\ude00", parser.fromXml(actual, Pojo.class).name, "Round trip lost information");
     }
 
     @Test
     public void unescapeNamedEntitiesXml() {
-        assertEquals("Invalid named entity", "<>&\"'", Escaping.unescapeXml("&lt;&gt;&amp;&quot;&apos;"));
-        assertEquals("Entity was decoded twice", "&#65;", Escaping.unescapeXml("&amp;#65;"));
+        assertEquals("<>&\"'", unescapeXml("&lt;&gt;&amp;&quot;&apos;"), "Invalid named entity");
+        assertEquals("&#65;", unescapeXml("&amp;#65;"), "Entity was decoded twice");
     }
 
     @Test
     public void unescapeMalformedXmlIsKeptAsText() {
-        assertEquals("Missing semicolon was decoded", "a&#x41", Escaping.unescapeXml("a&#x41"));
-        assertEquals("Missing semicolon was decoded", "a&#65", Escaping.unescapeXml("a&#65"));
-        assertEquals("Empty reference was decoded", "&#;", Escaping.unescapeXml("&#;"));
-        assertEquals("Empty reference was decoded", "&#x;", Escaping.unescapeXml("&#x;"));
-        assertEquals("Invalid number was decoded", "&#abc;", Escaping.unescapeXml("&#abc;"));
-        assertEquals("Invalid number was decoded", "&#xzz;", Escaping.unescapeXml("&#xzz;"));
-        assertEquals("Uppercase x was treated as hexadecimal", "&#X41;", Escaping.unescapeXml("&#X41;"));
-        assertEquals("Out of range number was decoded", "&#999999999999999;", Escaping.unescapeXml("&#999999999999999;"));
-        assertEquals("Negative number was decoded", "&#-5;", Escaping.unescapeXml("&#-5;"));
+        assertEquals("a&#x41", unescapeXml("a&#x41"), "Missing semicolon was decoded");
+        assertEquals("a&#65", unescapeXml("a&#65"), "Missing semicolon was decoded");
+        assertEquals("&#;", unescapeXml("&#;"), "Empty reference was decoded");
+        assertEquals("&#x;", unescapeXml("&#x;"), "Empty reference was decoded");
+        assertEquals("&#abc;", unescapeXml("&#abc;"), "Invalid number was decoded");
+        assertEquals("&#xzz;", unescapeXml("&#xzz;"), "Invalid number was decoded");
+        assertEquals("&#X41;", unescapeXml("&#X41;"), "Uppercase x was treated as hexadecimal");
+        assertEquals("&#999999999999999;", unescapeXml("&#999999999999999;"), "Out of range number was decoded");
+        assertEquals("&#-5;", unescapeXml("&#-5;"), "Negative number was decoded");
     }
 
     @Test
     public void unescapeNumericEntitiesHtml() {
-        assertEquals("Invalid entity", "{&", Escaping.unescapeHtml("&#123;&#x0026;"));
-        assertEquals("Invalid entity", "©", Escaping.unescapeHtml("&#xA9;"));
+        assertEquals("{&", unescapeHtml("&#123;&#x0026;"), "Invalid entity");
+        assertEquals("©", unescapeHtml("&#xA9;"), "Invalid entity");
     }
 
     @Test
     public void unescapeMalformedHtmlIsKeptAsText() {
-        assertEquals("Empty reference was decoded", "&#;", Escaping.unescapeHtml("&#;"));
-        assertEquals("Empty reference was decoded", "&#x;", Escaping.unescapeHtml("&#x;"));
-        assertEquals("Invalid number was decoded", "&#abc;", Escaping.unescapeHtml("&#abc;"));
-        assertEquals("Invalid number was decoded", "&#xzz;", Escaping.unescapeHtml("&#xzz;"));
-        assertEquals("Missing semicolon was decoded", "&#123", Escaping.unescapeHtml("&#123"));
-        assertEquals("Out of range number was decoded", "&#999999999999999;", Escaping.unescapeHtml("&#999999999999999;"));
+        assertEquals("&#;", unescapeHtml("&#;"), "Empty reference was decoded");
+        assertEquals("&#x;", unescapeHtml("&#x;"), "Empty reference was decoded");
+        assertEquals("&#abc;", unescapeHtml("&#abc;"), "Invalid number was decoded");
+        assertEquals("&#xzz;", unescapeHtml("&#xzz;"), "Invalid number was decoded");
+        assertEquals("&#123", unescapeHtml("&#123"), "Missing semicolon was decoded");
+        assertEquals("&#999999999999999;", unescapeHtml("&#999999999999999;"), "Out of range number was decoded");
     }
 
     @Test
     public void unescapeRoundTrip() {
         final var input = "Mêlée Island \ud83d\ude00 &<>\"'";
 
-        assertEquals("Round trip lost information", input, Escaping.unescapeXml(Escaping.escapeXml(input, true)));
-        assertEquals("Round trip lost information", input, Escaping.unescapeHtml(Escaping.escapeHtml(input, true)));
+        assertEquals(input, unescapeXml(escapeXml(input, true)), "Round trip lost information");
+        assertEquals(input, unescapeHtml(escapeHtml(input, true)), "Round trip lost information");
     }
 
     @Test
@@ -137,8 +134,8 @@ public class EscapeNumericEntityTest {
 
         final var actual = parser.fromXml("<pojo><name>&#x4A;</name></pojo>", Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "J", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("J", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -147,8 +144,8 @@ public class EscapeNumericEntityTest {
 
         final var actual = parser.fromXml("<pojo><name>a&#x41 b</name></pojo>", Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "a&#x41 b", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("a&#x41 b", actual.name, "Pojo has the wrong name");
     }
 
 }

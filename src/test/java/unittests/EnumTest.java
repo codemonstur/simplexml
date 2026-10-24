@@ -2,13 +2,13 @@ package unittests;
 
 import model.Enum1Pojo;
 import model.Enum2Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
 import static model.EnumWithDefault.three;
 import static model.SimpleEnum.one;
 import static model.SimpleEnum.value;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnumTest {
 
@@ -20,8 +20,8 @@ public class EnumTest {
 
         final var actual = parser.fromXml(input, Enum1Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", one, actual.test);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(one, actual.test, "Pojo has the wrong name");
     }
 
     @Test
@@ -30,8 +30,8 @@ public class EnumTest {
 
         final var actual = parser.fromXml(input, Enum1Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertNull("Pojo has the wrong name", actual.test);
+        assertNotNull(actual, "Pojo is null");
+        assertNull(actual.test, "Pojo has the wrong name");
     }
 
     @Test
@@ -40,17 +40,17 @@ public class EnumTest {
 
         final var actual = parser.fromXml(input, Enum1Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertNull("Pojo has the wrong name", actual.test);
+        assertNotNull(actual, "Pojo is null");
+        assertNull(actual.test, "Pojo has the wrong name");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void deserializeNoEnumOption() {
         final var input = "<enum1pojo><test>missing</test></enum1pojo>\n";
 
-        parser.fromXml(input, Enum1Pojo.class);
-
-        fail("Missing enum value didn't throw exception");
+        assertThrows(IllegalArgumentException.class, () ->
+            parser.fromXml(input, Enum1Pojo.class),
+            "Missing enum value didn't throw exception");
     }
 
     @Test
@@ -60,8 +60,8 @@ public class EnumTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Invalid POJO XML", expected, actual);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(expected, actual, "Invalid POJO XML");
     }
 
     @Test
@@ -70,8 +70,8 @@ public class EnumTest {
 
         final var pojo = parser.fromXml(pojoXml, Enum1Pojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong enum value", value, pojo.test);
+        assertNotNull(pojo, "Pojo is null");
+        assertEquals(value, pojo.test, "Pojo has the wrong enum value");
     }
 
     @Test
@@ -80,7 +80,8 @@ public class EnumTest {
 
         final var pojo = parser.fromXml(pojoXml, Enum2Pojo.class);
 
-        assertNotNull("Pojo is null", pojo);
-        assertEquals("Pojo has the wrong enum value", three, pojo.test);
+        assertNotNull(pojo, "Pojo is null");
+        assertEquals(three, pojo.test, "Pojo has the wrong enum value");
     }
+
 }

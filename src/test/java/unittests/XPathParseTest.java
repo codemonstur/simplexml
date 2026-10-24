@@ -1,11 +1,11 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.error.InvalidXPath;
 import xmlparser.xpath.TextSegment;
 import xmlparser.xpath.XPathExpression;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XPathParseTest {
 
@@ -107,7 +107,7 @@ public class XPathParseTest {
 		assertNotNull(actual);
 		assertEquals(1, actual.segments.size());
 		assertNotNull(actual.segments.get(0));
-		assertTrue(actual.segments.get(0) instanceof TextSegment);
+        assertInstanceOf(TextSegment.class, actual.segments.get(0));
 		assertEquals("text()", actual.segments.get(0).toString());
 	}
 	
@@ -118,78 +118,68 @@ public class XPathParseTest {
 		assertNotNull(actual);
 		assertEquals(2, actual.segments.size());
 		assertNotNull(actual.segments.get(1));
-		assertTrue(actual.segments.get(1) instanceof TextSegment);
+        assertInstanceOf(TextSegment.class, actual.segments.get(1));
 		assertEquals("text()", actual.segments.get(1).toString());
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testNull() {
-		XPathExpression.newXPath(null);
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath(null));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformed1() {
-		XPathExpression.newXPath("[");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("["));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformed2() {
-		XPathExpression.newXPath("a[");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("a["));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformed3() {
-		XPathExpression.newXPath("[]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("[]"));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformed4() {
-		XPathExpression.newXPath("a]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("a]"));
 	}
 	
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformed5() {
-		XPathExpression.newXPath("abc[a=1]][b=0]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("abc[a=1]][b=0]"));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformed6() {
-		XPathExpression.newXPath("ab]cd[foo=0]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("ab]cd[foo=0]"));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformedEquality1() {
-		XPathExpression.newXPath("a[=]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("a[=]"));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformedEquality2() {
-		XPathExpression.newXPath("a[=c]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("a[=c]"));
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testMalformedEquality3() {
-		XPathExpression.newXPath("a[c=]");
-
-		fail("Should throw an exception");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("a[c=]"));
 	}
 
 	@Test
@@ -210,7 +200,7 @@ public class XPathParseTest {
 
 		assertEquals(2, actual.segments.size());
 		assertNotNull(actual.segments.get(1));
-		assertTrue(actual.segments.get(1) instanceof TextSegment);
+        assertInstanceOf(TextSegment.class, actual.segments.get(1));
 	}
 
 	@Test
@@ -222,25 +212,25 @@ public class XPathParseTest {
 		assertEquals("", actual.segments.get(0).elementName);
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testDoubleSlash() {
-		XPathExpression.newXPath("foo//bar");
-
-		fail("Empty segment not detected");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("foo//bar"),
+			"Empty segment not detected");
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testLeadingDoubleSlash() {
-		XPathExpression.newXPath("//foo");
-
-		fail("Empty segment not detected");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("//foo"),
+			"Empty segment not detected");
 	}
 
-	@Test(expected = InvalidXPath.class)
+	@Test
 	public void testTrailingSlash() {
-		XPathExpression.newXPath("foo/");
-
-		fail("Empty segment not detected");
+		assertThrows(InvalidXPath.class, () ->
+			XPathExpression.newXPath("foo/"),
+			"Empty segment not detected");
 	}
 
 	@Test
@@ -249,8 +239,7 @@ public class XPathParseTest {
 			XPathExpression.newXPath("foo//bar");
 			fail("Empty segment not detected");
 		} catch (final InvalidXPath e) {
-			assertEquals("Invalid error message",
-					"Path contains an empty segment: foo//bar", e.getMessage());
+			assertEquals("Path contains an empty segment: foo//bar", e.getMessage(), "Invalid error message");
 		}
 	}
 

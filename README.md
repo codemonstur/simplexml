@@ -53,7 +53,7 @@ It's in maven central.
     <dependency>
         <groupId>com.github.codemonstur</groupId>
         <artifactId>simplexml</artifactId>
-        <version>3.5.0</version>
+        <version>3.6.0</version>
     </dependency>
 
 ### Serializing

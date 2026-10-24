@@ -1,10 +1,10 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class InvalidXmlTest {
@@ -12,16 +12,18 @@ public class InvalidXmlTest {
     private final XmlParser parser = new XmlParser();
     private final XmlParser lenient = newXmlParser().lenientWhitespace().build();
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void nonWhitespaceAtStart() {
-        parser.fromXml("bla <tag></tag>");
-        fail("Non-whitespace characters before tags not caught");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("bla <tag></tag>"),
+            "Non-whitespace characters before tags not caught");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void semiWhitespaceAtStart() {
-        parser.fromXml("\ufeff \u205f \u180e <tag></tag>");
-        fail("Non-whitespace characters before tags not caught");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("\ufeff \u205f \u180e <tag></tag>"),
+            "Non-whitespace characters before tags not caught");
     }
 
     @Test
@@ -29,73 +31,84 @@ public class InvalidXmlTest {
         final var actual = lenient.fromXml("\ufeff \u205f \u180e <tag></tag>");
 
         assertNotNull(actual);
-        assertEquals("Name of tag is invalid", "tag", actual.name);
+        assertEquals("tag", actual.name, "Name of tag is invalid");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void attributeEqualsOnly() {
-        parser.fromXml("<tag =></tag>");
-        fail("Bare equals character not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag =></tag>"),
+            "Bare equals character not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void attributeNameWithoutEquals() {
-        parser.fromXml("<tag word></tag>");
-        fail("Bare attribute without value not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag word></tag>"),
+            "Bare attribute without value not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void nonWhitespaceAtEnd() {
-        parser.fromXml("<tag></tag> blaa");
-        fail("Non-whitespace characters after tags not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag></tag> blaa"),
+            "Non-whitespace characters after tags not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void noXmlAtAll() {
-        parser.fromXml(" blaa bla val val");
-        fail("Failed to throw exception on no XML");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml(" blaa bla val val"),
+            "Failed to throw exception on no XML");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void unclosedTag() {
-        parser.fromXml("<tag>");
-        fail("Unclosed tag not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag>"),
+            "Unclosed tag not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void unfinishedTag() {
-        parser.fromXml("<tag  ");
-        fail("Unfinished tag not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag  "),
+            "Unfinished tag not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void invalidCharacterInOpeningTag() {
-        parser.fromXml("<tag> bla <2 </tag>");
-        fail("Invalid character in tag name not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag> bla <2 </tag>"),
+            "Invalid character in tag name not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void extraClosingTag() {
-        parser.fromXml("<tag></tag></tag>");
-        fail("Extra closing tag not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag></tag></tag>"),
+            "Extra closing tag not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void closingTagAfterSelfClosingTag() {
-        parser.fromXml("<tag/></tag>");
-        fail("Closing tag of a self closing tag not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag/></tag>"),
+            "Closing tag of a self closing tag not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void strayClosingTagBeforeOpeningTag() {
-        parser.fromXml("</tag><tag></tag>");
-        fail("Closing tag without an opening tag not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("</tag><tag></tag>"),
+            "Closing tag without an opening tag not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void mismatchedClosingTag() {
-        parser.fromXml("<tag><child>x</tag></child>");
-        fail("Mismatched closing tag not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag><child>x</tag></child>"),
+            "Mismatched closing tag not detected");
     }
 
     @Test
@@ -104,45 +117,51 @@ public class InvalidXmlTest {
             parser.fromXml("<tag></other>");
             fail("Mismatched closing tag not detected");
         } catch (final InvalidXml e) {
-            assertEquals("Invalid error message",
-                    "Mismatched closing tag: expected </tag> but found </other>", e.getMessage());
+            assertEquals("Mismatched closing tag: expected </tag> but found </other>",
+                    e.getMessage(), "Invalid error message");
         }
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void secondRootElement() {
-        parser.fromXml("<tag>1</tag><other>2</other>");
-        fail("A second root element not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag>1</tag><other>2</other>"),
+            "A second root element not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void thirdRootElement() {
-        parser.fromXml("<tag>1</tag><other>2</other><third>3</third>");
-        fail("A third root element not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag>1</tag><other>2</other><third>3</third>"),
+            "A third root element not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void secondRootAfterNestedElement() {
-        parser.fromXml("<tag><child>1</child></tag><other>2</other>");
-        fail("A second root element not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag><child>1</child></tag><other>2</other>"),
+            "A second root element not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void secondSelfClosingRootElement() {
-        parser.fromXml("<tag/><other/>");
-        fail("A second self closing root element not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag/><other/>"),
+            "A second self closing root element not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void textBetweenTwoRoots() {
-        parser.fromXml("<tag/>text<other/>");
-        fail("Text between two root elements not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag/>text<other/>"),
+            "Text between two root elements not detected");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void secondRootAfterProlog() {
-        parser.fromXml("<tag>1</tag><?pi?><other/>");
-        fail("A second root element not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag>1</tag><?pi?><other/>"),
+            "A second root element not detected");
     }
 
     @Test
@@ -151,45 +170,50 @@ public class InvalidXmlTest {
             parser.fromXml("<tag>1</tag><other>2</other>");
             fail("A second root element not detected");
         } catch (final InvalidXml e) {
-            assertEquals("Invalid error message",
-                    "A second root element was found: <other> follows the end of the first", e.getMessage());
+            assertEquals("A second root element was found: <other> follows the end of the first",
+                    e.getMessage(), "Invalid error message");
         }
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void secondRootElementWhenDeserializing() {
-        parser.fromXml("<pojo><name>a</name></pojo><pojo><name>b</name></pojo>", model.Pojo.class);
-        fail("A second root element not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<pojo><name>a</name></pojo><pojo><name>b</name></pojo>", model.Pojo.class),
+            "A second root element not detected");
     }
 
     @Test
     public void commentAfterRootElement() {
-        assertEquals("A trailing comment was not allowed", "tag",
-                parser.fromXml("<tag>1</tag><!-- a comment -->").name);
+        assertEquals("tag", parser.fromXml("<tag>1</tag><!-- a comment -->").name,
+                "A trailing comment was not allowed");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void tagNameContainingALessThan() {
-        parser.fromXml("<a<b>x</a<b>");
-        fail("A tag name containing a '<' was not caught");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<a<b>x</a<b>"),
+            "A tag name containing a '<' was not caught");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void tagNameContainingAnAmpersand() {
-        parser.fromXml("<a&b>x</a&b>");
-        fail("A tag name containing a '&' was not caught");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<a&b>x</a&b>"),
+            "A tag name containing a '&' was not caught");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void tagNameContainingAnEqualsSign() {
-        parser.fromXml("<a=b>x</a=b>");
-        fail("A tag name containing an '=' was not caught");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<a=b>x</a=b>"),
+            "A tag name containing an '=' was not caught");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void tagNameStartingWithADigit() {
-        parser.fromXml("<1a>x</1a>");
-        fail("A tag name starting with a digit was not caught");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<1a>x</1a>"),
+            "A tag name starting with a digit was not caught");
     }
 
     @Test
@@ -199,18 +223,18 @@ public class InvalidXmlTest {
 
             fail("A tag name containing an '=' was not caught");
         } catch (final InvalidXml e) {
-            assertEquals("Invalid error message",
-                    "Found opening tag with invalid characters: a=b", e.getMessage());
+            assertEquals("Found opening tag with invalid characters: a=b",
+                    e.getMessage(), "Invalid error message");
         }
     }
 
     @Test
     public void tagNameThatIsNotAnAsciiWord() {
-        assertEquals("A valid tag name was rejected", "my-tag", parser.fromXml("<my-tag>x</my-tag>").name);
-        assertEquals("A valid tag name was rejected", "a.b", parser.fromXml("<a.b>x</a.b>").name);
-        assertEquals("A valid tag name was rejected", "ns:elem", parser.fromXml("<ns:elem>x</ns:elem>").name);
-        assertEquals("A valid tag name was rejected", "_x", parser.fromXml("<_x>x</_x>").name);
-        assertEquals("A valid tag name was rejected", "é", parser.fromXml("<é>x</é>").name);
+        assertEquals("my-tag", parser.fromXml("<my-tag>x</my-tag>").name, "A valid tag name was rejected");
+        assertEquals("a.b", parser.fromXml("<a.b>x</a.b>").name, "A valid tag name was rejected");
+        assertEquals("ns:elem", parser.fromXml("<ns:elem>x</ns:elem>").name, "A valid tag name was rejected");
+        assertEquals("_x", parser.fromXml("<_x>x</_x>").name, "A valid tag name was rejected");
+        assertEquals("é", parser.fromXml("<é>x</é>").name, "A valid tag name was rejected");
     }
 
 }

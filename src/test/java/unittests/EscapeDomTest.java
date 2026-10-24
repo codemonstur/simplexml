@@ -1,10 +1,10 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 import static xmlparser.model.XmlElement.newElement;
 
@@ -20,8 +20,8 @@ public class EscapeDomTest {
 
         final var actual = parserDefault.domToXml(inputDom);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -31,8 +31,8 @@ public class EscapeDomTest {
 
         final var actual = parserDefault.domToXml(inputDom);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -42,9 +42,9 @@ public class EscapeDomTest {
 
         final var actual = parserDefault.fromXml(inputXml);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid deserialized output", expected.name, actual.name);
-        assertEquals("Invalid deserialized output", expected.getText(), actual.getText());
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.name, actual.name, "Invalid deserialized output");
+        assertEquals(expected.getText(), actual.getText(), "Invalid deserialized output");
     }
 
     @Test
@@ -54,8 +54,8 @@ public class EscapeDomTest {
 
         final var actual = parserEncodeUTF8.domToXml(inputDom);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -65,8 +65,8 @@ public class EscapeDomTest {
 
         final var actual = parserDefault.domToXml(inputDom);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -76,9 +76,9 @@ public class EscapeDomTest {
 
         final var actual = parserEncodeUTF8.fromXml(inputXml);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid deserialized output", expected.name, actual.name);
-        assertEquals("Invalid deserialized output", expected.getText(), actual.getText());
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.name, actual.name, "Invalid deserialized output");
+        assertEquals(expected.getText(), actual.getText(), "Invalid deserialized output");
     }
 
 }

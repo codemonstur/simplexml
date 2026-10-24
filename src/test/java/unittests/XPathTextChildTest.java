@@ -1,12 +1,12 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.model.XmlElement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.xpath.XPathExpression.newXPath;
 
 public class XPathTextChildTest {
@@ -23,8 +23,8 @@ public class XPathTextChildTest {
 
         final var actual = newXPath("pojo/name").evaluateAny(document);
 
-        assertNotNull("Element was not found", actual);
-        assertEquals("Element has the wrong text", "Hello", actual.getText());
+        assertNotNull(actual, "Element was not found");
+        assertEquals("Hello", actual.getText(), "Element has the wrong text");
     }
 
     @Test
@@ -33,8 +33,8 @@ public class XPathTextChildTest {
 
         final var actual = newXPath("pojo/wrapper/name").evaluateAny(document);
 
-        assertNotNull("Element was not found", actual);
-        assertEquals("Element has the wrong text", "Hello", actual.getText());
+        assertNotNull(actual, "Element was not found");
+        assertEquals("Hello", actual.getText(), "Element has the wrong text");
     }
 
     @Test
@@ -43,16 +43,16 @@ public class XPathTextChildTest {
 
         final var actual = newXPath("pojo/text()").evaluateAny(document);
 
-        assertNotNull("Text node was not found", actual);
-        assertEquals("Text node has the wrong text", "some text", ((XmlElement.XmlTextElement) actual).text);
+        assertNotNull(actual, "Text node was not found");
+        assertEquals("some text", ((XmlElement.XmlTextElement) actual).text, "Text node has the wrong text");
     }
 
     @Test
     public void deserializeWithXPathPastTextChild() {
         final var actual = parser.fromXml(INPUT_TEXT_FIRST_NESTED, "pojo/wrapper", Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name");
     }
 
 }

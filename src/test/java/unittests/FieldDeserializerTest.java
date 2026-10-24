@@ -1,6 +1,6 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlFieldDeserializer;
 import xmlparser.error.InvalidAnnotation;
@@ -9,7 +9,7 @@ import xmlparser.model.XmlElement;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FieldDeserializerTest {
 
@@ -47,16 +47,17 @@ public class FieldDeserializerTest {
 
         final var actual = parser.fromXml(input, FieldPojo.class);
 
-        assertNotNull("pojo is null", actual);
-        assertNotNull("map is null", actual.map);
-        assertFalse("map is empty", actual.map.isEmpty());
-        assertEquals("map has wrong number of elements", 3, actual.map.size());
+        assertNotNull(actual, "pojo is null");
+        assertNotNull(actual.map, "map is null");
+        assertFalse(actual.map.isEmpty(), "map is empty");
+        assertEquals(3, actual.map.size(), "map has wrong number of elements");
     }
 
-    @Test (expected = InvalidAnnotation.class)
+    @Test
     public void testInvalidFieldDeserializer() {
         final var input = "<invalidfieldpojo><map></map></invalidfieldpojo>";
-        parser.fromXml(input, InvalidFieldPojo.class);
+        assertThrows(InvalidAnnotation.class, () ->
+            parser.fromXml(input, InvalidFieldPojo.class));
     }
 
 }

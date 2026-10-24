@@ -1,11 +1,11 @@
 package unittests;
 
 import model.PojoWithText;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class TextNodeTest {
@@ -18,9 +18,9 @@ public class TextNodeTest {
 
         final var actual = parser.fromXml(input, PojoWithText.class);
 
-        assertNotNull("No deserialization response", actual);
-        assertEquals("Invalid deserialized output", "Hello", actual.name);
-        assertEquals("Invalid deserialized output", "World", actual.text);
+        assertNotNull(actual, "No deserialization response");
+        assertEquals("Hello", actual.name, "Invalid deserialized output");
+        assertEquals("World", actual.text, "Invalid deserialized output");
     }
 
     @Test
@@ -30,8 +30,8 @@ public class TextNodeTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
 }

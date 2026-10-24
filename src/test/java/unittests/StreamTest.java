@@ -1,7 +1,7 @@
 package unittests;
 
 import model.SimplePojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
@@ -10,9 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StreamTest {
 
@@ -65,10 +63,10 @@ public class StreamTest {
             }
         }
 
-        assertEquals("Number of items is incorrect", 3, actual.size());
-        assertEquals("Item 1 is not equal", XML_ITEM_1, actual.get(0));
-        assertEquals("Item 2 is not equal", XML_ITEM_2, actual.get(1));
-        assertEquals("Item 3 is not equal", XML_ITEM_3, actual.get(2));
+        assertEquals(3, actual.size(), "Number of items is incorrect");
+        assertEquals(XML_ITEM_1, actual.get(0), "Item 1 is not equal");
+        assertEquals(XML_ITEM_2, actual.get(1), "Item 2 is not equal");
+        assertEquals(XML_ITEM_3, actual.get(2), "Item 3 is not equal");
     }
 
     @Test
@@ -82,10 +80,10 @@ public class StreamTest {
             }
         }
 
-        assertEquals("Number of items is incorrect", 3, actual.size());
-        assertEquals("Root tag of item 1 is incorrect", "tag", actual.get(0).name);
-        assertEquals("Root tag of item 2 is incorrect", "something", actual.get(1).name);
-        assertEquals("Root tag of item 3 is incorrect", "else", actual.get(2).name);
+        assertEquals(3, actual.size(), "Number of items is incorrect");
+        assertEquals("tag", actual.get(0).name, "Root tag of item 1 is incorrect");
+        assertEquals("something", actual.get(1).name, "Root tag of item 2 is incorrect");
+        assertEquals("else", actual.get(2).name, "Root tag of item 3 is incorrect");
     }
 
     @Test
@@ -99,114 +97,120 @@ public class StreamTest {
             }
         }
 
-        assertEquals("Number of items is incorrect", 3, actual.size());
-        assertEquals("Item 1 is incorrect", Integer.valueOf(1), actual.get(0).integer);
-        assertNotNull("Item 2 is null", actual.get(1));
-        assertEquals("Item 2 is incorrect", "test", actual.get(2).string);
+        assertEquals(3, actual.size(), "Number of items is incorrect");
+        assertEquals(Integer.valueOf(1), actual.get(0).integer, "Item 1 is incorrect");
+        assertNotNull(actual.get(1), "Item 2 is null");
+        assertEquals("test", actual.get(2).string, "Item 2 is incorrect");
     }
 
-    @Test(expected = InvalidXml.class)
-    public void invalidXmlStreamRawThrowsException() throws Exception {
-        try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
-            final var it = parser.iterateXml(in);
-            while (it.hasNext()) it.next();
-        }
+    @Test
+    public void invalidXmlStreamRawThrowsException() {
+        assertThrows(InvalidXml.class, () -> {
+            try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
+                final var it = parser.iterateXml(in);
+                while (it.hasNext()) it.next();
+            }
+        });
     }
 
-    @Test(expected = InvalidXml.class)
-    public void invalidXmlStreamDomThrowsException() throws Exception {
-        try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
-            final var it = parser.iterateDom(in);
-            while (it.hasNext()) it.next();
-        }
+    @Test
+    public void invalidXmlStreamDomThrowsException() {
+        assertThrows(InvalidXml.class, () -> {
+            try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
+                final var it = parser.iterateDom(in);
+                while (it.hasNext()) it.next();
+            }
+        });
     }
 
-    @Test(expected = InvalidXml.class)
-    public void invalidXmlStreamObjectThrowsException() throws Exception {
-        try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
-            final var it = parser.iterateObject(in, SimplePojo.class);
-            while (it.hasNext()) it.next();
-        }
+    @Test
+    public void invalidXmlStreamObjectThrowsException() {
+        assertThrows(InvalidXml.class, () -> {
+            try (final var in = new ByteArrayInputStream(INVALID_XML_STREAM.getBytes(UTF_8))) {
+                final var it = parser.iterateObject(in, SimplePojo.class);
+                while (it.hasNext()) it.next();
+            }
+        });
     }
 
     @Test
     public void streamRawWithASectionInsideAnElement() throws Exception {
         final var actual = readAllRaw("<a><![CDATA[<b/>]]></a><c>x</c>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a><![CDATA[<b/>]]></a>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<c>x</c>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a><![CDATA[<b/>]]></a>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<c>x</c>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithASectionHoldingTheEndOfItsElement() throws Exception {
         final var actual = readAllRaw("<a><d><![CDATA[</d><e>]]></d></a><c>x</c>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a><d><![CDATA[</d><e>]]></d></a>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<c>x</c>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a><d><![CDATA[</d><e>]]></d></a>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<c>x</c>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithACommentInsideAnElement() throws Exception {
         final var actual = readAllRaw("<a><!-- <b/> --></a><c>x</c>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a><!-- <b/> --></a>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<c>x</c>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a><!-- <b/> --></a>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<c>x</c>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithACommentHoldingAGreaterThan() throws Exception {
         final var actual = readAllRaw("<a><!-- a > b --></a><c>x</c>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a><!-- a > b --></a>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<c>x</c>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a><!-- a > b --></a>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<c>x</c>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithACommentBetweenElements() throws Exception {
         final var actual = readAllRaw("<a/><!-- <b/> --><b/>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a/>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<b/>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a/>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<b/>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithAProlog() throws Exception {
         final var actual = readAllRaw("<?xml version=\"1.0\"?><a>x</a><b>y</b>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a>x</a>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<b>y</b>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a>x</a>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<b>y</b>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithAProcessingInstructionBetweenElements() throws Exception {
         final var actual = readAllRaw("<a/><?pi x?><b/>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a/>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<b/>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a/>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<b/>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawWithADeclarationInsideAnElement() throws Exception {
         final var actual = readAllRaw("<a><!DOCTYPE html></a><b/>");
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is not equal", "<a><!DOCTYPE html></a>", actual.get(0));
-        assertEquals("Item 2 is not equal", "<b/>", actual.get(1));
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<a><!DOCTYPE html></a>", actual.get(0), "Item 1 is not equal");
+        assertEquals("<b/>", actual.get(1), "Item 2 is not equal");
     }
 
     @Test
     public void streamRawHoldingNothingButAComment() throws Exception {
         final var actual = readAllRaw("<!-- nothing else -->");
 
-        assertEquals("Number of items is incorrect", 1, actual.size());
-        assertEquals("Item 1 is not equal", "<!-- nothing else -->", actual.get(0));
+        assertEquals(1, actual.size(), "Number of items is incorrect");
+        assertEquals("<!-- nothing else -->", actual.get(0), "Item 1 is not equal");
     }
 
     @Test
@@ -217,8 +221,8 @@ public class StreamTest {
 
             fail("Unbalanced tags were not caught");
         } catch (final InvalidXml e) {
-            assertEquals("Invalid error message",
-                    "Unbalanced tags: closing tag without a matching opening tag", e.getMessage());
+            assertEquals("Unbalanced tags: closing tag without a matching opening tag",
+                    e.getMessage(), "Invalid error message");
         }
     }
 
@@ -230,9 +234,9 @@ public class StreamTest {
             while (it.hasNext()) actual.add(it.next());
         }
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Root tag of item 1 is incorrect", "a", actual.get(0).name);
-        assertEquals("Root tag of item 2 is incorrect", "c", actual.get(1).name);
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("a", actual.get(0).name, "Root tag of item 1 is incorrect");
+        assertEquals("c", actual.get(1).name, "Root tag of item 2 is incorrect");
     }
 
     @Test
@@ -245,9 +249,9 @@ public class StreamTest {
             while (it.hasNext()) actual.add(it.next());
         }
 
-        assertEquals("Number of items is incorrect", 2, actual.size());
-        assertEquals("Item 1 is incorrect", "<x>", actual.get(0).string);
-        assertEquals("Item 2 is incorrect", "2", actual.get(1).string);
+        assertEquals(2, actual.size(), "Number of items is incorrect");
+        assertEquals("<x>", actual.get(0).string, "Item 1 is incorrect");
+        assertEquals("2", actual.get(1).string, "Item 2 is incorrect");
     }
 
     private ArrayList<String> readAllRaw(final String input) throws Exception {

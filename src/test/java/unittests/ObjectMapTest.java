@@ -3,16 +3,14 @@ package unittests;
 import model.ObjectMapPojo;
 import model.Pojo;
 import model.SimpleEnum;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ObjectMapTest {
 
@@ -46,33 +44,31 @@ public class ObjectMapTest {
     public void deserializeObjectValues() {
         final var actual = parser.fromXml(XML, ObjectMapPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong size", 1, actual.tagIsKeyValue.size());
-        assertEquals("Map has the wrong value", "monkey", actual.tagIsKeyValue.get("x").name);
-        assertEquals("Map has the wrong key", "one", actual.childNodeEntries.keySet().iterator().next().name);
-        assertEquals("Map has the wrong value", "bonk",
-                actual.childNodeEntries.values().iterator().next().name);
-        assertEquals("Map has the wrong enum key", "1", actual.enumKeys.get(SimpleEnum.two));
-        assertEquals("Map has the wrong enum value", SimpleEnum.two, actual.enumValues.get("k"));
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(1, actual.tagIsKeyValue.size(), "Map has the wrong size");
+        assertEquals("monkey", actual.tagIsKeyValue.get("x").name, "Map has the wrong value");
+        assertEquals("one", actual.childNodeEntries.keySet().iterator().next().name, "Map has the wrong key");
+        assertEquals("bonk", actual.childNodeEntries.values().iterator().next().name, "Map has the wrong value");
+        assertEquals("1", actual.enumKeys.get(SimpleEnum.two), "Map has the wrong enum key");
+        assertEquals(SimpleEnum.two, actual.enumValues.get("k"), "Map has the wrong enum value");
     }
 
     @Test
     public void serializeObjectValues() {
         final var actual = parser.toXml(newPojo());
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", XML, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(XML, actual, "Invalid serialized output");
     }
 
     @Test
     public void roundTripsObjectKeysAndValues() {
         final var actual = parser.fromXml(parser.toXml(newPojo()), ObjectMapPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong key", "one", actual.childNodeEntries.keySet().iterator().next().name);
-        assertEquals("Map has the wrong value", "bonk",
-                actual.childNodeEntries.values().iterator().next().name);
-        assertEquals("Map has the wrong value", "monkey", actual.tagIsKeyValue.get("x").name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("one", actual.childNodeEntries.keySet().iterator().next().name, "Map has the wrong key");
+        assertEquals("bonk", actual.childNodeEntries.values().iterator().next().name, "Map has the wrong value");
+        assertEquals("monkey", actual.tagIsKeyValue.get("x").name, "Map has the wrong value");
     }
 
     /**
@@ -84,22 +80,23 @@ public class ObjectMapTest {
         final var actual = parser.fromXml(
                 "<objectmappojo><tagIsKeyKey><x>1</x></tagIsKeyKey></objectmappojo>", ObjectMapPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Entry with an unrepresentable key should have been skipped", Map.of(), actual.tagIsKeyKey);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(Map.of(), actual.tagIsKeyKey, "Entry with an unrepresentable key should have been skipped");
     }
 
     /**
      * A tag name has to start with a letter, so an @XmlEnumValue that does not can not be a
      * @XmlMapTagIsKey key. Writing it would produce XML that can not be read back.
      */
-    @Test(expected = InvalidXml.class)
+    @Test
     public void enumKeyThatIsNotATagNameThrows() {
         final Map<SimpleEnum, String> keys = new HashMap<>();
         keys.put(SimpleEnum.value, "1");
 
-        parser.toXml(new ObjectMapPojo(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
-                keys, new HashMap<>()));
-        fail("Enum key that is not a valid tag name was written");
+        assertThrows(InvalidXml.class, () ->
+            parser.toXml(new ObjectMapPojo(new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
+                keys, new HashMap<>())),
+                "Enum key that is not a valid tag name was written");
     }
 
     /**
@@ -114,8 +111,8 @@ public class ObjectMapTest {
         final Map<String, Pojo> expected = new HashMap<>();
         expected.put("k", null);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong contents", expected, actual.attributeValues);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(expected, actual.attributeValues, "Map has the wrong contents");
     }
 
     private static ObjectMapPojo newPojo() {

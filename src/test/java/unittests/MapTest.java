@@ -1,7 +1,7 @@
 package unittests;
 
 import model.MapPojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlMapTagIsKey;
 import xmlparser.annotations.XmlMapWithAttributes;
@@ -11,10 +11,8 @@ import xmlparser.error.InvalidAnnotation;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.model.XmlElement.newElement;
 
 public class MapTest {
@@ -66,27 +64,31 @@ public class MapTest {
     public void deserialize() {
         final var actual = parser.fromXml(mapXml, MapPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertReflectionEquals(newDefaultMapPojo(), actual);
+        assertNotNull(actual, "Pojo is null");
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .isEqualTo(newDefaultMapPojo());
     }
 
     @Test
     public void serialize() {
         final var actual = parser.toXml(map);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", mapXml, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(mapXml, actual, "Invalid serialized output");
     }
 
-    @Test(expected = InvalidAnnotation.class)
+    @Test
     public void twoMapTagsThrowsExceptionXml() {
-        parser.fromXml("<invalidpojo><map></map></invalidpojo>", InvalidPojo.class);
+        assertThrows(InvalidAnnotation.class, () ->
+            parser.fromXml("<invalidpojo><map></map></invalidpojo>", InvalidPojo.class));
     }
 
-    @Test(expected = InvalidAnnotation.class)
+    @Test
     public void twoMapTagsThrowsExceptionDom() {
         final var xml = newElement("invalidpojo").child(newElement("map")).build();
-        parser.fromXml(xml, InvalidPojo.class);
+        assertThrows(InvalidAnnotation.class, () ->
+                parser.fromXml(xml, InvalidPojo.class));
     }
 
     @Test
@@ -94,8 +96,8 @@ public class MapTest {
         final var actual = parser.fromXml(
                 "<nullvaluepojo><attributes key=\"k\"/></nullvaluepojo>", NullValuePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong contents", mapWith("k", null), actual.attributes);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(mapWith("k", null), actual.attributes, "Map has the wrong contents");
     }
 
     @Test
@@ -103,8 +105,8 @@ public class MapTest {
         final var actual = parser.fromXml(
                 "<nullvaluepojo><textAttributes key=\"k\"/></nullvaluepojo>", NullValuePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong contents", mapWith("k", null), actual.textAttributes);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(mapWith("k", null), actual.textAttributes, "Map has the wrong contents");
     }
 
     @Test
@@ -112,8 +114,8 @@ public class MapTest {
         final var actual = parser.fromXml(
                 "<nullvaluepojo><childNodes><key/><value>1</value></childNodes></nullvaluepojo>", NullValuePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Entry without a key should have been skipped", new HashMap<>(), actual.childNodes);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(new HashMap<>(), actual.childNodes, "Entry without a key should have been skipped");
     }
 
     @Test
@@ -121,8 +123,8 @@ public class MapTest {
         final var actual = parser.fromXml(
                 "<nullvaluepojo><childNodes><key>k</key><value/></childNodes></nullvaluepojo>", NullValuePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong contents", mapWith("k", null), actual.childNodes);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(mapWith("k", null), actual.childNodes, "Map has the wrong contents");
     }
 
     @Test
@@ -136,11 +138,11 @@ public class MapTest {
             """;
 
         final var xml = parser.toXml(pojo);
-        assertEquals("Invalid serialized output", expected, xml);
+        assertEquals(expected, xml, "Invalid serialized output");
 
         final var actual = parser.fromXml(xml, NullValuePojo.class);
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Map has the wrong contents", mapWith("k", null), actual.attributes);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(mapWith("k", null), actual.attributes, "Map has the wrong contents");
     }
 
     private static Map<String, Integer> mapWith(final String key, final Integer value) {

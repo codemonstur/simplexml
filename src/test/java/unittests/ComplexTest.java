@@ -2,14 +2,14 @@ package unittests;
 
 import model.ComplexPojo;
 import model.SimpleEnum;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ComplexTest {
 
@@ -37,16 +37,18 @@ public class ComplexTest {
     public void deserialize() {
         final var actual = parser.fromXml(complexXml, ComplexPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertReflectionEquals(newDefaultComplexPojo(), actual);
+        assertNotNull(actual, "Pojo is null");
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .isEqualTo(newDefaultComplexPojo());
     }
 
     @Test
     public void serialize() {
         final var actual = parser.toXml(complex);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", complexXml, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(complexXml, actual, "Invalid serialized output");
     }
 
     private static ComplexPojo newDefaultComplexPojo() {

@@ -1,14 +1,14 @@
 package unittests;
 
 import model.WrappedPojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class WrappedTest {
 
@@ -45,16 +45,18 @@ public class WrappedTest {
     public void deserialize() {
         final var actual = parser.fromXml(wrappedXml, WrappedPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertReflectionEquals(newDefaultWrappedPojo(), actual);
+        assertNotNull(actual, "Pojo is null");
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .isEqualTo(newDefaultWrappedPojo());
     }
 
     @Test
     public void serialize() {
         final var actual = parser.toXml(wrapped);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", wrappedXml, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(wrappedXml, actual, "Invalid serialized output");
     }
 
     @Test
@@ -62,18 +64,22 @@ public class WrappedTest {
         final var actual1 = parser.fromXml(wrappedXmlNull, WrappedPojo.class);
         final var actual2 = parser.fromXml(wrappedXmlNullTwo, WrappedPojo.class);
 
-        assertNotNull("Pojo is null", actual1);
-        assertNotNull("Pojo is null", actual2);
-        assertReflectionEquals(wrappedNull, actual1);
-        assertReflectionEquals(wrappedNull, actual2);
+        assertNotNull(actual1, "Pojo is null");
+        assertNotNull(actual2, "Pojo is null");
+        assertThat(actual1)
+            .usingRecursiveComparison()
+            .isEqualTo(wrappedNull);
+        assertThat(actual2)
+            .usingRecursiveComparison()
+            .isEqualTo(wrappedNull);
     }
 
     @Test
     public void serializeNull() {
         final var actual = parser.toXml(wrappedNull);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", wrappedXmlNull, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(wrappedXmlNull, actual, "Invalid serialized output");
     }
 
     private static WrappedPojo newDefaultWrappedPojo() {

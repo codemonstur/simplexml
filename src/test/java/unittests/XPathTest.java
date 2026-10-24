@@ -1,10 +1,10 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.model.XmlElement.XmlTextElement;
 import xmlparser.xpath.XPathExpression;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.model.XmlElement.newElement;
 
 public class XPathTest {
@@ -524,9 +524,11 @@ public class XPathTest {
 			.child(newElement("a").text("foo"))
 			.build();
 
-		assertEquals("An absolute path did not match the same elements as a relative one",
+		assertEquals(
 			XPathExpression.newXPath("root/a").evaluate(doc),
-			XPathExpression.newXPath("/root/a").evaluate(doc));
+			XPathExpression.newXPath("/root/a").evaluate(doc),
+			"An absolute path did not match the same elements as a relative one"
+		);
 	}
 
 	@Test
@@ -538,16 +540,16 @@ public class XPathTest {
 
 		final var actual = XPathExpression.newXPath("/root/a/text()").evaluateAsStrings(doc);
 
-		assertEquals("An absolute path did not reach the text", 1, actual.size());
-		assertTrue("An absolute path did not reach the text", actual.contains("foo"));
+		assertEquals(1, actual.size(), "An absolute path did not reach the text");
+		assertTrue(actual.contains("foo"), "An absolute path did not reach the text");
 	}
 
 	@Test
 	public void testAbsolutePathOfMissingElementIsEmpty() {
 		final var doc = newElement("root").child(newElement("a").text("foo")).build();
 
-		assertEquals("An absolute path to a missing element matched something",
-			0, XPathExpression.newXPath("/root/missing").evaluate(doc).size());
+		assertEquals(0, XPathExpression.newXPath("/root/missing").evaluate(doc).size(),
+				"An absolute path to a missing element matched something");
 	}
 
 }

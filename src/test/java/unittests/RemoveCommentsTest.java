@@ -1,11 +1,11 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RemoveCommentsTest {
 
@@ -18,13 +18,13 @@ public class RemoveCommentsTest {
         final var actualElement = parser.fromXml(input);
         final var actualPojo = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("XmlElement is null", actualElement);
+        assertNotNull(actualElement, "XmlElement is null");
 
         final var name = actualElement.findChildForName("name", null);
-        assertNotNull("Name element is null", name);
-        assertEquals("Name element has the wrong name", "Hello", name.getText());
-        assertNotNull("Pojo is null", actualPojo);
-        assertEquals("Pojo has the wrong name", "Hello", actualPojo.name);
+        assertNotNull(name, "Name element is null");
+        assertEquals("Hello", name.getText(), "Name element has the wrong name");
+        assertNotNull(actualPojo, "Pojo is null");
+        assertEquals("Hello", actualPojo.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -34,13 +34,13 @@ public class RemoveCommentsTest {
         final var actualElement = parser.fromXml(input);
         final var actualPojo = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("XmlElement is null", actualElement);
+        assertNotNull(actualElement, "XmlElement is null");
 
         final var name = actualElement.findChildForName("name", null);
-        assertNotNull("Name element is null", name);
-        assertEquals("Name element has the wrong name", "Hello", name.getText());
-        assertNotNull("Pojo is null", actualPojo);
-        assertEquals("Pojo has the wrong name", "Hello", actualPojo.name);
+        assertNotNull(name, "Name element is null");
+        assertEquals("Hello", name.getText(), "Name element has the wrong name");
+        assertNotNull(actualPojo, "Pojo is null");
+        assertEquals("Hello", actualPojo.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -50,13 +50,13 @@ public class RemoveCommentsTest {
         final var actualElement = parser.fromXml(input);
         final var actualPojo = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("XmlElement is null", actualElement);
+        assertNotNull(actualElement, "XmlElement is null");
 
         final var name = actualElement.findChildForName("name", null);
-        assertNotNull("Name element is null", name);
-        assertEquals("Name element has the wrong name", "Hello", name.getText());
-        assertNotNull("Pojo is null", actualPojo);
-        assertEquals("Pojo has the wrong name", "Hello", actualPojo.name);
+        assertNotNull(name, "Name element is null");
+        assertEquals("Hello", name.getText(), "Name element has the wrong name");
+        assertNotNull(actualPojo, "Pojo is null");
+        assertEquals("Hello", actualPojo.name, "Pojo has the wrong name");
     }
 
 }

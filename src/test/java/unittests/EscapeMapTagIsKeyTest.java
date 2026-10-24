@@ -1,15 +1,13 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlMapTagIsKey;
 import xmlparser.error.InvalidXml;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class EscapeMapTagIsKeyTest {
@@ -39,8 +37,8 @@ public class EscapeMapTagIsKeyTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -56,8 +54,8 @@ public class EscapeMapTagIsKeyTest {
 
         final var actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.map.get("key"), actual.map.get("key"));
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.map.get("key"), actual.map.get("key"), "Invalid serialized output");
     }
 
     @Test
@@ -73,8 +71,8 @@ public class EscapeMapTagIsKeyTest {
 
         final String actual = parserEncodeUTF8.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -90,8 +88,8 @@ public class EscapeMapTagIsKeyTest {
 
         final String actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -107,8 +105,8 @@ public class EscapeMapTagIsKeyTest {
 
         final PojoMap actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.map.get("key"), actual.map.get("key"));
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.map.get("key"), actual.map.get("key"), "Invalid serialized output");
     }
 
     @Test
@@ -121,8 +119,8 @@ public class EscapeMapTagIsKeyTest {
                 </pojomap>
                 """;
 
-        assertEquals("A key that is a valid name was rejected",
-                expected, parserDefault.toXml(new PojoMap(Map.of("my-key.1", "v"))));
+        assertEquals(expected, parserDefault.toXml(new PojoMap(Map.of("my-key.1", "v"))),
+                "A key that is a valid name was rejected");
     }
 
     @Test
@@ -135,8 +133,8 @@ public class EscapeMapTagIsKeyTest {
                 </pojomap>
                 """;
 
-        assertEquals("A namespaced key was rejected",
-                expected, parserDefault.toXml(new PojoMap(Map.of("ns:key", "v"))));
+        assertEquals(expected, parserDefault.toXml(new PojoMap(Map.of("ns:key", "v"))),
+                "A namespaced key was rejected");
     }
 
     @Test
@@ -149,8 +147,8 @@ public class EscapeMapTagIsKeyTest {
                 </pojomap>
                 """;
 
-        assertEquals("A non-ascii key was rejected",
-                expected, parserDefault.toXml(new PojoMap(Map.of("é", "v"))));
+        assertEquals(expected, parserDefault.toXml(new PojoMap(Map.of("é", "v"))),
+                "A non-ascii key was rejected");
     }
 
     @Test
@@ -172,8 +170,7 @@ public class EscapeMapTagIsKeyTest {
 
             fail("Map key '" + key + "' was written as a tag name");
         } catch (final InvalidXml e) {
-            assertEquals("Invalid error message",
-                    "Map key '" + key + "' is not a valid tag name", e.getMessage());
+            assertEquals("Map key '" + key + "' is not a valid tag name", e.getMessage(), "Invalid error message");
         }
     }
 

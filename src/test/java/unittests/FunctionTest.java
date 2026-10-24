@@ -1,12 +1,12 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.error.AssignmentFailure;
 import xmlparser.utils.Reflection;
 
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.utils.Functions.trim;
 import static xmlparser.utils.Validator.multipleAreTrue;
 
@@ -34,17 +34,13 @@ public class FunctionTest {
         private final String field = "immutable";
     }
 
-    @Test(expected = AssignmentFailure.class)
+    @Test
     public void settingFieldWithoutAccessThrowsException() throws NoSuchFieldException {
         final FinalClass o = new FinalClass();
         final Field field = FinalClass.class.getDeclaredField("field");
 
-        Reflection.setField(field, o, "newValue");
+        assertThrows(AssignmentFailure.class, () ->
+            Reflection.setField(field, o, "newValue"));
     }
-
-//    @Test
-//    public void invalidCallToCanonicalConstructorOfRecord() {
-//        Reflection.canonicalConstructorOfRecord(FunctionTest.class);
-//    }
 
 }

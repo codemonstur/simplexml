@@ -2,11 +2,11 @@ package unittests;
 
 import model.Enum1Pojo;
 import model.SimpleEnum;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class ReflexivityTest {
@@ -19,8 +19,8 @@ public class ReflexivityTest {
 
         final var actual = parser.fromXml(parser.toXml(pojo), Enum1Pojo.class);
 
-        assertNotNull("No deserialization response", actual);
-        assertEquals("Invalid serialized output", pojo.test, actual.test);
+        assertNotNull(actual, "No deserialization response");
+        assertEquals(pojo.test, actual.test, "Invalid serialized output");
     }
 
 }

@@ -1,12 +1,12 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.utils.Trimming;
 import xmlparser.utils.Trimming.Trim;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class TrimmingTest {
@@ -18,8 +18,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -29,8 +29,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "\u2004 Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("\u2004 Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -40,8 +40,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -51,8 +51,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "\u2004 Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("\u2004 Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -62,8 +62,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -80,8 +80,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -98,8 +98,8 @@ public class TrimmingTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "\r Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("\r Hello", actual.name, "Pojo has the wrong name");
     }
 
 }

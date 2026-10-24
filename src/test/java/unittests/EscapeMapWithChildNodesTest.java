@@ -1,13 +1,13 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlMapWithChildNodes;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class EscapeMapWithChildNodesTest {
@@ -41,8 +41,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -59,8 +59,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -77,8 +77,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.map1.get("<>&\"'"), actual.map1.get("<>&\"'"));
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.map1.get("<>&\"'"), actual.map1.get("<>&\"'"), "Invalid serialized output");
     }
 
     @Test
@@ -95,8 +95,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserDefault.fromXml(inputXml, PojoMap.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.map2.get("<>&\"'"), actual.map2.get("<>&\"'"));
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.map2.get("<>&\"'"), actual.map2.get("<>&\"'"), "Invalid serialized output");
     }
 
     @Test
@@ -113,8 +113,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserEncodeUTF8.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -131,8 +131,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -149,8 +149,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.map1.get("ƑƟƠƄǠȒ"), actual.map1.get("ƑƟƠƄǠȒ"));
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.map1.get("ƑƟƠƄǠȒ"), actual.map1.get("ƑƟƠƄǠȒ"), "Invalid serialized output");
     }
 
     @Test
@@ -167,8 +167,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserEncodeUTF8.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -185,8 +185,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -203,8 +203,8 @@ public class EscapeMapWithChildNodesTest {
 
         final var actual = parserEncodeUTF8.fromXml(inputXml, PojoMap.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.map2.get("ƑƟƠƄǠȒ"), actual.map2.get("ƑƟƠƄǠȒ"));
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.map2.get("ƑƟƠƄǠȒ"), actual.map2.get("ƑƟƠƄǠȒ"), "Invalid serialized output");
     }
 
 }

@@ -41,11 +41,12 @@ benchmark: ## Run the JMH benchmark suite
 	@mvn exec:java -Dexec.classpathScope=test
 
 
-validate: ## Check dependency versions, cves, and licenses
+validate: ## Check dependency versions, cves, licenses, and code quality
 	@mvn versions:display-dependency-updates
 	@mvn versions:display-plugin-updates
 	@mvn validate -P vulnerabilities
 	@mvn validate -P licenses
+	@mvn validate -P codequality
 
 release-notes:
 	@mkdir -p src/docs/releases

@@ -2,11 +2,11 @@ package unittests;
 
 import model.Pojo;
 import model.PojoWithAttribute;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class EscapePojoTest {
@@ -21,8 +21,8 @@ public class EscapePojoTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -32,8 +32,8 @@ public class EscapePojoTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -43,8 +43,8 @@ public class EscapePojoTest {
 
         final var actual = parserDefault.fromXml(inputXml, Pojo.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.name, actual.name);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.name, actual.name, "Invalid serialized output");
     }
 
     @Test
@@ -54,8 +54,8 @@ public class EscapePojoTest {
 
         final var actual = parserDefault.fromXml(inputXml, PojoWithAttribute.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.name, actual.name);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.name, actual.name, "Invalid serialized output");
     }
 
     @Test
@@ -65,8 +65,8 @@ public class EscapePojoTest {
 
         final var actual = parserEncodeUTF8.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -76,8 +76,8 @@ public class EscapePojoTest {
 
         final var actual = parserDefault.toXml(inputPojo);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -87,8 +87,8 @@ public class EscapePojoTest {
 
         final var actual = parserEncodeUTF8.fromXml(inputXml, Pojo.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected.name, actual.name);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected.name, actual.name, "Invalid serialized output");
     }
 
 }

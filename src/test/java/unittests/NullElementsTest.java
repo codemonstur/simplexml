@@ -1,7 +1,7 @@
 package unittests;
 
 import model.NullElementsPojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
 import java.util.ArrayList;
@@ -12,9 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NullElementsTest {
 
@@ -59,21 +57,21 @@ public class NullElementsTest {
     public void nullElementsAreSerialized() {
         final var actual = parser.toXml(withNullElements());
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", XML, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(XML, actual, "Invalid serialized output");
     }
 
     @Test
     public void nullElementsAreDeserialized() {
         final var actual = parser.fromXml(XML, NullElementsPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("List has the wrong contents", Arrays.asList("a", null, "c"), actual.list);
-        assertEquals("Set has the wrong contents", new HashSet<>(Arrays.asList("b", null, "d")), actual.set);
-        assertArrayEquals("Array has the wrong contents", new String[]{"x", null, "z"}, actual.array);
-        assertEquals("Map has the wrong contents", mapOf("k", "v", "nul", null), actual.map);
-        assertEquals("Map with attributes has the wrong contents",
-                mapOf("key1", "val1", "nul", null), actual.mapWithAttributes);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(Arrays.asList("a", null, "c"), actual.list, "List has the wrong contents");
+        assertEquals(new HashSet<>(Arrays.asList("b", null, "d")), actual.set, "Set has the wrong contents");
+        assertArrayEquals(new String[]{"x", null, "z"}, actual.array, "Array has the wrong contents");
+        assertEquals(mapOf("k", "v", "nul", null), actual.map, "Map has the wrong contents");
+        assertEquals(mapOf("key1", "val1", "nul", null), actual.mapWithAttributes,
+                "Map with attributes has the wrong contents");
     }
 
     @Test
@@ -94,8 +92,8 @@ public class NullElementsTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     private static Map<String, String> mapOf(final String key, final String value) {

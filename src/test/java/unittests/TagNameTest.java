@@ -1,10 +1,10 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.utils.XML;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TagNameTest {
 
@@ -36,12 +36,12 @@ public class TagNameTest {
 
     private void assertValid(final String... names) {
         for (final String name : names)
-            assertTrue("'" + name + "' should be a valid tag name", XML.isValidTagName(name));
+            assertTrue(XML.isValidTagName(name), "'" + name + "' should be a valid tag name");
     }
 
     private void assertInvalid(final String... names) {
         for (final String name : names)
-            assertFalse("'" + name + "' should not be a valid tag name", XML.isValidTagName(name));
+            assertFalse(XML.isValidTagName(name), "'" + name + "' should not be a valid tag name");
     }
 
 }

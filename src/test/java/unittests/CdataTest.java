@@ -1,13 +1,11 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CdataTest {
 
@@ -15,93 +13,92 @@ public class CdataTest {
 
     @Test
     public void cdataIsReadAsText() {
-        assertEquals("CDATA body was not read as text", "hi", text("<a><![CDATA[hi]]></a>"));
+        assertEquals("hi", text("<a><![CDATA[hi]]></a>"), "CDATA body was not read as text");
     }
 
     @Test
     public void entitiesAreNotDecoded() {
-        assertEquals("Entities in CDATA were decoded", "a &amp; b", text("<a><![CDATA[a &amp; b]]></a>"));
+        assertEquals("a &amp; b", text("<a><![CDATA[a &amp; b]]></a>"), "Entities in CDATA were decoded");
     }
 
     @Test
     public void markupIsLiteral() {
-        assertEquals("Markup in CDATA was parsed", "<b/>", text("<a><![CDATA[<b/>]]></a>"));
+        assertEquals("<b/>", text("<a><![CDATA[<b/>]]></a>"), "Markup in CDATA was parsed");
     }
 
     @Test
     public void greaterThanInsideBody() {
-        assertEquals("CDATA body was cut at the first '>'", "a > b", text("<a><![CDATA[a > b]]></a>"));
+        assertEquals("a > b", text("<a><![CDATA[a > b]]></a>"), "CDATA body was cut at the first '>'");
     }
 
     @Test
     public void greaterThanFirstInBody() {
-        assertEquals("CDATA body was cut at the first '>'", ">", text("<a><![CDATA[>]]></a>"));
+        assertEquals(">", text("<a><![CDATA[>]]></a>"), "CDATA body was cut at the first '>'");
     }
 
     @Test
     public void textSurroundingCdata() {
-        assertEquals("Text around CDATA was lost", "xyz", text("<a>x<![CDATA[y]]>z</a>"));
+        assertEquals("xyz", text("<a>x<![CDATA[y]]>z</a>"), "Text around CDATA was lost");
     }
 
     @Test
     public void emptyCdata() {
-        assertEquals("Empty CDATA was not ignored", "|", text("<a><![CDATA[]]>|</a>"));
+        assertEquals("|", text("<a><![CDATA[]]>|</a>"), "Empty CDATA was not ignored");
     }
 
     @Test
     public void bracketsBeforeTerminator() {
-        assertEquals("CDATA body was cut at the first ']'", "a]]b", text("<a><![CDATA[a]]b]]></a>"));
+        assertEquals("a]]b", text("<a><![CDATA[a]]b]]></a>"), "CDATA body was cut at the first ']'");
     }
 
     @Test
     public void whitespaceIsPreserved() {
-        assertEquals("CDATA whitespace was trimmed", "  hi  ", text("<a><![CDATA[  hi  ]]></a>"));
+        assertEquals("  hi  ", text("<a><![CDATA[  hi  ]]></a>"), "CDATA whitespace was trimmed");
     }
 
     @Test
     public void nestedElementHoldsCdata() {
         final var actual = parser.fromXml("<a><b><![CDATA[<c/>]]></b></a>");
 
-        assertEquals("CDATA in a child element was lost", "<c/>",
-            actual.findChildForName("b", null).getText());
+        assertEquals("<c/>", actual.findChildForName("b", null).getText(),
+                "CDATA in a child element was lost");
     }
 
     @Test
     public void deserializeCdataIntoField() {
         final var actual = parser.fromXml("<pojo><name><![CDATA[<x>]]></name></pojo>", Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("CDATA was not deserialized into the field", "<x>", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("<x>", actual.name, "CDATA was not deserialized into the field");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void unterminatedCdata() {
-        parser.fromXml("<a><![CDATA[abc</a>");
-        fail("Unterminated CDATA section not detected");
+        assertThrows(InvalidXml.class, () -> parser.fromXml("<a><![CDATA[abc</a>"));
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void cdataBeforeFirstTag() {
-        parser.fromXml("<![CDATA[x]]><a/>");
-        fail("CDATA before the opening tag not detected");
+        assertThrows(InvalidXml.class, () -> parser.fromXml("<![CDATA[x]]><a/>"),
+                "CDATA before the opening tag not detected");
     }
 
     @Test
     public void compressPreservesCdata() {
-        assertEquals("CDATA was not preserved when compressing",
-            "<a><![CDATA[hi]]></a>", parser.compressXml("<a> <![CDATA[hi]]> </a>"));
+        assertEquals("<a><![CDATA[hi]]></a>", parser.compressXml("<a> <![CDATA[hi]]> </a>"),
+                "CDATA was not preserved when compressing");
     }
 
     @Test
     public void compressPreservesCdataContainingMarkup() {
-        assertEquals("CDATA containing markup was rewritten",
-            "<a><![CDATA[<b/>]]></a>", parser.compressXml("<a><![CDATA[<b/>]]></a>"));
+        assertEquals("<a><![CDATA[<b/>]]></a>", parser.compressXml("<a><![CDATA[<b/>]]></a>"),
+                "CDATA containing markup was rewritten");
     }
 
     @Test
     public void compressPreservesCdataContainingGreaterThan() {
-        assertEquals("CDATA containing '>' was truncated",
-            "<a><![CDATA[a > b]]></a>", parser.compressXml("<a><![CDATA[a > b]]></a>"));
+        assertEquals("<a><![CDATA[a > b]]></a>", parser.compressXml("<a><![CDATA[a > b]]></a>"),
+                "CDATA containing '>' was truncated");
     }
 
     private String text(final String xml) {

@@ -1,12 +1,12 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlName;
 import xmlparser.annotations.XmlNameFromClass;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TagNameFromClassTest {
 
@@ -51,8 +51,8 @@ public class TagNameFromClassTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", XML_GET_ACTION, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(XML_GET_ACTION, actual, "Invalid serialized output");
     }
 
     private static final String XML_EMAIL_ACTION = """
@@ -69,8 +69,8 @@ public class TagNameFromClassTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", XML_EMAIL_ACTION, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(XML_EMAIL_ACTION, actual, "Invalid serialized output");
     }
 
     private static final String XML_OBJECT_ACTION = """
@@ -85,8 +85,8 @@ public class TagNameFromClassTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", XML_OBJECT_ACTION, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(XML_OBJECT_ACTION, actual, "Invalid serialized output");
     }
 
 }

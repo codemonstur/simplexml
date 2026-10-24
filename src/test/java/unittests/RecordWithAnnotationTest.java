@@ -1,11 +1,11 @@
 package unittests;
 
 import model.RecordPojoWithAnnotation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RecordWithAnnotationTest {
 
@@ -18,8 +18,8 @@ public class RecordWithAnnotationTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -28,8 +28,8 @@ public class RecordWithAnnotationTest {
 
         final var actual = parser.fromXml(input, RecordPojoWithAnnotation.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name());
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name(), "Pojo has the wrong name");
     }
 
 }

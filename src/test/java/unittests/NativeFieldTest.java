@@ -1,11 +1,11 @@
 package unittests;
 
 import model.NativePojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class NativeFieldTest {
@@ -18,8 +18,8 @@ public class NativeFieldTest {
 
         final var actual = parser.fromXml(input, NativePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong id", 5, actual.id);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(5, actual.id, "Pojo has the wrong id");
     }
 
     @Test
@@ -29,8 +29,8 @@ public class NativeFieldTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -39,8 +39,8 @@ public class NativeFieldTest {
 
         final var actual = parser.fromXml(input, NativePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Missing int should have its zero value", 0, actual.id);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(0, actual.id, "Missing int should have its zero value");
     }
 
 }

@@ -1,13 +1,13 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.model.XmlElement.XmlTextElement;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.model.XmlElement.newElement;
 
 public class DomTest {
@@ -20,10 +20,10 @@ public class DomTest {
 
         final var actual = parser.fromXml(input);
 
-        assertNotNull("Pojo is null", actual);
-        assertFalse("<pojo> tag is self closing", actual.isSelfClosing());
-        assertFalse("<name> tag is self closing", actual.children.get(0).isSelfClosing());
-        assertTrue("<closing> tag is self closing", actual.children.get(1).isSelfClosing());
+        assertNotNull(actual, "Pojo is null");
+        assertFalse(actual.isSelfClosing(), "<pojo> tag is self closing");
+        assertFalse(actual.children.get(0).isSelfClosing(), "<name> tag is self closing");
+        assertTrue(actual.children.get(1).isSelfClosing(), "<closing> tag is self closing");
     }
 
     @Test
@@ -31,9 +31,9 @@ public class DomTest {
         final var input = "<pojo><name>Hello</name></pojo>";
         final var actual = parser.fromXml(input).getElementsByTagName("name");
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("List size is incorrect", 1, actual.size());
-        assertEquals("List item is incorrect", "name", actual.get(0).name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(1, actual.size(), "List size is incorrect");
+        assertEquals("name", actual.get(0).name, "List item is incorrect");
     }
 
     @Test
@@ -41,17 +41,17 @@ public class DomTest {
         final var input = "<pojo><name>Hello</name></pojo>";
         final var actual = parser.fromXml(input);
 
-        assertNotNull("Missing dom object", actual);
-        assertEquals("String output is incorrect", "XmlElement[pojo]", actual.toString());
-        assertEquals("String output is incorrect", "XmlElement[name]", actual.children.get(0).toString());
+        assertNotNull(actual, "Missing dom object");
+        assertEquals("XmlElement[pojo]", actual.toString(), "String output is incorrect");
+        assertEquals("XmlElement[name]", actual.children.get(0).toString(), "String output is incorrect");
     }
 
     @Test
     public void testToStringTextNode() {
         final var actual = newElement("pojo").text("hello").build();
 
-        assertEquals("String output is incorrect", "XmlElement[pojo]", actual.toString());
-        assertEquals("String output is incorrect", "XmlTextElement[hello]", actual.children.get(0).toString());
+        assertEquals("XmlElement[pojo]", actual.toString(), "String output is incorrect");
+        assertEquals("XmlTextElement[hello]", actual.children.get(0).toString(), "String output is incorrect");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class DomTest {
         final var actual = parser.domToXml(input);
 
         assertNotNull(actual);
-        assertEquals("Invalid XML output", expected, actual);
+        assertEquals(expected, actual, "Invalid XML output");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DomTest {
 
         final var actual = parser.domToXml(parser.fromXml(input));
 
-        assertEquals("Text before a child element was written after it", expected, actual);
+        assertEquals(expected, actual, "Text before a child element was written after it");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class DomTest {
 
         final var actual = parser.domToXml(parser.fromXml(input));
 
-        assertEquals("Text was not written in document order", expected, actual);
+        assertEquals(expected, actual, "Text was not written in document order");
     }
 
     @Test
@@ -94,7 +94,7 @@ public class DomTest {
 
         final var actual = parser.domToXml(parser.fromXml(input));
 
-        assertEquals("Text between children was gathered at the end", expected, actual);
+        assertEquals(expected, actual, "Text between children was gathered at the end");
     }
 
     @Test
@@ -104,9 +104,8 @@ public class DomTest {
         final var once = parser.domToXml(parser.fromXml(input));
         final var twice = parser.domToXml(parser.fromXml(once));
 
-        assertEquals("Mixed content changed on re-reading the output", once, twice);
-        assertEquals("Text content was lost",
-                "onethreefive", parser.fromXml(once).getText());
+        assertEquals(once, twice, "Mixed content changed on re-reading the output");
+        assertEquals("onethreefive", parser.fromXml(once).getText(), "Text content was lost");
     }
 
     @Test
@@ -116,16 +115,16 @@ public class DomTest {
 
         final var actual = parser.domToXml(parser.fromXml(input));
 
-        assertEquals("Neighbouring text nodes were split over several lines", expected, actual);
-        assertEquals("Text content was lost", "xy<z>z", parser.fromXml(actual).getText());
+        assertEquals(expected, actual, "Neighbouring text nodes were split over several lines");
+        assertEquals("xy<z>z", parser.fromXml(actual).getText(), "Text content was lost");
     }
 
     @Test
     public void toXmlOfADomTreeMatchesDomToXml() {
         final var element = parser.fromXml("<pojo attr=\"v\">head<child>1</child>tail</pojo>");
 
-        assertEquals("toXml of a DOM tree did not agree with domToXml",
-                parser.domToXml(element), parser.toXml(element));
+        assertEquals(parser.domToXml(element), parser.toXml(element),
+                "toXml of a DOM tree did not agree with domToXml");
     }
 
     @Test
@@ -134,7 +133,7 @@ public class DomTest {
 
         final var actual = parser.toXml(element);
 
-        assertEquals("The tree was not written", "<a>\n  <b>1</b>\n  <c>2</c>\n</a>\n", actual);
+        assertEquals("<a>\n  <b>1</b>\n  <c>2</c>\n</a>\n", actual, "The tree was not written");
     }
 
     @Test
@@ -144,7 +143,7 @@ public class DomTest {
 
         parser.toXml(element, writer);
 
-        assertEquals("The tree was not written", "<a>\n  <b>1</b>\n</a>\n", writer.toString());
+        assertEquals("<a>\n  <b>1</b>\n</a>\n", writer.toString(), "The tree was not written");
     }
 
     @Test
@@ -154,19 +153,21 @@ public class DomTest {
         final var once = parser.toXml(element);
         final var twice = parser.toXml(parser.fromXml(once));
 
-        assertEquals("A DOM tree did not survive being written twice", once, twice);
+        assertEquals(once, twice, "A DOM tree did not survive being written twice");
     }
 
     @Test
     public void toXmlStillWritesAnObjectAsBefore() {
-        assertEquals("Object serialization changed",
-                "<pojo>\n  <name>hello</name>\n</pojo>\n", parser.toXml(new model.Pojo("hello")));
+        assertEquals("<pojo>\n  <name>hello</name>\n</pojo>\n",
+            parser.toXml(new model.Pojo("hello")),
+                "Object serialization changed");
     }
 
     @Test
     public void toXmlOfATextElementWritesItsText() {
-        assertEquals("A text element was not written as its text",
-                "hi &amp; &lt;there&gt;", parser.toXml(new XmlTextElement(null, "hi & <there>")));
+        assertEquals("hi &amp; &lt;there&gt;",
+            parser.toXml(new XmlTextElement(null, "hi & <there>")),
+                "A text element was not written as its text");
     }
 
     @Test
@@ -175,23 +176,26 @@ public class DomTest {
 
         parser.toXml(new XmlTextElement(null, "hi & <there>"), writer);
 
-        assertEquals("A text element was not written as its text", "hi &amp; &lt;there&gt;", writer.toString());
+        assertEquals("hi &amp; &lt;there&gt;", writer.toString(),
+                "A text element was not written as its text");
     }
 
     @Test
     public void toXmlOfAnEmptyTextElementWritesNothing() {
-        assertEquals("An empty text element wrote something", "", parser.toXml(new XmlTextElement(null, "")));
-        assertEquals("A text element without text wrote something", "", parser.toXml(new XmlTextElement(null, null)));
+        assertEquals("", parser.toXml(new XmlTextElement(null, "")),
+                "An empty text element wrote something");
+        assertEquals("", parser.toXml(new XmlTextElement(null, null)),
+                "A text element without text wrote something");
     }
 
     @Test
     public void aTextElementStillHoldsNoChildren() {
         final var element = new XmlTextElement(null, "t");
 
-        assertEquals("A text element holds a child", 0, element.numChildrenWithName("c"));
-        assertNull("A text element found a child", element.findChildForName("c", null));
-        assertFalse("A text element has non-text children", element.hasNonTextChildren());
-        assertEquals("A text element lost its text", "t", element.getText());
+        assertEquals(0, element.numChildrenWithName("c"), "A text element holds a child");
+        assertNull(element.findChildForName("c", null), "A text element found a child");
+        assertFalse(element.hasNonTextChildren(), "A text element has non-text children");
+        assertEquals("t", element.getText(), "A text element lost its text");
     }
 
     @Test
@@ -200,15 +204,15 @@ public class DomTest {
 
         element.appendChild(newElement("c").build());
 
-        assertEquals("A text element lost the child that was added", 1, element.numChildrenWithName("c"));
-        assertEquals("A text element lost the text it was built with", "t", element.getText());
+        assertEquals(1, element.numChildrenWithName("c"), "A text element lost the child that was added");
+        assertEquals("t", element.getText(), "A text element lost the text it was built with");
     }
 
     @Test
     public void toXmlStillWritesATextElementInsideARealElement() {
         final var root = newElement("r").child(new XmlTextElement(null, "t")).build();
 
-        assertEquals("A text child was not written into its element", "<r>t</r>\n", parser.toXml(root));
+        assertEquals("<r>t</r>\n", parser.toXml(root), "A text child was not written into its element");
     }
 
 }

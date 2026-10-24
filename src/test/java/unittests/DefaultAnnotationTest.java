@@ -5,13 +5,13 @@ import model.PojoWithDefaults;
 import model.RecordWithDefaults;
 import model.SimpleWithDefaultsPojo;
 import model.SimpleWithDefaultsRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlDefaultValue;
 import xmlparser.annotations.XmlTextNode;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DefaultAnnotationTest {
 
@@ -66,92 +66,92 @@ public class DefaultAnnotationTest {
 
     @Test
     public void testSerializeClass() {
-        final var xml = parser.toXml(new PojoWithDefaults());
-        assertEquals(EXPECTED_SERIALIZE_CLASS, xml);
+        final var actual = parser.toXml(new PojoWithDefaults());
+        assertEquals(EXPECTED_SERIALIZE_CLASS, actual);
     }
     @Test
     public void testSerializeRecord() {
-        final var xml = parser.toXml(new RecordWithDefaults(null, null, null));
-        assertEquals(EXPECTED_SERIALIZE_RECORD, xml);
+        final var actual = parser.toXml(new RecordWithDefaults(null, null, null));
+        assertEquals(EXPECTED_SERIALIZE_RECORD, actual);
     }
 
     @Test
     public void testDeserializeClass() {
-        final var pojo = parser.fromXml("<pojowithdefaults></pojowithdefaults>", PojoWithDefaults.class);
+        final var actual = parser.fromXml("<pojowithdefaults></pojowithdefaults>", PojoWithDefaults.class);
 
-        assertEquals("hello", pojo.field1);
-        assertNull(pojo.field2);
-        assertEquals("hello", pojo.field3);
+        assertEquals("hello", actual.field1);
+        assertNull(actual.field2);
+        assertEquals("hello", actual.field3);
     }
     @Test
     public void testDeserializeRecord() {
-        final var pojo = parser.fromXml("<recordwithdefaults></recordwithdefaults>", PojoWithDefaults.class);
+        final var actual = parser.fromXml("<recordwithdefaults></recordwithdefaults>", PojoWithDefaults.class);
 
-        assertEquals("hello", pojo.field1);
-        assertNull(pojo.field2);
-        assertEquals("hello", pojo.field3);
+        assertEquals("hello", actual.field1);
+        assertNull(actual.field2);
+        assertEquals("hello", actual.field3);
     }
 
     @Test
     public void testDeserializeSimpleTypesClass() {
-        final var pojo = parser.fromXml("<simplewithdefaultspojo></simplewithdefaultspojo>", SimpleWithDefaultsPojo.class);
+        final var actual = parser.fromXml("<simplewithdefaultspojo></simplewithdefaultspojo>", SimpleWithDefaultsPojo.class);
 
-        assertEquals(Character.valueOf('a'), pojo.character);
-        assertEquals(Byte.valueOf("10"), pojo.bytes);
-        assertEquals(Integer.valueOf("1"), pojo.integer);
-        assertEquals(Short.valueOf((short)1), pojo.shorts);
-        assertEquals(Long.valueOf(1L), pojo.longs);
-        assertEquals(Boolean.TRUE, pojo.booleans);
-        assertEquals("hello", pojo.string);
+        assertEquals(Character.valueOf('a'), actual.character);
+        assertEquals(Byte.valueOf("10"), actual.bytes);
+        assertEquals(Integer.valueOf("1"), actual.integer);
+        assertEquals(Short.valueOf((short)1), actual.shorts);
+        assertEquals(Long.valueOf(1L), actual.longs);
+        assertEquals(Boolean.TRUE, actual.booleans);
+        assertEquals("hello", actual.string);
     }
     @Test
     public void testDeserializeSimpleTypesRecord() {
-        final var pojo = parser.fromXml("<simplewithdefaultsrecord></simplewithdefaultsrecord>", SimpleWithDefaultsRecord.class);
+        final var actual = parser.fromXml("<simplewithdefaultsrecord></simplewithdefaultsrecord>", SimpleWithDefaultsRecord.class);
 
-        assertEquals(Character.valueOf('a'), pojo.character());
-        assertEquals(Byte.valueOf("10"), pojo.bytes());
-        assertEquals(Integer.valueOf("1"), pojo.integer());
-        assertEquals(Short.valueOf((short)1), pojo.shorts());
-        assertEquals(Long.valueOf(1L), pojo.longs());
-        assertEquals(Boolean.TRUE, pojo.booleans());
-        assertEquals("hello", pojo.string());
+        assertEquals(Character.valueOf('a'), actual.character());
+        assertEquals(Byte.valueOf("10"), actual.bytes());
+        assertEquals(Integer.valueOf("1"), actual.integer());
+        assertEquals(Short.valueOf((short)1), actual.shorts());
+        assertEquals(Long.valueOf(1L), actual.longs());
+        assertEquals(Boolean.TRUE, actual.booleans());
+        assertEquals("hello", actual.string());
     }
 
     @Test
     public void testSerializeSimpleTypesClass() {
-        final var xml = parser.toXml(new SimpleWithDefaultsPojo());
-        assertEquals(EXPECTED_SIMPLE_VALUES_CLASS, xml);
+        final var actual = parser.toXml(new SimpleWithDefaultsPojo());
+        assertEquals(EXPECTED_SIMPLE_VALUES_CLASS, actual);
     }
     @Test
     public void testSerializeSimpleTypesRecord() {
-        final var xml = parser.toXml(new SimpleWithDefaultsRecord(null, null, null, null, null, null, null));
-        assertEquals(EXPECTED_SIMPLE_VALUES_RECORD, xml);
+        final var actual = parser.toXml(new SimpleWithDefaultsRecord(null, null, null, null, null, null, null));
+        assertEquals(EXPECTED_SIMPLE_VALUES_RECORD, actual);
     }
 
     @Test
     public void testSerializeNullsWithDefaults() {
-        final var xml = parser.toXml(new NullDefaultsPojo(null, null, null, null, null));
+        final var actual = parser.toXml(new NullDefaultsPojo(null, null, null, null, null));
 
-        assertEquals("Invalid serialized output", EXPECTED_NULL_DEFAULTS, xml);
+        assertEquals(EXPECTED_NULL_DEFAULTS, actual, "Invalid serialized output");
     }
     @Test
     public void testDeserializeNullsWithDefaults() {
-        final var pojo = parser.fromXml(EXPECTED_NULL_DEFAULTS, NullDefaultsPojo.class);
+        final var actual = parser.fromXml(EXPECTED_NULL_DEFAULTS, NullDefaultsPojo.class);
 
-        assertEquals("Attribute default is missing", Integer.valueOf(5), pojo.attribute);
-        assertEquals("Wrapped default is missing", "hello", pojo.wrapped);
-        assertEquals("Default is missing", "body", pojo.body);
-        assertEquals("Default is missing", "tail", pojo.tail);
-        assertEquals("Text node default is missing", "text", pojo.text);
+        assertEquals(Integer.valueOf(5), actual.attribute, "Attribute default is missing");
+        assertEquals("hello", actual.wrapped, "Wrapped default is missing");
+        assertEquals("body", actual.body, "Default is missing");
+        assertEquals("tail", actual.tail, "Default is missing");
+        assertEquals("text", actual.text, "Text node default is missing");
     }
     @Test
     public void testSerializeTextNodeWithDefaultValue() {
-        final var xml = parser.toXml(new TextOnly());
+        final var actual = parser.toXml(new TextOnly());
         final var expected = """
                 <textonly>only</textonly>
                 """;
 
-        assertEquals("Invalid serialized output", expected, xml);
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     private static class TextOnly {

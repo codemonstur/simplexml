@@ -1,14 +1,13 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlAbstractClass;
 import xmlparser.annotations.XmlAbstractClass.TypeMap;
 import xmlparser.annotations.XmlName;
 import xmlparser.error.InvalidAnnotation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractTest {
 
@@ -89,48 +88,51 @@ public class AbstractTest {
     public void deserializeOne() {
         final var actual = parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage1.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Field 'sender' is wrong", "external application", actual.sender);
-        assertNotNull("Missing 'payload' field", actual.payload);
-        assertEquals("Payload field has wrong type", Foo.class, actual.payload.getClass());
-        assertEquals("Foo does not have 'id' set", Integer.valueOf(1), actual.payload.getId());
+        assertNotNull(actual, "No serialization response");
+        assertEquals("external application", actual.sender, "Field 'sender' is wrong");
+        assertNotNull(actual.payload, "Missing 'payload' field");
+        assertEquals(Foo.class, actual.payload.getClass(), "Payload field has wrong type");
+        assertEquals(Integer.valueOf(1), actual.payload.getId(), "Foo does not have 'id' set");
     }
 
     @Test
     public void deserializeTwo() {
         final var actual = parser.fromXml(ABSTRACT_CLASS_2, TargetedMessage2.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Field 'sender' is wrong", "external application", actual.sender);
-        assertNotNull("Missing 'payload' field", actual.payload);
-        assertEquals("Payload field has wrong type", Foo.class, actual.payload.getClass());
-        assertEquals("Foo does not have 'id' set", Integer.valueOf(1), actual.payload.getId());
+        assertNotNull(actual, "No serialization response");
+        assertEquals("external application", actual.sender, "Field 'sender' is wrong");
+        assertNotNull(actual.payload, "Missing 'payload' field");
+        assertEquals(Foo.class, actual.payload.getClass(), "Payload field has wrong type");
+        assertEquals(Integer.valueOf(1), actual.payload.getId(), "Foo does not have 'id' set");
     }
 
     @Test
     public void deserializeThree() {
         final var actual = parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage3.class);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Field 'sender' is wrong", "external application", actual.sender);
-        assertNotNull("Missing 'payload' field", actual.payload);
-        assertEquals("Payload field has wrong type", Foo.class, actual.payload.getClass());
-        assertEquals("Foo does not have 'id' set", Integer.valueOf(1), actual.payload.getId());
+        assertNotNull(actual, "No serialization response");
+        assertEquals("external application", actual.sender, "Field 'sender' is wrong");
+        assertNotNull(actual.payload, "Missing 'payload' field");
+        assertEquals(Foo.class, actual.payload.getClass(), "Payload field has wrong type");
+        assertEquals(Integer.valueOf(1), actual.payload.getId(), "Foo does not have 'id' set");
     }
 
-    @Test(expected = InvalidAnnotation.class)
+    @Test
     public void missingTypeThrowsException() {
-        parser.fromXml(ABSTRACT_MISSING_CLASS, TargetedMessage1.class);
+        assertThrows(InvalidAnnotation.class, () ->
+            parser.fromXml(ABSTRACT_MISSING_CLASS, TargetedMessage1.class));
     }
 
-    @Test(expected = InvalidAnnotation.class)
+    @Test
     public void missingAttributeThrowsException() {
-        parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage1.class);
+        assertThrows(InvalidAnnotation.class, () ->
+            parser.fromXml(ABSTRACT_CLASS_3, TargetedMessage1.class));
     }
 
-    @Test(expected = InvalidAnnotation.class)
+    @Test
     public void missingChildTagThrowsException() {
-        parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage3.class);
+        assertThrows(InvalidAnnotation.class, () ->
+            parser.fromXml(ABSTRACT_CLASS_1, TargetedMessage3.class));
     }
 
 }

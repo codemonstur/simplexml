@@ -1,11 +1,11 @@
 package unittests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class CustomSerializersTest {
@@ -53,16 +53,18 @@ public class CustomSerializersTest {
     public void serialize() {
         final var actual = parser.toXml(CONTAINER);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", CONTAINER_XML, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(CONTAINER_XML, actual, "Invalid serialized output");
     }
 
     @Test
     public void deserialize() {
         final var actual = parser.fromXml(CONTAINER_XML, Container.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertReflectionEquals(CONTAINER, actual);
+        assertNotNull(actual, "Pojo is null");
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .isEqualTo(CONTAINER);
     }
 
 }

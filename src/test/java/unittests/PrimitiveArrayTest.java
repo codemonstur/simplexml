@@ -1,12 +1,10 @@
 package unittests;
 
 import model.PrimitiveArrayPojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PrimitiveArrayTest {
 
@@ -27,18 +25,18 @@ public class PrimitiveArrayTest {
     public void deserialize() {
         final var actual = parser.fromXml(POJO_XML, PrimitiveArrayPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertArrayEquals("Numbers have the wrong contents", new int[]{1, 2}, actual.numbers);
-        assertArrayEquals("Booleans have the wrong contents", new boolean[]{true, false}, actual.booleans);
-        assertArrayEquals("Strings have the wrong contents", new String[]{"one", "two"}, actual.strings);
+        assertNotNull(actual, "Pojo is null");
+        assertArrayEquals(new int[]{1, 2}, actual.numbers, "Numbers have the wrong contents");
+        assertArrayEquals(new boolean[]{true, false}, actual.booleans, "Booleans have the wrong contents");
+        assertArrayEquals(new String[]{"one", "two"}, actual.strings, "Strings have the wrong contents");
     }
 
     @Test
     public void deserializeEmpty() {
         final var actual = parser.fromXml("<primitivearraypojo></primitivearraypojo>", PrimitiveArrayPojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertArrayEquals("Numbers should be empty", new int[0], actual.numbers);
+        assertNotNull(actual, "Pojo is null");
+        assertArrayEquals(new int[0], actual.numbers, "Numbers should be empty");
     }
 
     @Test
@@ -47,8 +45,8 @@ public class PrimitiveArrayTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", POJO_XML, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(POJO_XML, actual, "Invalid serialized output");
     }
 
 }

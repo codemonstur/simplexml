@@ -1,10 +1,10 @@
 package unittests;
 
 import model.SimplePojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class NullTest {
@@ -18,8 +18,8 @@ public class NullTest {
 
         final var actual = parser.toXml(input);
 
-        assertNotNull("No serialization response", actual);
-        assertEquals("Invalid serialized output", expected, actual);
+        assertNotNull(actual, "No serialization response");
+        assertEquals(expected, actual, "Invalid serialized output");
     }
 
     @Test
@@ -28,14 +28,14 @@ public class NullTest {
 
         final var actual = parser.fromXml(input, SimplePojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertNull("Boolean is not null", actual.booleans);
-        assertNull("Byte is not null", actual.bytes);
-        assertNull("Character is not null", actual.character);
-        assertNull("String is not null", actual.string);
-        assertNull("Short is not null", actual.shorts);
-        assertNull("Long is not null", actual.longs);
-        assertNull("Integer is not null", actual.integer);
+        assertNotNull(actual, "Pojo is null");
+        assertNull(actual.booleans, "Boolean is not null");
+        assertNull(actual.bytes, "Byte is not null");
+        assertNull(actual.character, "Character is not null");
+        assertNull(actual.string, "String is not null");
+        assertNull(actual.shorts, "Short is not null");
+        assertNull(actual.longs, "Long is not null");
+        assertNull(actual.integer, "Integer is not null");
     }
 
 }

@@ -1,10 +1,10 @@
 package unittests;
 
 import model.StaticFieldPojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StaticFieldTest {
 
@@ -16,7 +16,7 @@ public class StaticFieldTest {
 
         final var actual = parser.fromXml(input, StaticFieldPojo.class);
 
-        assertNotNull("Pojo is null", actual);
+        assertNotNull(actual, "Pojo is null");
     }
 
 }

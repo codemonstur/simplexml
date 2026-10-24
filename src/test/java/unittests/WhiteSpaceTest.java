@@ -1,11 +1,11 @@
 package unittests;
 
 import model.Pojo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class WhiteSpaceTest {
@@ -17,8 +17,8 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -28,9 +28,9 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input);
 
-        assertNotNull("XmlElement is null", actual);
-        assertEquals("XmlElement has the wrong name value", "tag", actual.name);
-        assertEquals("XmlElement has wrong attribute count", 0, actual.attributes.size());
+        assertNotNull(actual, "XmlElement is null");
+        assertEquals("tag", actual.name, "XmlElement has the wrong name value");
+        assertEquals(0, actual.attributes.size(), "XmlElement has wrong attribute count");
     }
 
     @Test
@@ -40,10 +40,10 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input);
 
-        assertNotNull("XmlElement is null", actual);
-        assertEquals("XmlElement has the wrong name value", "tag", actual.name);
-        assertEquals("XmlElement has wrong attribute count", 1, actual.attributes.size());
-        assertEquals("XmlElement has wrong attribute", "true", actual.attributes.get("attr"));
+        assertNotNull(actual, "XmlElement is null");
+        assertEquals("tag", actual.name, "XmlElement has the wrong name value");
+        assertEquals(1, actual.attributes.size(), "XmlElement has wrong attribute count");
+        assertEquals("true", actual.attributes.get("attr"), "XmlElement has wrong attribute");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "    Hello   \n  ", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("    Hello   \n  ", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -64,10 +64,10 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has wrong number of children", 3, actual.children.size());
-        assertEquals("First whitespace is incorrect", "\n  ", actual.children.get(0).getText());
-        assertEquals("Second whitespace is incorrect", "\n", actual.children.get(2).getText());
+        assertNotNull(actual, "Pojo is null");
+        assertEquals(3, actual.children.size(), "Pojo has wrong number of children");
+        assertEquals("\n  ", actual.children.get(0).getText(), "First whitespace is incorrect");
+        assertEquals("\n", actual.children.get(2).getText(), "Second whitespace is incorrect");
     }
 
     @Test
@@ -82,8 +82,8 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name", "    Hello   \n  ", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("    Hello   \n  ", actual.name, "Pojo has the wrong name");
     }
 
     @Test
@@ -98,8 +98,8 @@ public class WhiteSpaceTest {
 
         final var actual = parser.fromXml(input, Pojo.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Pojo has the wrong name value", "Hello", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("Hello", actual.name, "Pojo has the wrong name value");
     }
 
 }

@@ -34,30 +34,110 @@
 
     <properties>
         <module.name>com.github.codemonstur.simplexml</module.name>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- default for @{argLine}; jacoco's prepare-agent appends the agent when it runs -->
         <argLine></argLine>
 
-        <maven.version>3.6.3</maven.version>
-
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
+        <maven.version>3.6.3</maven.version>
 
-        <version.library.junit>4.13.2</version.library.junit>
-        <version.library.unitils-core>3.4.6</version.library.unitils-core>
+        <version.library.junit>6.1.3</version.library.junit>
         <version.library.commons-text>1.15.0</version.library.commons-text>
+        <version.library.jmh>1.37</version.library.jmh>
+        <version.library.dom4j>2.2.0</version.library.dom4j>
+        <version.library.jdom2>2.0.6.1</version.library.jdom2>
+        <version.library.xerces>2.12.2</version.library.xerces>
+        <version.library.woodstox>7.3.0</version.library.woodstox>
+        <version.library.jackson>2.22.4</version.library.jackson>
+        <version.library.assertj>3.27.7</version.library.assertj>
 
         <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
         <version.plugin.surefire>3.6.0</version.plugin.surefire>
-        <version.plugin.jar>3.3.0</version.plugin.jar>
+        <version.plugin.jar>3.5.1</version.plugin.jar>
         <version.plugin.source>3.4.0</version.plugin.source>
         <version.plugin.javadoc>3.12.0</version.plugin.javadoc>
         <version.plugin.gpg>3.2.8</version.plugin.gpg>
         <version.plugin.publish>0.12.0</version.plugin.publish>
         <version.plugin.license-check>1.3.0</version.plugin.license-check>
         <version.plugin.check-cves>1.1.0</version.plugin.check-cves>
+        <version.plugin.codegrade>0.2.0</version.plugin.codegrade>
+        <version.plugin.exec>3.6.4</version.plugin.exec>
+        <version.plugin.compiler>3.16.0</version.plugin.compiler>
     </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${version.library.junit}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${version.library.assertj}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${version.library.commons-text}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Benchmarking (JMH) -->
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${version.library.jmh}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${version.library.jmh}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- XML parsers compared against -->
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${version.library.dom4j}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>${version.library.jdom2}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>${version.library.xerces}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>${version.library.woodstox}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${version.library.jackson}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -96,14 +176,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${version.plugin.compiler}</version>
                 <configuration>
                     <release>${maven.compiler.release}</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.openjdk.jmh</groupId>
                             <artifactId>jmh-generator-annprocess</artifactId>
-                            <version>1.37</version>
+                            <version>${version.library.jmh}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -112,7 +192,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>${version.plugin.exec}</version>
                 <configuration>
                     <mainClass>org.openjdk.jmh.Main</mainClass>
                     <arguments>
@@ -129,6 +209,8 @@
                     <archive>
                         <manifestEntries>
                             <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -189,78 +271,6 @@
         </plugins>
     </build>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.library.junit}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.unitils</groupId>
-            <artifactId>unitils-core</artifactId>
-            <version>${version.library.unitils-core}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${version.library.commons-text}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Benchmarking (JMH) -->
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-core</artifactId>
-            <version>1.37</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.37</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- XML parsers compared against -->
-        <dependency>
-            <groupId>org.dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>2.2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom2</artifactId>
-            <version>2.0.6.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
-            <version>7.3.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.22.4</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-
     <profiles>
 
         <profile>
@@ -294,6 +304,7 @@
                                 <rule>name:equal:Eclipse Public License 1.0</rule>
                                 <rule>url:equal:http://www.eclipse.org/org/documents/edl-v10.php</rule>
                                 <rule>url:equal:http://www.mozilla.org/MPL/2.0/</rule>
+                                <rule>url:equal:https://www.eclipse.org/legal/epl-v20.html</rule>
                             </rules>
                         </configuration>
                     </plugin>
@@ -323,5 +334,27 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>codequality</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>com.github.codemonstur</groupId>
+                        <artifactId>codegrade-maven-plugin</artifactId>
+                        <version>${version.plugin.codegrade}</version>
+                        <executions>
+                            <execution><goals><goal>check</goal></goals></execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 </project>

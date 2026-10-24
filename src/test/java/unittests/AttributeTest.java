@@ -1,13 +1,11 @@
 package unittests;
 
 import model.PojoWithAttribute;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AttributeTest {
 
@@ -15,76 +13,77 @@ public class AttributeTest {
 
     @Test
     public void greaterThanInQuotedAttribute() {
-        assertEquals("Attribute value was truncated at the '>'", "y>z",
-            parser.fromXml("<a b=\"y>z\">q</a>").attributes.get("b"));
+        assertEquals("y>z", parser.fromXml("<a b=\"y>z\">q</a>").attributes.get("b"),
+                "Attribute value was truncated at the '>'");
     }
 
     @Test
     public void textAfterGreaterThanAttributeIsKept() {
-        assertEquals("Text following a '>' in an attribute was corrupted", "q",
-            parser.fromXml("<a b=\"y>z\">q</a>").getText());
+        assertEquals("q", parser.fromXml("<a b=\"y>z\">q</a>").getText(),
+                "Text following a '>' in an attribute was corrupted");
     }
 
     @Test
     public void attributeAfterOneContainingGreaterThan() {
         final var attributes = parser.fromXml("<a b=\"y>z\" c=\"2\">q</a>").attributes;
 
-        assertEquals("Second attribute was lost", "2", attributes.get("c"));
-        assertEquals("First attribute was corrupted", "y>z", attributes.get("b"));
+        assertEquals("2", attributes.get("c"), "Second attribute was lost");
+        assertEquals("y>z", attributes.get("b"), "First attribute was corrupted");
     }
 
     @Test
     public void greaterThanInSingleQuotedAttribute() {
-        assertEquals("Attribute value was truncated at the '>'", "y>z",
-            parser.fromXml("<a b='y>z'>q</a>").attributes.get("b"));
+        assertEquals("y>z", parser.fromXml("<a b='y>z'>q</a>").attributes.get("b"),
+                "Attribute value was truncated at the '>'");
     }
 
     @Test
     public void mixedQuoteStylesEachContainGreaterThan() {
         final var attributes = parser.fromXml("<a b=\"x>y\" c='p>q'>z</a>").attributes;
 
-        assertEquals("Double quoted attribute was corrupted", "x>y", attributes.get("b"));
-        assertEquals("Single quoted attribute was corrupted", "p>q", attributes.get("c"));
-        assertEquals("Text after the attributes was corrupted", "z",
-            parser.fromXml("<a b=\"x>y\" c='p>q'>z</a>").getText());
+        assertEquals("x>y", attributes.get("b"), "Double quoted attribute was corrupted");
+        assertEquals("p>q", attributes.get("c"), "Single quoted attribute was corrupted");
+        assertEquals("z", parser.fromXml("<a b=\"x>y\" c='p>q'>z</a>").getText(),
+                "Text after the attributes was corrupted");
     }
 
     @Test
     public void lessThanInQuotedAttribute() {
-        assertEquals("Attribute value containing '<' was corrupted", "1<2",
-            parser.fromXml("<a b=\"1<2\">q</a>").attributes.get("b"));
+        assertEquals("1<2", parser.fromXml("<a b=\"1<2\">q</a>").attributes.get("b"),
+                "Attribute value containing '<' was corrupted");
     }
 
     @Test
     public void singleQuotedAttributeWithSpace() {
-        assertEquals("Single quoted attribute containing whitespace was not read", "x y",
-            parser.fromXml("<a b='x y'>q</a>").attributes.get("b"));
+        assertEquals("x y", parser.fromXml("<a b='x y'>q</a>").attributes.get("b"),
+                "Single quoted attribute containing whitespace was not read");
     }
 
     @Test
     public void deserializeAttributeContainingGreaterThan() {
         final var actual = parser.fromXml("<pojowithattribute name=\"y>z\" />", PojoWithAttribute.class);
 
-        assertNotNull("Pojo is null", actual);
-        assertEquals("Attribute containing '>' was not deserialized", "y>z", actual.name);
+        assertNotNull(actual, "Pojo is null");
+        assertEquals("y>z", actual.name, "Attribute containing '>' was not deserialized");
     }
 
     @Test
     public void compressKeepsGreaterThanInAttribute() {
-        assertEquals("Compressing dropped part of the attribute", "<a b=\"y>z\">q</a>",
-            parser.compressXml("<a b=\"y>z\">q</a>"));
+        assertEquals("<a b=\"y>z\">q</a>", parser.compressXml("<a b=\"y>z\">q</a>"),
+                "Compressing dropped part of the attribute");
     }
 
     @Test
     public void compressKeepsGreaterThanInSingleQuotedAttribute() {
-        assertEquals("Compressing dropped part of the attribute", "<a b=\"y>z\">q</a>",
-            parser.compressXml("<a b='y>z'>q</a>"));
+        assertEquals("<a b=\"y>z\">q</a>", parser.compressXml("<a b='y>z'>q</a>"),
+                "Compressing dropped part of the attribute");
     }
 
-    @Test(expected = InvalidXml.class)
+    @Test
     public void unterminatedQuotedValue() {
-        parser.fromXml("<a b='don't'>q</a>");
-        fail("Unterminated quoted attribute value not detected");
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<a b='don't'>q</a>"),
+            "Unterminated quoted attribute value not detected");
     }
 
 }
