@@ -150,7 +150,7 @@
                 <version>${version.plugin.enforcer}</version>
                 <executions>
                     <execution>
-                        <id>enforce-maven</id>
+                        <id>enforce-maven-version</id>
                         <goals><goal>enforce</goal>
                         </goals>
                         <configuration>
