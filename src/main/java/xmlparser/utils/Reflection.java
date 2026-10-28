@@ -8,6 +8,7 @@ import xmlparser.model.XmlElement;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
 import static xmlparser.model.XmlElement.findChildForName;
@@ -72,7 +73,13 @@ public enum Reflection {;
      * @param o the enum instance to convert
      * @return the XML value
      */
+    private static final Map<Enum<?>, String> ENUM_VALUE_CACHE = new ConcurrentHashMap<>();
+
     public static String toEnumValue(final Enum o) {
+        return ENUM_VALUE_CACHE.computeIfAbsent(o, Reflection::toEnumValueUncached);
+    }
+
+    private static String toEnumValueUncached(final Enum o) {
         try {
             final String name = o.name();
             final Field field = o.getClass().getField(name);
@@ -135,7 +142,13 @@ public enum Reflection {;
      * @param f the field to classify
      * @return the field's kind
      */
+    private static final Map<Field, FieldType> FIELD_TYPE_CACHE = new ConcurrentHashMap<>();
+
     public static FieldType toFieldType(final Field f) {
+        return FIELD_TYPE_CACHE.computeIfAbsent(f, Reflection::toFieldTypeUncached);
+    }
+
+    private static FieldType toFieldTypeUncached(final Field f) {
         if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
         if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXT_NODE;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
@@ -156,7 +169,13 @@ public enum Reflection {;
      * @param f the record component to classify
      * @return the component's kind
      */
+    private static final Map<RecordComponent, FieldType> RECORD_TYPE_CACHE = new ConcurrentHashMap<>();
+
     public static FieldType toFieldType(final RecordComponent f) {
+        return RECORD_TYPE_CACHE.computeIfAbsent(f, Reflection::toFieldTypeRecordUncached);
+    }
+
+    private static FieldType toFieldTypeRecordUncached(final RecordComponent f) {
         if (f.isAnnotationPresent(XmlFieldDeserializer.class)) return FieldType.FIELD_DESERIALIZER;
         if (f.isAnnotationPresent(XmlTextNode.class)) return FieldType.TEXT_NODE;
         if (f.isAnnotationPresent(XmlAttribute.class)) return FieldType.ANNOTATED_ATTRIBUTE;
@@ -230,7 +249,14 @@ public enum Reflection {;
      * @param type the class to take the fields of
      * @return the fields of the class and its superclasses, subclass first
      */
+    private static final Map<Class<?>, List<Field>> FIELD_CACHE = new ConcurrentHashMap<>();
+
     public static List<Field> listFields(final Class<?> type) {
+        if (type == null) return new ArrayList<>();
+        return FIELD_CACHE.computeIfAbsent(type, Reflection::listFieldsUncached);
+    }
+
+    private static List<Field> listFieldsUncached(final Class<?> type) {
         return listFields(new ArrayList<>(), type);
     }
     /**
