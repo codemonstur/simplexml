@@ -10,3 +10,18 @@ Bug fixes:
 - Iterator gets a one-item pending buffer (hasNext idempotent, next() standalone) and skips comments/PIs/declarations between elements; finishTag/hasOpenSubset read past comments, DOCTYPE internal subsets and PIs with > in their data (stream reader, iterator and compressor share the logic); empty attribute into char → zero value, not StringIndexOutOfBoundsException
 - Compression escapes " when requoting single-quoted values; duplicate attribute names → InvalidXml
 - Locale.ROOT lowercasing; toNumber rejects 5f/0x10/123L; numeric references validated digit-by-digit (&#+65;) and rejected when they name a character XML forbids (&#0;); unescapeXml keeps the & of unknown references (matching unescapeHtml); newStreamReader(String, Charset) is a real StringReader — parsing signatures widened InputStreamReader→Reader (source-compatible, nothing uses getEncoding)
+Changes since simplexml-3.6.0:
+- Add CDATA serialization support
+- Added mutation testing, build fixes
+- Cache reflection metadata and enum values
+- Add performance optimization plan
+- Build fixes
+- Build fixes, Converted tests to Junit 6
+- Create the release notes directory before writing the release notes
+- chore: commit pending local changes
+- chore: update dependencies to fix vulnerability scan findings
+- chore: commit pending local changes
+- Add make coverage target and compose the JaCoCo agent into surefire's argLine
+- Removed the LICENSE copyright year, harmonized the build files
+- Build fixes
+- Fix for javadoc error
