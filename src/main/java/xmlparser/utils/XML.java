@@ -1,6 +1,7 @@
 package xmlparser.utils;
 
 import xmlparser.annotations.XmlDefaultValue;
+import xmlparser.error.InvalidCData;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -244,6 +245,19 @@ public enum XML {;
      */
     public static void writeSelfClosingTag(final Writer writer, final String name, final String attributes) throws IOException {
         writer.append(LESS_THAN).append(name).append(attributes).append(SPACE).append(FORWARD_SLASH).append(GREATER_THAN);
+    }
+
+    /**
+     * Checks that the text of a CDATA section does not contain the illegal terminator {@code ]]>}.
+     *
+     * @param content the text to check
+     * @param name the tag name, used in the error message
+     * @return the content unchanged when it is valid
+     * @throws InvalidCData when the content contains {@code ]]>
+     */
+    public static String requireValidCdata(final String content, final String name) {
+        if (content.contains("]]>")) throw new InvalidCData("text node of tag " + name + " contains illegal sequence ]]>");
+        return content;
     }
 
 }

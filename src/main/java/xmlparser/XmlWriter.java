@@ -191,18 +191,30 @@ public interface XmlWriter extends AccessSerializers {
         writeNewLine(writer);
     }
 
-    private void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
+    private void writeSimple(final Writer writer, final String name, final String text, final String indent) throws IOException {
         writeIndent(writer, indent);
-        writeTag(writer, name, escape(getSerializer(value.getClass()).convert(value)));
+        writeTag(writer, name, text);
         writeNewLine(writer);
     }
 
     private void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
-            , final Object text, final String indent) throws IOException, IllegalAccessException {
+            , final String text, final String indent) throws IOException, IllegalAccessException {
         writeIndent(writer, indent);
-        writeTag(writer, name, attributesToXml(attributes, value, this::escape, this::render),
-                escape(getSerializer(text.getClass()).convert(text)));
+        writeTag(writer, name, attributesToXml(attributes, value, this::escape, this::render), text);
         writeNewLine(writer);
+    }
+
+    /**
+     * Turns a value into the text it is written as, either as a CDATA section or as escaped text.
+     *
+     * @param isCdata whether to wrap the value in a CDATA section
+     * @param tagName the tag name, used in the error message for an invalid CDATA section
+     * @param value the value to render, which is not null
+     * @return the text the value is written as
+     */
+    private String toTextContent(final boolean isCdata, final String tagName, final Object value) {
+        final String content = render(value);
+        return isCdata ? "<![CDATA[" + requireValidCdata(content, tagName) + "]]>" : escape(content);
     }
 
     private void writeList(final Writer writer, final Field field, final String name, final Object o, final String indent)
@@ -372,8 +384,10 @@ public interface XmlWriter extends AccessSerializers {
                 writeSelfClosingTag(writer, name, attributesToXml(attributes, o, this::escape, this::render));
                 writeNewLine(writer);
             }
-            else
-                writeSimple(writer, name, o, attributes, toValue(textNode, o), indent);
+            else {
+                final boolean isCdata = isCdataTextNode(textNode);
+                writeSimple(writer, name, o, attributes, toTextContent(isCdata, name, toValue(textNode, o)), indent);
+            }
             return;
         }
 
@@ -403,7 +417,8 @@ public interface XmlWriter extends AccessSerializers {
         }
         if (textNode != null) {
             writeIndent(writer, indent);
-            writer.append(escape(render(toValue(textNode, o))));
+            final boolean isCdata = isCdataTextNode(textNode);
+            writer.append(toTextContent(isCdata, name, toValue(textNode, o)));
             writeNewLine(writer);
         }
         writeIndent(writer, indent);
@@ -421,7 +436,7 @@ public interface XmlWriter extends AccessSerializers {
             return;
         }
         switch (toClassType(c, this)) {
-            case SIMPLE -> writeSimple(writer, name, value, indent);
+            case SIMPLE -> writeSimple(writer, name, toTextContent(isCdataTextNode(field), name, value), indent);
             case ARRAY -> writeArray(writer, field, name, value, indent);
             case LIST -> writeList(writer, field, name, value, indent);
             case SET -> writeSet(writer, field, name, value, indent);

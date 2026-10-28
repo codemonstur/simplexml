@@ -15,4 +15,11 @@ public @interface XmlTextNode {
      * @return the pattern, or the empty string for none; text that does not match is an InvalidXml
      */
     String pattern() default "";
+
+    /**
+     * Whether the text node is written as a CDATA section.
+     *
+     * @return true to wrap the text in {@code <![CDATA[...]]>}, false to escape it normally
+     */
+    boolean cdata() default false;
 }

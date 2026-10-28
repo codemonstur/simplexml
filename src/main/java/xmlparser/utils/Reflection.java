@@ -557,6 +557,17 @@ public enum Reflection {;
     }
 
     /**
+     * Whether the given field is a text node that is written as a CDATA section.
+     *
+     * @param field the field to check
+     * @return true when the field carries {@link xmlparser.annotations.XmlTextNode} with cdata enabled
+     */
+    public static boolean isCdataTextNode(final Field field) {
+        return field != null && field.isAnnotationPresent(XmlTextNode.class)
+                && field.getAnnotation(XmlTextNode.class).cdata();
+    }
+
+    /**
      * Reads a field by handing the element to the function named in its @XmlFieldDeserializer
      * annotation, which leaves the shape of the value to user code. The function is static and
      * takes the element as its only argument.
