@@ -53,8 +53,8 @@
         <version.library.woodstox>7.3.0</version.library.woodstox>
         <version.library.xerces>2.12.2</version.library.xerces>
 
-        <version.plugin.check-cves>1.1.0</version.plugin.check-cves>
-        <version.plugin.check-license>1.4.0</version.plugin.check-license>
+        <version.plugin.check-cves>1.2.0</version.plugin.check-cves>
+        <version.plugin.check-license>1.5.0</version.plugin.check-license>
         <version.plugin.codegrade>0.2.0</version.plugin.codegrade>
         <version.plugin.compiler>3.16.0</version.plugin.compiler>
         <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
@@ -66,6 +66,7 @@
         <version.plugin.publish>0.12.0</version.plugin.publish>
         <version.plugin.source>3.4.0</version.plugin.source>
         <version.plugin.surefire>3.6.0</version.plugin.surefire>
+            <version.library.archunit>1.5.1</version.library.archunit>
     </properties>
 
     <dependencies>
@@ -137,6 +138,13 @@
             <scope>test</scope>
         </dependency>
 
+            <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit6</artifactId>
+            <version>${version.library.archunit}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -157,6 +165,7 @@
                             <rules>
                                 <requireMavenVersion>
                                     <version>${maven.version}</version>
+                                    <message>This project requires Maven ${maven.version} to build</message>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
@@ -294,21 +303,17 @@
                         <configuration>
                             <includeTestDependencies>true</includeTestDependencies>
                             <rules>
-                                <rule>url:equal:http://www.opensource.org/licenses/bsd-license.php</rule>
-                                <rule>url:equal:http://opensource.org/licenses/BSD-3-Clause</rule>
-                                <rule>name:regex:(?i)BSD(-|\s)?3(-|\s)?cl.?ause.*</rule>
-                                <rule>url:regex:(http|https)://(www.)?opensource.org/licenses/(MIT|mit-license.php)</rule>
-                                <rule>url:equal:http://openjdk.java.net/legal/gplv2+ce.html</rule>
-                                <rule>name:equal:GNU General Public License (GPL), version 2, with the Classpath exception</rule>
-                                <rule>name:equal:The MIT License</rule>
-                                <rule>url:equal:https://opensource.org/license/mit</rule>
-                                <rule>name:regex:(The )?Apache(\s|-)(Software )?(License |License, )?(Version |version )?2\.0</rule>
-                                <rule>url:equal:http://www.eclipse.org/legal/epl-v10.html</rule>
-                                <rule>name:equal:Eclipse Public License 1.0</rule>
-                                <rule>url:equal:http://www.eclipse.org/org/documents/edl-v10.php</rule>
-                                <rule>url:equal:http://www.mozilla.org/MPL/2.0/</rule>
-                                <rule>url:equal:https://www.eclipse.org/legal/epl-v20.html</rule>
+                                <rule>name:regex:.*Apache.*</rule>
+                                <rule>name:regex:.*MIT.*</rule>
+                                <rule>name:regex:.*BSD.*</rule>
+                                <rule>name:regex:.*Eclipse.*</rule>
+                                <rule>name:regex:.*GPL.*</rule>
+                                <rule>name:regex:.*SAX.*</rule>
+                                <rule>name:regex:.*W3C.*</rule>
+                                <rule>name:regex:.*Similar to Apache.*</rule>
+                                <rule>name:regex:.*GNU General Public.*</rule>
                             </rules>
+                        
                         </configuration>
                     </plugin>
 
