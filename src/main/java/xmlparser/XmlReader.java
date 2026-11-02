@@ -34,6 +34,13 @@ import static xmlparser.xpath.XPathExpression.newXPath;
 public interface XmlReader extends AccessDeserializers {
 
     /**
+     * Whether classes without an {@link xmlparser.annotations.XmlConstructor}-annotated constructor
+     * should be instantiated through their no-arg constructor instead of the allocation that skips
+     * constructors. Defaults to {@code false}.
+     */
+    boolean isUseNoArgConstructor();
+
+    /**
      * Fills an object of the given type from a DOM element. A deserializer registered for the type
      * is used as it stands; otherwise a record is built through its canonical constructor and any
      * other class is allocated without running a constructor, and the validators the type declares
@@ -174,7 +181,18 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     private <T> T domToClass(final XmlElement node, final Class<T> clazz) {
-        final T o = newInstance(clazz);
+        T o;
+        if (isUseNoArgConstructor()) {
+            try {
+                final Constructor<?> c = clazz.getDeclaredConstructor();
+                c.setAccessible(true);
+                o = (T) c.newInstance();
+            } catch (final ReflectiveOperationException e) {
+                o = newInstance(clazz);
+            }
+        } else {
+            o = newInstance(clazz);
+        }
 
         XmlElement selectedNode;
         for (final Field f : listFields(clazz)) {

@@ -44,6 +44,7 @@ public final class XmlParser {
     private final XmlWriter writer;
     private final XmlIterator stream;
     private final boolean conserveWhitespace;
+    private final boolean useNoArgConstructor;
     private final Trim trimmer;
     private final UnEscape unescaper;
     private final Charset charset;
@@ -54,17 +55,18 @@ public final class XmlParser {
      * own idea of whitespace, and the serializers and deserializers the library ships with.
      */
     public XmlParser() {
-        this(false, true, false, true, UTF_8, LINE_FEED,
+        this(false, true, false, true, false, UTF_8, LINE_FEED,
             defaultSerializer(), new HashMap<>(), defaultDeserializers(), new NativeTrimmer(), Escaping::escapeXml,
             Escaping::unescapeXml);
     }
 
     private XmlParser(final boolean shouldEncodeUTF8, final boolean shouldPrettyPrint, final boolean conserveWhitespace,
-                      final boolean enableEnumCaching, final Charset charset, final String newLine,
+                      final boolean enableEnumCaching, final boolean useNoArgConstructor, final Charset charset, final String newLine,
                       final ObjectSerializer defaultSerializer, final Map<Class<?>, ObjectSerializer> serializers,
                       final Map<Class<?>, ObjectDeserializer> deserializers, final Trim trimmer, final Escape escaper,
                       final UnEscape unescaper) {
         this.charset = charset;
+        this.useNoArgConstructor = useNoArgConstructor;
         this.compress = new XmlCompress() {};
         final var enumCache = new HashMap<Class<Enum>, Map<String, Enum>>();
         final var enumDefaultCache = new HashMap<Class<Enum>, Enum>();
@@ -84,6 +86,9 @@ public final class XmlParser {
             }
             public ObjectDeserializer getDeserializer(final Class<?> type) {
                 return deserializers.get(type);
+            }
+            public boolean isUseNoArgConstructor() {
+                return useNoArgConstructor;
             }
         };
         this.writer = new XmlWriter() {
@@ -357,6 +362,7 @@ public final class XmlParser {
         private boolean shouldPrettyPrint = true;
         private boolean conserveWhitespace = false;
         private boolean enableEnumCaching = true;
+        private boolean useNoArgConstructor = false;
         private Charset charset = UTF_8;
         private String newLine = LINE_FEED;
         private Trim trimmer = new NativeTrimmer();
@@ -424,6 +430,17 @@ public final class XmlParser {
          */
         public Builder conserveWhitespace() {
             this.conserveWhitespace = true;
+            return this;
+        }
+        /**
+         * Makes the parser instantiate classes through their no-arg constructor instead of the
+         * allocation that skips constructors. Classes without a no-arg constructor still fall back
+         * to the allocation. Off by default.
+         *
+         * @return this, so the calls can be chained
+         */
+        public Builder useNoArgConstructor() {
+            this.useNoArgConstructor = true;
             return this;
         }
         /**
@@ -620,7 +637,7 @@ public final class XmlParser {
          */
         public XmlParser build() {
             return new XmlParser(shouldEncodeUTF8, shouldPrettyPrint, conserveWhitespace, enableEnumCaching,
-                    charset, newLine, defaultSerializer, serializers, deserializers, trimmer, escaper, unescaper);
+                    useNoArgConstructor, charset, newLine, defaultSerializer, serializers, deserializers, trimmer, escaper, unescaper);
         }
     }
 
