@@ -3,6 +3,7 @@ package xmlparser.utils;
 import xmlparser.annotations.*;
 import xmlparser.annotations.XmlAbstractClass.TypeMap;
 import xmlparser.error.AssignmentFailure;
+import xmlparser.error.ConstructionFailure;
 import xmlparser.error.InvalidAnnotation;
 import xmlparser.model.XmlElement;
 
@@ -18,6 +19,83 @@ import static xmlparser.utils.Reflection.ClassType.*;
  * A helper class that uses reflection to introspect and construct various objects and classes.
  */
 public enum Reflection {;
+
+    /**
+     * Fields can be declared as an interface (List, Set, Map) or as a concrete implementation
+     * (ArrayList, TreeSet, ...). When they are declared as a concrete implementation we have to
+     * build that exact type, otherwise the assignment into the field would fail.
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Object> newList(final Class<?> declaredType) {
+        return isConcrete(declaredType) ? (List<Object>) newInstanceOf(declaredType) : new LinkedList<>();
+    }
+    @SuppressWarnings("unchecked")
+    public static Set<Object> newSet(final Class<?> declaredType) {
+        return isConcrete(declaredType) ? (Set<Object>) newInstanceOf(declaredType) : new HashSet<>();
+    }
+    @SuppressWarnings("unchecked")
+    public static Map<Object, Object> newMap(final Class<?> declaredType) {
+        return isConcrete(declaredType) ? (Map<Object, Object>) newInstanceOf(declaredType) : new HashMap<>();
+    }
+    private static boolean isConcrete(final Class<?> type) {
+        return !type.isInterface() && !Modifier.isAbstract(type.getModifiers());
+    }
+
+    /**
+     * Builds an object of the given class without running any of its constructors, which is what
+     * lets a class be deserialized whether or not it holds a no-arg constructor. The allocation is
+     * inherited from Object, so every field comes back at its default and a constructor body, if
+     * there is one at all, never runs. The fields are filled in afterwards.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(final Class<T> clazz, final boolean alwaysUseConstructor) {
+        if (alwaysUseConstructor) {
+            try {
+                final Constructor<?> c = clazz.getDeclaredConstructor();
+                c.setAccessible(true);
+                return (T) c.newInstance();
+            } catch (final ReflectiveOperationException e) {
+                throw new ConstructionFailure(clazz, e);
+            }
+        }
+
+        for (final Constructor<?> c : clazz.getDeclaredConstructors()) {
+            if (c.isAnnotationPresent(XmlConstructor.class)) {
+                try {
+                    c.setAccessible(true);
+                    return (T) c.newInstance();
+                } catch (final ReflectiveOperationException e) {
+                    throw new InvalidAnnotation("Class " + clazz.getName() + " could not be instantiated", e);
+                }
+            }
+        }
+        return newInstanceWithoutConstructor(clazz);
+    }
+
+    private static <T> T newInstanceWithoutConstructor(final Class<T> clazz) {
+        try {
+            final Class<?> factoryClass = Class.forName("sun.reflect.ReflectionFactory");
+            final Object factory = factoryClass.getMethod("getReflectionFactory").invoke(null);
+            final Constructor<?> allocation = (Constructor<?>) factoryClass
+                    .getMethod("newConstructorForSerialization", Class.class, Constructor.class)
+                    .invoke(factory, clazz, Object.class.getDeclaredConstructor());
+            allocation.setAccessible(true);
+            return (T) allocation.newInstance();
+        } catch (final ReflectiveOperationException e) {
+            throw new InvalidAnnotation("Class " + clazz.getName() + " could not be instantiated", e);
+        }
+    }
+
+    // Collections are expected to be in a valid state, so unlike the classes above they are built
+    // through their constructor instead of being handed out empty
+    private static Object newInstanceOf(final Class<?> type) {
+        try {
+            return type.getDeclaredConstructor().newInstance();
+        } catch (final ReflectiveOperationException e) {
+            throw new InvalidAnnotation("Collection type " + type.getName() + " must have a no-arg constructor", e);
+        }
+    }
+
 
     // I would like to define T as 'T extends Record', haven't figured out how to get the generics to
     // understand what type I have. The XmlReader calls this using a Class<?> that has been checked with

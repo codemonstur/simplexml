@@ -1,10 +1,7 @@
 package xmlparser;
 
 import xmlparser.annotations.*;
-import xmlparser.error.InvalidAnnotation;
-import xmlparser.error.InvalidObject;
-import xmlparser.error.InvalidXPath;
-import xmlparser.error.InvalidXml;
+import xmlparser.error.*;
 import xmlparser.model.XmlElement;
 import xmlparser.parsing.DomBuilder;
 import xmlparser.parsing.ObjectDeserializer;
@@ -100,11 +97,11 @@ public interface XmlReader extends AccessDeserializers {
      * collected once so that an overriding method is not counted twice.
      */
     private void runValidators(final Object object, final Class<?> clazz) {
-        final Map<String, Method> validators = new LinkedHashMap<>();
-        for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass())
+        final var validators = new LinkedHashMap<String, Method>();
+        for (var c = clazz; c != null && c != Object.class; c = c.getSuperclass())
             collectValidators(c, validators);
 
-        for (final Method method : validators.values()) {
+        for (final var method : validators.values()) {
             try {
                 method.setAccessible(true);
                 method.invoke(object);
@@ -115,7 +112,7 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     private void collectValidators(final Class<?> type, final Map<String, Method> validators) {
-        for (final Method method : type.getDeclaredMethods())
+        for (final var method : type.getDeclaredMethods())
             if (method.isAnnotationPresent(XmlObjectValidator.class))
                 validators.putIfAbsent(method.getName() + Arrays.toString(method.getParameterTypes()), method);
         for (final Class<?> iface : type.getInterfaces()) collectValidators(iface, validators);
@@ -124,8 +121,8 @@ public interface XmlReader extends AccessDeserializers {
     private <T> T domToRecord(final XmlElement node, final Class<T> clazz) {
         XmlElement selectedNode;
 
-        final RecordComponent[] fields = clazz.getRecordComponents();
-        final Object[] fieldValues = new Object[fields.length];
+        final var fields = clazz.getRecordComponents();
+        final var fieldValues = new Object[fields.length];
         for (int i = 0; i < fields.length; i++) {
             final RecordComponent f = fields[i];
             if (f.isAnnotationPresent(XmlNoImport.class)) continue;
@@ -181,18 +178,7 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     private <T> T domToClass(final XmlElement node, final Class<T> clazz) {
-        T o;
-        if (isUseNoArgConstructor()) {
-            try {
-                final Constructor<?> c = clazz.getDeclaredConstructor();
-                c.setAccessible(true);
-                o = (T) c.newInstance();
-            } catch (final ReflectiveOperationException e) {
-                o = newInstance(clazz);
-            }
-        } else {
-            o = newInstance(clazz);
-        }
+        final T o = newInstance(clazz, isUseNoArgConstructor());
 
         XmlElement selectedNode;
         for (final Field f : listFields(clazz)) {
@@ -658,71 +644,6 @@ public interface XmlReader extends AccessDeserializers {
             map.put(mapKey, mapValue);
         }
         return map;
-    }
-
-    /**
-     * Fields can be declared as an interface (List, Set, Map) or as a concrete implementation
-     * (ArrayList, TreeSet, ...). When they are declared as a concrete implementation we have to
-     * build that exact type, otherwise the assignment into the field would fail.
-     */
-    @SuppressWarnings("unchecked")
-    private List<Object> newList(final Class<?> declaredType) {
-        return isConcrete(declaredType) ? (List<Object>) newInstanceOf(declaredType) : new LinkedList<>();
-    }
-    @SuppressWarnings("unchecked")
-    private Set<Object> newSet(final Class<?> declaredType) {
-        return isConcrete(declaredType) ? (Set<Object>) newInstanceOf(declaredType) : new HashSet<>();
-    }
-    @SuppressWarnings("unchecked")
-    private Map<Object, Object> newMap(final Class<?> declaredType) {
-        return isConcrete(declaredType) ? (Map<Object, Object>) newInstanceOf(declaredType) : new HashMap<>();
-    }
-    private static boolean isConcrete(final Class<?> type) {
-        return !type.isInterface() && !Modifier.isAbstract(type.getModifiers());
-    }
-
-    /**
-     * Builds an object of the given class without running any of its constructors, which is what
-     * lets a class be deserialized whether or not it holds a no-arg constructor. The allocation is
-     * inherited from Object, so every field comes back at its default and a constructor body, if
-     * there is one at all, never runs. The fields are filled in afterwards.
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> T newInstance(final Class<T> clazz) {
-        for (final Constructor<?> c : clazz.getDeclaredConstructors()) {
-            if (c.isAnnotationPresent(XmlConstructor.class)) {
-                try {
-                    c.setAccessible(true);
-                    return (T) c.newInstance();
-                } catch (final ReflectiveOperationException e) {
-                    throw new InvalidAnnotation("Class " + clazz.getName() + " could not be instantiated", e);
-                }
-            }
-        }
-        return newInstanceWithoutConstructor(clazz);
-    }
-
-    private static <T> T newInstanceWithoutConstructor(final Class<T> clazz) {
-        try {
-            final Class<?> factoryClass = Class.forName("sun.reflect.ReflectionFactory");
-            final Object factory = factoryClass.getMethod("getReflectionFactory").invoke(null);
-            final Constructor<?> allocation = (Constructor<?>) factoryClass
-                    .getMethod("newConstructorForSerialization", Class.class, Constructor.class)
-                    .invoke(factory, clazz, Object.class.getDeclaredConstructor());
-            allocation.setAccessible(true);
-            return (T) allocation.newInstance();
-        } catch (final ReflectiveOperationException e) {
-            throw new InvalidAnnotation("Class " + clazz.getName() + " could not be instantiated", e);
-        }
-    }
-    // Collections are expected to be in a valid state, so unlike the classes above they are built
-    // through their constructor instead of being handed out empty
-    private static Object newInstanceOf(final Class<?> type) {
-        try {
-            return type.getDeclaredConstructor().newInstance();
-        } catch (final ReflectiveOperationException e) {
-            throw new InvalidAnnotation("Collection type " + type.getName() + " must have a no-arg constructor", e);
-        }
     }
 
     /**
