@@ -18,7 +18,6 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import sun.reflect.ReflectionFactory;
 
 import static xmlparser.model.XmlElement.findChildForName;
 import static xmlparser.utils.Functions.isNullOrEmpty;
@@ -673,8 +672,11 @@ public interface XmlReader extends AccessDeserializers {
     @SuppressWarnings("unchecked")
     private static <T> T newInstanceWithoutConstructor(final Class<T> clazz) {
         try {
-            final Constructor<?> allocation = ReflectionFactory.getReflectionFactory()
-                    .newConstructorForSerialization(clazz, Object.class.getDeclaredConstructor());
+            final Class<?> factoryClass = Class.forName("sun.reflect.ReflectionFactory");
+            final Object factory = factoryClass.getMethod("getReflectionFactory").invoke(null);
+            final Constructor<?> allocation = (Constructor<?>) factoryClass
+                    .getMethod("newConstructorForSerialization", Class.class, Constructor.class)
+                    .invoke(factory, clazz, Object.class.getDeclaredConstructor());
             allocation.setAccessible(true);
             return (T) allocation.newInstance();
         } catch (final ReflectiveOperationException e) {
