@@ -18,7 +18,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import org.objenesis.ObjenesisStd;
+import sun.reflect.ReflectionFactory;
 
 import static xmlparser.model.XmlElement.findChildForName;
 import static xmlparser.utils.Functions.isNullOrEmpty;
@@ -670,10 +670,14 @@ public interface XmlReader extends AccessDeserializers {
      * inherited from Object, so every field comes back at its default and a constructor body, if
      * there is one at all, never runs. The fields are filled in afterwards.
      */
+    @SuppressWarnings("unchecked")
     private static <T> T newInstanceWithoutConstructor(final Class<T> clazz) {
         try {
-            return new ObjenesisStd().newInstance(clazz);
-        } catch (final RuntimeException e) {
+            final Constructor<?> allocation = ReflectionFactory.getReflectionFactory()
+                    .newConstructorForSerialization(clazz, Object.class.getDeclaredConstructor());
+            allocation.setAccessible(true);
+            return (T) allocation.newInstance();
+        } catch (final ReflectiveOperationException e) {
             throw new InvalidAnnotation("Class " + clazz.getName() + " could not be instantiated", e);
         }
     }
