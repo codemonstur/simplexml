@@ -174,7 +174,7 @@ public interface XmlReader extends AccessDeserializers {
     }
 
     private <T> T domToClass(final XmlElement node, final Class<T> clazz) {
-        final T o = newInstanceWithoutConstructor(clazz);
+        final T o = newInstance(clazz);
 
         XmlElement selectedNode;
         for (final Field f : listFields(clazz)) {
@@ -670,6 +670,20 @@ public interface XmlReader extends AccessDeserializers {
      * there is one at all, never runs. The fields are filled in afterwards.
      */
     @SuppressWarnings("unchecked")
+    private static <T> T newInstance(final Class<T> clazz) {
+        for (final Constructor<?> c : clazz.getDeclaredConstructors()) {
+            if (c.isAnnotationPresent(XmlConstructor.class)) {
+                try {
+                    c.setAccessible(true);
+                    return (T) c.newInstance();
+                } catch (final ReflectiveOperationException e) {
+                    throw new InvalidAnnotation("Class " + clazz.getName() + " could not be instantiated", e);
+                }
+            }
+        }
+        return newInstanceWithoutConstructor(clazz);
+    }
+
     private static <T> T newInstanceWithoutConstructor(final Class<T> clazz) {
         try {
             final Class<?> factoryClass = Class.forName("sun.reflect.ReflectionFactory");
