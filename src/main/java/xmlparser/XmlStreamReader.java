@@ -167,6 +167,9 @@ public interface XmlStreamReader {
             if (equals == -1) throw new InvalidXml("Invalid formatted attribute list: '" + input + "'");
 
             final String name = trimmer.trim(input.substring(startName, equals));
+            // an attribute name is written back verbatim when the document is serialized, so a
+            // name that is not an XML name would corrupt the output it is written into
+            if (!isValidTagName(name)) throw new InvalidXml("Found attribute name with invalid characters: " + name);
             input = input.substring(equals+1);
 
             int startValue = indexOfNonWhitespaceChar(input, 0, trimmer);
