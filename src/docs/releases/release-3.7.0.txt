@@ -1,0 +1,9 @@
+3.7.0
+
+Validate attribute names when parsing an opening tag
+Add useNoArgConstructor builder option
+Add @XmlConstructor annotation for selecting a no-arg constructor
+
+WARNING: Due to changes in parsing some input may now generate an InvalidXml
+ exception instead of just writing invalid XML. If you were using simplexml
+ to write invalid XML you may no longer be able to do this.
