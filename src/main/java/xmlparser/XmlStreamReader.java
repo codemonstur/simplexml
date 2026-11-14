@@ -155,7 +155,7 @@ public interface XmlStreamReader {
      * @param trimmer the opinion of whitespace to trim names and values with
      * @param escaper the unescape the values go through
      * @return the attributes, an empty map when the tag has none
-     * @throws InvalidXml if a name is not followed by an '=', or a name is used twice
+     * @throws InvalidXml if a name is not a valid XML name, is not followed by an '=', or is used twice
      */
     static HashMap<String, String> xmlToAttributes(String input, final Trim trimmer, final UnEscape escaper) {
         final HashMap<String, String> attributes = new HashMap<>();

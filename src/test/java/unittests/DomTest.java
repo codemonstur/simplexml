@@ -2,6 +2,7 @@ package unittests;
 
 import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
+import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement.XmlTextElement;
 
 import java.io.IOException;
@@ -213,6 +214,34 @@ public class DomTest {
         final var root = newElement("r").child(new XmlTextElement(null, "t")).build();
 
         assertEquals("<r>t</r>\n", parser.toXml(root), "A text child was not written into its element");
+    }
+
+    @Test
+    public void anInvalidAttributeNameIsNotWritten() {
+        final var element = newElement("pojo").attribute("a\"b", "v").build();
+
+        final var e = assertThrows(InvalidXml.class, () -> parser.toXml(element),
+                "An attribute name that is not an XML name was written");
+
+        assertEquals("Attribute name 'a\"b' is not a valid XML name",
+                e.getMessage(), "Invalid error message");
+    }
+
+    @Test
+    public void anInvalidElementNameIsNotWritten() {
+        final var element = newElement("a b").build();
+
+        final var e = assertThrows(InvalidXml.class, () -> parser.toXml(element),
+                "An element name that is not an XML name was written");
+
+        assertEquals("Tag name 'a b' is not a valid XML name",
+                e.getMessage(), "Invalid error message");
+    }
+
+    @Test
+    public void aValidElementNameIsStillWritten() {
+        assertEquals("<ns:é />\n", parser.toXml(newElement("ns:é").build()),
+                "A valid element name was rejected");
     }
 
 }

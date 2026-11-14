@@ -2,6 +2,7 @@ package xmlparser.utils;
 
 import xmlparser.annotations.XmlDefaultValue;
 import xmlparser.error.InvalidCData;
+import xmlparser.error.InvalidXml;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -30,6 +31,7 @@ public enum XML {;
      * @return the attributes as text, ready to sit just inside a tag
      * @throws IllegalArgumentException if the field is not declared by the object's class
      * @throws IllegalAccessException if a field cannot be read
+     * @throws InvalidXml if an attribute name is not a valid XML name
      */
     public static String attributesToXml(final List<Field> fields, final Object o
             , final Function<String, String> escaper) throws IllegalArgumentException, IllegalAccessException {
@@ -48,6 +50,7 @@ public enum XML {;
      * @return the attributes as text, ready to sit just inside a tag
      * @throws IllegalArgumentException if the field is not declared by the object's class
      * @throws IllegalAccessException if a field cannot be read
+     * @throws InvalidXml if an attribute name is not a valid XML name
      */
     public static String attributesToXml(final List<Field> fields, final Object o
             , final Function<String, String> escaper, final Function<Object, String> renderer)
@@ -65,6 +68,7 @@ public enum XML {;
      * @param map the attributes to render, or null for none
      * @param escaper applied to each value before it is written
      * @return the attributes as text, ready to sit just inside a tag
+     * @throws InvalidXml if an attribute name is not a valid XML name
      */
     public static String attributesToXml(final Map<String, String> map, final Function<String, String> escaper) {
         if (map == null || map.isEmpty()) return EMPTY;
@@ -77,23 +81,28 @@ public enum XML {;
     }
     /**
      * Appends one name="value" pair to a builder, the value written between double quotes. A null
-     * value is written as an empty one, and the name is written exactly as given.
+     * value is written as an empty one, and the name is written as given once it is known to be a
+     * valid XML name.
      * @param builder the builder to append to
      * @param name the name of the attribute
      * @param value the value of the attribute, or null for an empty one
+     * @throws InvalidXml if the name is not a valid XML name, which can not be escaped into one
      */
     public static void addAttribute(final StringBuilder builder, final String name, final String value) {
+        // a name is written as it is, so a string that is not an XML name would corrupt the
+        // document rather than turn up as an attribute of it
+        if (!isValidTagName(name)) throw new InvalidXml("Attribute name '" + name + "' is not a valid XML name");
         builder.append(SPACE).append(name).append(EQUALS).append(DOUBLE_QUOTE)
                 .append(value == null ? EMPTY : value).append(DOUBLE_QUOTE);
     }
     /**
-     * Tells whether a string is usable as an XML name, which is what a map key has to be when it
-     * is written as a tag. A name starts with a letter, '_' or ':' and carries on with those plus
-     * '-', '.', digits and a few combining marks. A key holding a '&lt;' or an '&amp;' is not a
-     * name at all, and there is no way to escape it into one, so it is rejected instead of being
-     * written.
+     * Tells whether a string is usable as an XML name, which is what a tag name and an attribute
+     * name have to be. A name starts with a letter, '_' or ':' and carries on with those plus
+     * '-', '.', digits and a few combining marks. A string holding a '&lt;' or an '&amp;' is not
+     * a name at all, and there is no way to escape it into one, so it is rejected instead of
+     * being written.
      * @param name the string to check
-     * @return true if the string can stand as a tag name
+     * @return true if the string can stand as an XML name
      */
     public static boolean isValidTagName(final String name) {
         if (isNullOrEmpty(name)) return false;
@@ -152,12 +161,19 @@ public enum XML {;
         return f.getAnnotation(XmlDefaultValue.class).value();
     }
 
+    // a tag name is written as it is, so a string that is not an XML name would corrupt the
+    // document rather than turn up as an element of it
+    private static void requireValidTagName(final String name) {
+        if (!isValidTagName(name)) throw new InvalidXml("Tag name '" + name + "' is not a valid XML name");
+    }
+
     /**
      * Writes an element with its text inside it, or a self-closing tag when there is no text.
      * @param writer the writer to write to
      * @param name the name of the tag
      * @param text the text of the element, or null or empty for a self-closing tag
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeTag(final Writer writer, final String name, final String text) throws IOException {
         if (isNullOrEmpty(text)) {
@@ -174,6 +190,7 @@ public enum XML {;
      * @param attributes the rendered attributes, written as they stand
      * @param text the text of the element, or null or empty for a self-closing tag
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeTag(final Writer writer, final String name, final String attributes, final String text) throws IOException {
         if (isNullOrEmpty(text)) {
@@ -191,6 +208,7 @@ public enum XML {;
      * @param name the name of the tag
      * @param text the text to put between the tags
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeOpeningAndClosingTag(final Writer writer, final String name, final String text) throws IOException {
         writeOpeningTag(writer, name);
@@ -203,8 +221,10 @@ public enum XML {;
      * @param writer the writer to write to
      * @param name the name of the tag
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeOpeningTag(final Writer writer, final String name) throws IOException {
+        requireValidTagName(name);
         writer.append(LESS_THAN).append(name).append(GREATER_THAN);
     }
     /**
@@ -214,8 +234,10 @@ public enum XML {;
      * @param name the name of the tag
      * @param attributes the rendered attributes, written as they stand
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeOpeningTag(final Writer writer, final String name, final String attributes) throws IOException {
+        requireValidTagName(name);
         writer.append(LESS_THAN).append(name).append(attributes).append(GREATER_THAN);
     }
     /**
@@ -223,8 +245,10 @@ public enum XML {;
      * @param writer the writer to write to
      * @param name the name of the tag
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeClosingTag(final Writer writer, final String name) throws IOException {
+        requireValidTagName(name);
         writer.append(LESS_THAN).append(FORWARD_SLASH).append(name).append(GREATER_THAN);
     }
     /**
@@ -232,8 +256,10 @@ public enum XML {;
      * @param writer the writer to write to
      * @param name the name of the tag
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeSelfClosingTag(final Writer writer, final String name) throws IOException {
+        requireValidTagName(name);
         writer.append(LESS_THAN).append(name).append(FORWARD_SLASH).append(GREATER_THAN);
     }
     /**
@@ -242,8 +268,10 @@ public enum XML {;
      * @param name the name of the tag
      * @param attributes the rendered attributes, written as they stand
      * @throws IOException if the writer fails
+     * @throws InvalidXml if the name is not a valid XML name
      */
     public static void writeSelfClosingTag(final Writer writer, final String name, final String attributes) throws IOException {
+        requireValidTagName(name);
         writer.append(LESS_THAN).append(name).append(attributes).append(SPACE).append(FORWARD_SLASH).append(GREATER_THAN);
     }
 

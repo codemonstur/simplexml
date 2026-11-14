@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 import xmlparser.XmlParser;
 import xmlparser.annotations.XmlName;
 import xmlparser.annotations.XmlNameFromClass;
+import xmlparser.error.InvalidXml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TagNameFromClassTest {
 
@@ -32,6 +34,14 @@ public class TagNameFromClassTest {
 
         private EmailAction(final String address) {
             this.address = address;
+        }
+    }
+    @XmlName("a b")
+    private static class InvalidNameAction {
+        public final String id;
+
+        private InvalidNameAction(final String id) {
+            this.id = id;
         }
     }
 
@@ -71,6 +81,15 @@ public class TagNameFromClassTest {
 
         assertNotNull(actual, "No serialization response");
         assertEquals(XML_EMAIL_ACTION, actual, "Invalid serialized output");
+    }
+
+    @Test
+    public void serializeClassWithAnInvalidNameThrows() {
+        final var e = assertThrows(InvalidXml.class, () -> parser.toXml(new InvalidNameAction("1")),
+                "A class name that is not an XML name was written");
+
+        assertEquals("Tag name 'a b' is not a valid XML name",
+                e.getMessage(), "Invalid error message");
     }
 
     private static final String XML_OBJECT_ACTION = """
