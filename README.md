@@ -12,7 +12,7 @@ thread-safe, user friendly API, secure.
 
 Version 3.x depends on Java 17. 
 Java 8 is no longer supported. 
-The last version compatible with Java 8 is in the 2.x major versions range.
+The last version compatible with Java 8 is 2.10.1, later versions are not.
 
 ## How to use
 

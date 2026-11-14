@@ -4,7 +4,7 @@ Ideas for making simplexml faster, based on the current implementation and bench
 
 ## Profiling first
 
-- Use the existing JMH benchmarks in `src/test/benchmarks/` (`XmlBenchmark`, `ObjectBenchmark`) to identify whether the bottleneck is parsing, reflection, escaping, allocation, or collection handling.
+- Use the existing JMH benchmarks in `../test/benchmarks` (`XmlBenchmark`, `ObjectBenchmark`) to identify whether the bottleneck is parsing, reflection, escaping, allocation, or collection handling.
 - Add micro-benchmarks for representative workloads: large documents, deeply nested objects, maps/lists, enums, and repeated serialize/deserialize of the same types.
 
 ## High-impact optimizations
