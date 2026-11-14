@@ -237,4 +237,32 @@ public class InvalidXmlTest {
         assertEquals("é", parser.fromXml("<é>x</é>").name, "A valid tag name was rejected");
     }
 
+    @Test
+    public void invalidCharacterInAttributeName() {
+        assertThrows(InvalidXml.class, () ->
+            parser.fromXml("<tag b\"><c\"=\"v\"></tag>"),
+            "An attribute name containing markup characters was not caught");
+    }
+
+    @Test
+    public void attributeNameReportsItsName() {
+        try {
+            parser.fromXml("<tag b\"><c\"=\"v\"></tag>");
+
+            fail("An attribute name containing markup characters was not caught");
+        } catch (final InvalidXml e) {
+            assertEquals("Found attribute name with invalid characters: b\"><c\"",
+                    e.getMessage(), "Invalid error message");
+        }
+    }
+
+    @Test
+    public void validAttributeNames() {
+        final var actual = parser.fromXml("<tag ns:name=\"1\" my-tag.b=\"2\" _x=\"3\">v</tag>");
+
+        assertEquals("1", actual.attributes.get("ns:name"), "A namespaced attribute name was rejected");
+        assertEquals("2", actual.attributes.get("my-tag.b"), "A dotted attribute name was rejected");
+        assertEquals("3", actual.attributes.get("_x"), "An underscored attribute name was rejected");
+    }
+
 }
