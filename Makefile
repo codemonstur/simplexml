@@ -63,7 +63,7 @@ deploy: ## Clean, build and deploy a version to Github and Maven Central
 	@$(INFO) "Uploading to maven central"
 	@mvn clean deploy
 	@$(INFO) "Creating github release"
-	@gh release create $(NAME)-$(VERSION) target/$(NAME)-$(VERSION).jar target/$(NAME)-$(VERSION)-javadoc.jar target/$(NAME)-$(VERSION)-sources.jar -F src/docs/releases/release-$(VERSION).txt
+	@gh release create $(NAME)-$(VERSION) target/$(NAME).jar target/$(NAME)-javadoc.jar target/$(NAME)-sources.jar -F src/docs/releases/release-$(VERSION).txt
 	@$(INFO) "Tagging and pushing to github"
 	@git tag $(NAME)-$(VERSION)
 	@git push && git push --tags
