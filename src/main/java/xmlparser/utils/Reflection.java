@@ -21,18 +21,33 @@ import static xmlparser.utils.Reflection.ClassType.*;
 public enum Reflection {;
 
     /**
+     * Creates a list for the declared field type, using the concrete type when the field names one.
      * Fields can be declared as an interface (List, Set, Map) or as a concrete implementation
-     * (ArrayList, TreeSet, ...). When they are declared as a concrete implementation we have to
-     * build that exact type, otherwise the assignment into the field would fail.
+     * (ArrayList, TreeSet, ...); the concrete type has to be built exactly, otherwise the
+     * assignment into the field would fail.
+     * @param declaredType the declared type of the field
+     * @return a new list of that type
      */
     @SuppressWarnings("unchecked")
     public static List<Object> newList(final Class<?> declaredType) {
         return isConcrete(declaredType) ? (List<Object>) newInstanceOf(declaredType) : new LinkedList<>();
     }
+
+    /**
+     * Creates a set for the declared field type, using the concrete type when the field names one.
+     * @param declaredType the declared type of the field
+     * @return a new set of that type
+     */
     @SuppressWarnings("unchecked")
     public static Set<Object> newSet(final Class<?> declaredType) {
         return isConcrete(declaredType) ? (Set<Object>) newInstanceOf(declaredType) : new HashSet<>();
     }
+
+    /**
+     * Creates a map for the declared field type, using the concrete type when the field names one.
+     * @param declaredType the declared type of the field
+     * @return a new map of that type
+     */
     @SuppressWarnings("unchecked")
     public static Map<Object, Object> newMap(final Class<?> declaredType) {
         return isConcrete(declaredType) ? (Map<Object, Object>) newInstanceOf(declaredType) : new HashMap<>();
@@ -42,10 +57,16 @@ public enum Reflection {;
     }
 
     /**
-     * Builds an object of the given class without running any of its constructors, which is what
-     * lets a class be deserialized whether or not it holds a no-arg constructor. The allocation is
-     * inherited from Object, so every field comes back at its default and a constructor body, if
-     * there is one at all, never runs. The fields are filled in afterwards.
+     * Builds an object of the given class. When {@code alwaysUseConstructor} is false, an
+     * {@link XmlConstructor}-annotated constructor is used when present, otherwise the object is
+     * allocated without running a constructor. When it is true, the no-arg constructor is used.
+     * The fields are filled in afterwards.
+     * @param <T> the type of object to build
+     * @param clazz the class to instantiate
+     * @param alwaysUseConstructor whether to use the no-arg constructor
+     * @return the new instance
+     * @throws ConstructionFailure if the no-arg constructor cannot be invoked
+     * @throws InvalidAnnotation if an annotated constructor or the allocation fails
      */
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(final Class<T> clazz, final boolean alwaysUseConstructor) {
@@ -145,14 +166,14 @@ public enum Reflection {;
         return textNode;
     }
 
+    private static final Map<Enum<?>, String> ENUM_VALUE_CACHE = new ConcurrentHashMap<>();
+
     /**
      * Looks up the value to put into XML for a given Enum instance. Usually just .name() but it
      * may also be mapped to something else using the @XmlEnumValue annotation.
      * @param o the enum instance to convert
      * @return the XML value
      */
-    private static final Map<Enum<?>, String> ENUM_VALUE_CACHE = new ConcurrentHashMap<>();
-
     public static String toEnumValue(final Enum o) {
         return ENUM_VALUE_CACHE.computeIfAbsent(o, Reflection::toEnumValueUncached);
     }
@@ -213,6 +234,8 @@ public enum Reflection {;
         /** A field declared as an enum. */
         ENUM
     }
+    private static final Map<Field, FieldType> FIELD_TYPE_CACHE = new ConcurrentHashMap<>();
+
     /**
      * Classifies a field by its annotations first and by its declared type after, so both halves
      * of the mapper switch on one answer. A Collection that is neither a List nor a Set counts as
@@ -220,8 +243,6 @@ public enum Reflection {;
      * @param f the field to classify
      * @return the field's kind
      */
-    private static final Map<Field, FieldType> FIELD_TYPE_CACHE = new ConcurrentHashMap<>();
-
     public static FieldType toFieldType(final Field f) {
         return FIELD_TYPE_CACHE.computeIfAbsent(f, Reflection::toFieldTypeUncached);
     }
@@ -240,6 +261,8 @@ public enum Reflection {;
         if (Map.class.isAssignableFrom(type)) return FieldType.MAP;
         return FieldType.OTHER;
     }
+    private static final Map<RecordComponent, FieldType> RECORD_TYPE_CACHE = new ConcurrentHashMap<>();
+
     /**
      * Classifies a record component by its annotations first and by its declared type after, so
      * both halves of the mapper switch on one answer. A Collection that is neither a List nor a
@@ -247,8 +270,6 @@ public enum Reflection {;
      * @param f the record component to classify
      * @return the component's kind
      */
-    private static final Map<RecordComponent, FieldType> RECORD_TYPE_CACHE = new ConcurrentHashMap<>();
-
     public static FieldType toFieldType(final RecordComponent f) {
         return RECORD_TYPE_CACHE.computeIfAbsent(f, Reflection::toFieldTypeRecordUncached);
     }
@@ -318,6 +339,8 @@ public enum Reflection {;
         return c.getSuperclass() != null && c.getSuperclass().isEnum();
     }
 
+    private static final Map<Class<?>, List<Field>> FIELD_CACHE = new ConcurrentHashMap<>();
+
     /**
      * Collects the declared fields of a class and of every class it extends, including the static
      * and transient ones that callers filter out later. Synthetic fields, which the compiler adds
@@ -327,8 +350,6 @@ public enum Reflection {;
      * @param type the class to take the fields of
      * @return the fields of the class and its superclasses, subclass first
      */
-    private static final Map<Class<?>, List<Field>> FIELD_CACHE = new ConcurrentHashMap<>();
-
     public static List<Field> listFields(final Class<?> type) {
         if (type == null) return new ArrayList<>();
         return FIELD_CACHE.computeIfAbsent(type, Reflection::listFieldsUncached);

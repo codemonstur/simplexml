@@ -281,7 +281,7 @@ public enum XML {;
      * @param content the text to check
      * @param name the tag name, used in the error message
      * @return the content unchanged when it is valid
-     * @throws InvalidCData when the content contains {@code ]]>
+     * @throws InvalidCData when the content contains {@code ]]>}
      */
     public static String requireValidCdata(final String content, final String name) {
         if (content.contains("]]>")) throw new InvalidCData("text node of tag " + name + " contains illegal sequence ]]>");

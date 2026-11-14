@@ -38,6 +38,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- default for @{argLine}; jacoco's prepare-agent appends the agent when it runs -->
         <argLine></argLine>
+        <!-- there is no fresh execution data to report on when the tests are skipped -->
+        <skipTests>false</skipTests>
 
         <maven.compiler.release>17</maven.compiler.release>
         <maven.version>[3.9.0,)</maven.version>
@@ -165,6 +167,9 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${version.plugin.jacoco}</version>
+                <configuration>
+                    <skip>${skipTests}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>pre-unit-test</id>

@@ -34,6 +34,7 @@ public interface XmlReader extends AccessDeserializers {
      * Whether classes without an {@link xmlparser.annotations.XmlConstructor}-annotated constructor
      * should be instantiated through their no-arg constructor instead of the allocation that skips
      * constructors. Defaults to {@code false}.
+     * @return true when the no-arg constructor should be used
      */
     boolean isUseNoArgConstructor();
 

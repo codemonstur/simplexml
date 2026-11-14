@@ -7,6 +7,7 @@ public final class ConstructionFailure extends RuntimeException {
 
     /**
      * Reports a class that could not be instantiated through its no-args constructor.
+     * @param clazz the class that could not be instantiated
      * @param cause the failure that stopped the construction
      */
     public ConstructionFailure(final Class<?> clazz, final Throwable cause) {
