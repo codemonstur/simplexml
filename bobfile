@@ -29,4 +29,4 @@ deploy-github
 -- Uploads binaries to MavenCentral
 deploy-maven
     info [${PROJECT_NAME}] Uploading to MavenCentral
-    mvn clean deploy
+    mvn clean deploy -P release
