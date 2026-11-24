@@ -1,0 +1,2910 @@
+{
+  "target": "/home/jurgen/projects/libraries/simplexml",
+  "files": 171,
+  "unixTimestamp": 1795551011,
+  "iso8601": "2026-11-24T20:10:11.500277954Z",
+  "generatedAt": "Tuesday, November 24, 2026 20:10:11 UTC",
+  "durationMillis": 1482,
+  "duration": "1.482 s",
+  "score": 94.4,
+  "checks": [
+    {
+      "id": "long-file",
+      "description": "Files should stay under 150 lines, counting Javadoc as one",
+      "filesChecked": 171,
+      "filesFailing": 28,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlCompress.java",
+          "line": 198
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": 315
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": 645
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": 686
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": 204
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": 457
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": 296
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Constants.java",
+          "line": 331
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": 336
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": 739
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": 202
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XML.java",
+          "line": 292
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": 262
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": 215
+        },
+        {
+          "path": "src/test/java/benchmarks/XmlBenchmark.java",
+          "line": 160
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": 186
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": 497
+        },
+        {
+          "path": "src/test/java/unittests/DefaultAnnotationTest.java",
+          "line": 164
+        },
+        {
+          "path": "src/test/java/unittests/DomTest.java",
+          "line": 248
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapTagIsKeyTest.java",
+          "line": 178
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapWithAttributesTest.java",
+          "line": 181
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapWithChildNodesTest.java",
+          "line": 211
+        },
+        {
+          "path": "src/test/java/unittests/EscapeNumericEntityTest.java",
+          "line": 152
+        },
+        {
+          "path": "src/test/java/unittests/InvalidXmlTest.java",
+          "line": 268
+        },
+        {
+          "path": "src/test/java/unittests/MapTest.java",
+          "line": 173
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": 267
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": 247
+        },
+        {
+          "path": "src/test/java/unittests/XPathTest.java",
+          "line": 556
+        }
+      ]
+    },
+    {
+      "id": "long-line",
+      "description": "Lines should stay under 120 characters",
+      "filesChecked": 171,
+      "filesFailing": 23,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": 64
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": 139
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": 118
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": 194
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": 103
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Constants.java",
+          "line": 208
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": 133
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XML.java",
+          "line": 195
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Predicate.java",
+          "line": 43
+        },
+        {
+          "path": "src/test/java/benchmarks/XmlBenchmark.java",
+          "line": 150
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": 26
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": 29
+        },
+        {
+          "path": "src/test/java/question/Question1.java",
+          "line": 9
+        },
+        {
+          "path": "src/test/java/question/Question3.java",
+          "line": 13
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": 146
+        },
+        {
+          "path": "src/test/java/unittests/CdataSerializationTest.java",
+          "line": 36
+        },
+        {
+          "path": "src/test/java/unittests/CompressTest.java",
+          "line": 20
+        },
+        {
+          "path": "src/test/java/unittests/DefaultAnnotationTest.java",
+          "line": 97
+        },
+        {
+          "path": "src/test/java/unittests/EscapeNumericEntityTest.java",
+          "line": 48
+        },
+        {
+          "path": "src/test/java/unittests/EscapingTest.java",
+          "line": 42
+        },
+        {
+          "path": "src/test/java/unittests/NullElementsTest.java",
+          "line": 104
+        },
+        {
+          "path": "src/test/java/unittests/NumberParsingTest.java",
+          "line": 17
+        },
+        {
+          "path": "src/test/java/unittests/PrimitiveArrayTest.java",
+          "line": 44
+        }
+      ]
+    },
+    {
+      "id": "blank-lines",
+      "description": "Avoid multiple consecutive blank lines",
+      "filesChecked": 171,
+      "filesFailing": 13,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": 17
+        },
+        {
+          "path": "src/main/java/xmlparser/annotations/XmlName.java",
+          "line": 20
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": 219
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/DomBuilder.java",
+          "line": 68
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/EventParser.java",
+          "line": 33
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/ObjectSerializer.java",
+          "line": 26
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": 119
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Segment.java",
+          "line": 42
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": 155
+        },
+        {
+          "path": "src/test/java/example/Compress.java",
+          "line": 16
+        },
+        {
+          "path": "src/test/java/model/Pojo.java",
+          "line": 14
+        },
+        {
+          "path": "src/test/java/unittests/CustomSerializersTest.java",
+          "line": 50
+        },
+        {
+          "path": "src/test/java/unittests/DefaultAnnotationTest.java",
+          "line": 63
+        }
+      ]
+    },
+    {
+      "id": "trailing-whitespace",
+      "description": "Lines should not have trailing whitespace",
+      "filesChecked": 171,
+      "filesFailing": 4,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": 180
+        },
+        {
+          "path": "src/test/java/example/RawStream.java",
+          "line": 11
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": 21
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "id": "tab-indent",
+      "description": "Indent with spaces, not tabs",
+      "filesChecked": 171,
+      "filesFailing": 6,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/xpath/Predicate.java",
+          "line": 16
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Segment.java",
+          "line": 17
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/TextSegment.java",
+          "line": 11
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": 21
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": 12
+        },
+        {
+          "path": "src/test/java/unittests/XPathTest.java",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "id": "newline-eof",
+      "description": "Files should end with a newline",
+      "filesChecked": 171,
+      "filesFailing": 4,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/annotations/XmlConstructor.java",
+          "line": 15
+        },
+        {
+          "path": "src/main/java/xmlparser/error/InvalidCData.java",
+          "line": 15
+        },
+        {
+          "path": "src/test/java/model/SimpleEnum.java",
+          "line": 9
+        },
+        {
+          "path": "src/test/java/unittests/CdataSerializationTest.java",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "id": "empty-file",
+      "description": "Files should not be empty",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "star-imports",
+      "description": "Avoid wildcard (star) imports",
+      "filesChecked": 171,
+      "filesFailing": 43,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlCompress.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XML.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Predicate.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Segment.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/architecture/TestArchitecture.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/ObjectBenchmark.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/XmlBenchmark.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ComplexPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AttributeTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataSerializationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ComplexTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DomTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EnumTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapTagIsKeyTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeNumericEntityTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/FieldDeserializerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/FunctionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/InvalidXmlTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MissingPathTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NullElementsTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NullTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ObjectMapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PatternTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PrimitiveArrayTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/RecordTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ValidatorTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WrappedTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WriterFailureTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "unused-imports",
+      "description": "Remove unused imports",
+      "filesChecked": 171,
+      "filesFailing": 7,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/CollectionTypePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ObjectMapPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/tools/NamedEntitiesWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TrimmingDirectTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "class-name-case",
+      "description": "Class names should be PascalCase",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "method-name-case",
+      "description": "Method/field names should be camelCase",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "exception-name",
+      "description": "Exceptions should not end in Exception",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "oop-name",
+      "description": "Avoid OOP-role suffixes in class names",
+      "filesChecked": 171,
+      "filesFailing": 2,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/DomBuilder.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "long-names",
+      "description": "Avoid overly long class/method names",
+      "filesChecked": 171,
+      "filesFailing": 20,
+      "violations": [
+        {
+          "path": "src/test/java/unittests/AttributeTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CompressTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DomTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeDomTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapTagIsKeyTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeNumericEntityTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapePojoTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/InvalidXmlTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NumberParsingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PatternTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PrologTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/RecordTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ValidatorTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WhiteSpaceTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WriterFailureTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathDeserializationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "single-letter-var",
+      "description": "Avoid single-letter variable names",
+      "filesChecked": 171,
+      "filesFailing": 26,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Builder.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Constants.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XML.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Predicate.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/BenchmarkPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/XmlBenchmark.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question2.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractContainerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CustomSerializersTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/FunctionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NumberParsingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TrimmingDirectTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TrimmingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "constant-naming",
+      "description": "static final fields should be UPPER_SNAKE_CASE",
+      "filesChecked": 171,
+      "filesFailing": 12,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question1.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question2.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question3.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question5.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractContainerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ComplexTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ValidatorTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WrappedTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "boolean-method-name",
+      "description": "Boolean methods should start with is/has/can/should",
+      "filesChecked": 171,
+      "filesFailing": 4,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/utils/Validator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Predicate.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "default-package",
+      "description": "Classes should declare a package",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "reverse-dns-package",
+      "description": "Avoid reverse-DNS style package names",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "long-method",
+      "description": "Methods should stay under 50 lines",
+      "filesChecked": 171,
+      "filesFailing": 6,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlCompress.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "too-many-parameters",
+      "description": "Methods should take at most 5 parameters",
+      "filesChecked": 171,
+      "filesFailing": 3,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "deep-nesting",
+      "description": "Avoid deeply nested blocks (max 4)",
+      "filesChecked": 171,
+      "filesFailing": 4,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "high-complexity",
+      "description": "Methods should stay under cyclomatic complexity 10",
+      "filesChecked": 171,
+      "filesFailing": 12,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlCompress.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Builder.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XML.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "many-returns",
+      "description": "Avoid methods with too many returns",
+      "filesChecked": 171,
+      "filesFailing": 4,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "else-if-chain",
+      "description": "Avoid long else-if chains",
+      "filesChecked": 171,
+      "filesFailing": 2,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "enhanced-for",
+      "description": "Use enhanced for-loops over index loops",
+      "filesChecked": 171,
+      "filesFailing": 3,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "inner-class-depth",
+      "description": "Avoid deeply nested classes",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "large-class",
+      "description": "Classes should stay under 40 methods+fields",
+      "filesChecked": 171,
+      "filesFailing": 2,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "too-many-public-methods",
+      "description": "Classes should have at most 10 public methods",
+      "filesChecked": 171,
+      "filesFailing": 16,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AttributeTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CompressTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DefaultAnnotationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DomTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeNumericEntityTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/InvalidXmlTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PrologTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XmlParseTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "public-mutable-field",
+      "description": "Avoid public non-final fields",
+      "filesChecked": 171,
+      "filesFailing": 41,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Segment.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/BenchmarkPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Deserialize.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/PrettyPrint.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Serialize.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/CollectionTypePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ComplexPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/Enum1Pojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/Enum2Pojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/MapPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/MissingPathPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/NativePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/NullDefaultsPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/NullElementsPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ObjectMapPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PatternNumberPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PatternPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/Pojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoSelfClosed.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoWithAttribute.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoWithDefaults.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoWithText.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PrimitiveArrayPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/SimplePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/SimpleWithDefaultsPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/StaticFieldPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorBasePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorInterfacePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/WrappedPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/XPathPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question1.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question2.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractContainerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataSerializationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DefaultAnnotationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TagNameFromClassTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ValidatorTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "mutable-static",
+      "description": "Avoid non-final static fields",
+      "filesChecked": 171,
+      "filesFailing": 3,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/StaticFieldPojo.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "missing-equals-hashcode",
+      "description": "Override equals and hashCode together",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "getters-setters",
+      "description": "Avoid getters and setters (expose behavior, not state)",
+      "filesChecked": 171,
+      "filesFailing": 5,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/DomBuilder.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "boolean-parameter",
+      "description": "Avoid boolean parameters",
+      "filesChecked": 171,
+      "filesFailing": 13,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/DomBuilder.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/EventParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Validator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "string-equality",
+      "description": "Compare Strings with .equals, not \u003d\u003d",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "space-indent",
+      "description": "Indent with an even number of spaces",
+      "filesChecked": 171,
+      "filesFailing": 10,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/MapPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ObjectMapPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/RecordPojoWithAnnotation.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/WrappedPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "license-header",
+      "description": "Avoid license boilerplate at the top of files",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "final-parameters",
+      "description": "Method parameters should be declared final",
+      "filesChecked": 171,
+      "filesFailing": 15,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlCompress.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/EventParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/ObjectDeserializer.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/ObjectSerializer.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/AccessDeserializers.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/AccessSerializers.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Predicate.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Segment.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/ObjectBenchmark.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/XmlBenchmark.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "magic-number",
+      "description": "Avoid magic numbers",
+      "filesChecked": 171,
+      "filesFailing": 2,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/utils/Escaping.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XML.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "deprecated-api",
+      "description": "Avoid deprecated constructors/APIs",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "suppress-warnings",
+      "description": "Avoid @SuppressWarnings",
+      "filesChecked": 171,
+      "filesFailing": 2,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "missing-javadoc",
+      "description": "Public classes/methods should have Javadoc",
+      "filesChecked": 171,
+      "filesFailing": 114,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/DomBuilder.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/TextSegment.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/architecture/TestArchitecture.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/BenchmarkPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/ObjectBenchmark.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/XmlBenchmark.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Builder.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Compress.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Deserialize.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/PrettyPrint.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/RawStream.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Serialize.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/CollectionTypePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/CollectionTypeRecord.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ComplexPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/Enum1Pojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/Enum2Pojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/MapPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/MissingPathPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/NativePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/NullDefaultsPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/NullElementsPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PatternNumberPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PatternPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/Pojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoSelfClosed.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoWithAttribute.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoWithDefaults.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PojoWithText.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/PrimitiveArrayPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/SimplePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/SimpleWithDefaultsPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/StaticFieldPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatedInterface.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorBasePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorChildPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorInterfacePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorOverridingPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/ValidatorPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/WrappedPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/XPathPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question1.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question2.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question3.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question4.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question5.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question6.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/tools/NamedEntitiesWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractContainerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AttributeTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BuilderTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataSerializationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CdataTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CollectionTypePojoTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ComplexTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CompressTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CustomSerializersTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DefaultAnnotationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/DomTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EnumTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeDomTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapTagIsKeyTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapWithAttributesTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeMapWithChildNodesTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapeNumericEntityTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapePojoTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/EscapingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/FieldDeserializerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/FunctionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/HtmlTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/InvalidXmlTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MissingPathTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NativeFieldTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NullElementsTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NullTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NumberParsingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ObjectMapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ParserTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PatternTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PrimitiveArrayTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/PrologTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/RecordTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/RecordWithAnnotationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ReflexivityTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/RemoveCommentsTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/SelfClosingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/SimpleTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/StaticFieldTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/StreamTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TagNameFromClassTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TagNameTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TextNodeTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TrimmingDirectTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TrimmingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ValidatorTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WhiteSpaceTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WindowsNewLinesTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WrappedTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WriterFailureTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathDeserializationTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathParseTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XPathTextChildTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/XmlParseTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "author-tag",
+      "description": "Avoid @author tags",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "private-field-javadoc",
+      "description": "Avoid Javadoc on private fields",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/test/java/unittests/WriterFailureTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "empty-catch",
+      "description": "Avoid empty catch blocks",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/utils/Builder.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "empty-finally",
+      "description": "Avoid empty finally blocks",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "empty-method",
+      "description": "Avoid empty method bodies",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/test/java/tools/NamedEntitiesWriter.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "catch-general",
+      "description": "Avoid catching broad Exception/Throwable",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "return-null",
+      "description": "Avoid returning null",
+      "filesChecked": 171,
+      "filesFailing": 9,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlIterator.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/ObjectDeserializer.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Builder.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/XmlParse.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/AbstractContainerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/CustomSerializersTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "switch-fallthrough",
+      "description": "Avoid switch case fall-through",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "switch-default",
+      "description": "Switch statements should have a default",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "optional-get",
+      "description": "Avoid Optional.get() without isPresent()",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "raw-types",
+      "description": "Avoid raw generic types",
+      "filesChecked": 171,
+      "filesFailing": 26,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/XmlParser.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlStreamReader.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/XmlWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/model/XmlElement.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/parsing/ObjectDeserializer.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Reflection.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Trimming.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/Segment.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/xpath/XPathExpression.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/benchmarks/BenchmarkPojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/PrettyPrint.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/CollectionTypePojo.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/model/CollectionTypeRecord.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question3.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question4.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question5.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/BugFixRegressionTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ComplexTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/FieldDeserializerTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NullElementsTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/NumberParsingTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/ObjectMapTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/WrappedTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "print-stack-trace",
+      "description": "Avoid printStackTrace()",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "system-out",
+      "description": "Avoid System.out/err (use a logger)",
+      "filesChecked": 171,
+      "filesFailing": 15,
+      "violations": [
+        {
+          "path": "src/build/CoverageSummary.java",
+          "line": -1
+        },
+        {
+          "path": "src/main/java/xmlparser/utils/Constants.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Builder.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Compress.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Deserialize.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/PrettyPrint.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/RawStream.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/example/Serialize.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question1.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question2.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question3.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question4.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question5.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question6.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "commented-out-code",
+      "description": "Avoid commented-out code",
+      "filesChecked": 171,
+      "filesFailing": 3,
+      "violations": [
+        {
+          "path": "src/main/java/xmlparser/utils/Constants.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question3.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/tools/NamedEntitiesWriter.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "todo-fixme",
+      "description": "No leftover TODO/FIXME/XXX markers",
+      "filesChecked": 171,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "src/test/java/ideas/XmlToJson.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "hardcoded-secret",
+      "description": "Avoid hardcoded secrets/credentials",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "weak-hash",
+      "description": "Avoid weak hash algorithms (MD5/SHA1)",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "sql-concat",
+      "description": "Avoid SQL string concatenation",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "test-no-assertions",
+      "description": "Test methods should contain assertions",
+      "filesChecked": 171,
+      "filesFailing": 2,
+      "violations": [
+        {
+          "path": "src/test/java/unittests/EscapeMapTagIsKeyTest.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/TagNameTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "thread-sleep-test",
+      "description": "Avoid Thread.sleep in tests",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "ignored-test",
+      "description": "Avoid @Ignore/@Disabled tests",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "empty-test",
+      "description": "Avoid empty test methods",
+      "filesChecked": 171,
+      "filesFailing": 0,
+      "violations": []
+    },
+    {
+      "id": "unused-private",
+      "description": "Remove unused private fields/methods",
+      "filesChecked": 171,
+      "filesFailing": 5,
+      "violations": [
+        {
+          "path": "src/test/java/architecture/TestArchitecture.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/incubation/XmlCompare.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/question/Question4.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/tools/NamedEntitiesWriter.java",
+          "line": -1
+        },
+        {
+          "path": "src/test/java/unittests/MapTest.java",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "license",
+      "description": "Project must have a LICENSE file",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "readme",
+      "description": "Project must have a README file",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "build-file",
+      "description": "Project must have a build file (pom.xml or Gradle)",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "too-many-deps",
+      "description": "Keep dependencies under 20",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "snapshot-deps",
+      "description": "Avoid -SNAPSHOT/dynamic dependency versions",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "missing-dep-version",
+      "description": "Every dependency should declare a version",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "library-no-deps",
+      "description": "Libraries should have zero non-test dependencies (plugins exempt)",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "single-class-package",
+      "description": "Packages should contain more than one file",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "/home/jurgen/projects/libraries/simplexml",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "mixed-package",
+      "description": "A package should hold either files or sub-packages, not both",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "/home/jurgen/projects/libraries/simplexml",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "package-too-large",
+      "description": "Keep packages under 30 classes",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "/home/jurgen/projects/libraries/simplexml",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "circular-packages",
+      "description": "Avoid circular package dependencies",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "long-inheritance",
+      "description": "Avoid inheritance chains deeper than 3",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "no-tests",
+      "description": "Project should include tests",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "test-ratio",
+      "description": "Keep a reasonable test-to-source ratio",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": []
+    },
+    {
+      "id": "untested-classes",
+      "description": "Every main class should have a test",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "/home/jurgen/projects/libraries/simplexml",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "test-assertion-ratio",
+      "description": "Test methods should contain at least 33% assertions",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "/home/jurgen/projects/libraries/simplexml",
+          "line": -1
+        }
+      ]
+    },
+    {
+      "id": "duplicated-code",
+      "description": "Avoid duplicated code blocks across files",
+      "filesChecked": 1,
+      "filesFailing": 1,
+      "violations": [
+        {
+          "path": "/home/jurgen/projects/libraries/simplexml",
+          "line": -1
+        }
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "id": "loc",
+      "description": "Total physical lines",
+      "value": 15182
+    },
+    {
+      "id": "sloc",
+      "description": "Source lines, excluding blanks and comments",
+      "value": 9897
+    },
+    {
+      "id": "max-file-length",
+      "description": "Longest file, in lines",
+      "value": 739
+    },
+    {
+      "id": "cyclomatic-total",
+      "description": "Sum of cyclomatic complexity over all methods",
+      "value": 1820
+    },
+    {
+      "id": "cyclomatic-mean",
+      "description": "Mean cyclomatic complexity per method",
+      "value": 1.9675675675675677
+    },
+    {
+      "id": "cyclomatic-max",
+      "description": "Highest cyclomatic complexity of any method",
+      "value": 31
+    },
+    {
+      "id": "max-nesting",
+      "description": "Deepest control-flow nesting, in blocks",
+      "value": 9
+    },
+    {
+      "id": "halstead-volume",
+      "description": "Halstead volume of the whole codebase",
+      "value": 261641.236994093
+    },
+    {
+      "id": "total-imports",
+      "description": "Total import statements",
+      "value": 827
+    },
+    {
+      "id": "unique-imports",
+      "description": "Distinct import statements",
+      "value": 228
+    },
+    {
+      "id": "avg-imports-per-type",
+      "description": "Average import statements per top-level type",
+      "value": 4.83625730994152
+    },
+    {
+      "id": "comment-ratio",
+      "description": "Comment lines, percent of all lines",
+      "value": 18.46265314187854
+    },
+    {
+      "id": "javadoc-coverage",
+      "description": "Public types and methods with Javadoc, percent",
+      "value": 24.86992715920916
+    },
+    {
+      "id": "parse-failure-rate",
+      "description": "Files that failed to parse, percent",
+      "value": 0
+    },
+    {
+      "id": "maintainability-index",
+      "description": "Maintainability index, 0-100",
+      "value": 84.3781165304078
+    },
+    {
+      "id": "package-instability",
+      "description": "Mean package instability Ce/(Ca+Ce), percent",
+      "value": 62.525252525252526
+    },
+    {
+      "id": "commits",
+      "description": "Commits in history",
+      "value": 235
+    },
+    {
+      "id": "churn",
+      "description": "Lines added and deleted across history",
+      "value": 39561
+    },
+    {
+      "id": "hotspot-index",
+      "description": "Highest churn times complexity of any file",
+      "value": 218688
+    },
+    {
+      "id": "test-methods",
+      "description": "Number of test methods",
+      "value": 511
+    },
+    {
+      "id": "test-assertions",
+      "description": "Assertion calls in test methods",
+      "value": 1044
+    },
+    {
+      "id": "test-assertion-density",
+      "description": "Assertions per statement in test methods",
+      "value": 0.6181172291296625
+    }
+  ],
+  "categories": [
+    {
+      "name": "coverage",
+      "score": 75.0
+    },
+    {
+      "name": "documentation",
+      "score": 77.6
+    },
+    {
+      "name": "imports",
+      "score": 85.4
+    },
+    {
+      "name": "structure",
+      "score": 89.4
+    },
+    {
+      "name": "format",
+      "score": 93.5
+    },
+    {
+      "name": "design",
+      "score": 94.2
+    },
+    {
+      "name": "naming",
+      "score": 96.3
+    },
+    {
+      "name": "duplication",
+      "score": 96.8
+    },
+    {
+      "name": "dead code",
+      "score": 97.1
+    },
+    {
+      "name": "style",
+      "score": 97.2
+    },
+    {
+      "name": "noise",
+      "score": 97.2
+    },
+    {
+      "name": "complexity",
+      "score": 97.4
+    },
+    {
+      "name": "control flow",
+      "score": 97.5
+    },
+    {
+      "name": "tests",
+      "score": 99.7
+    },
+    {
+      "name": "security",
+      "score": 100.0
+    },
+    {
+      "name": "library",
+      "score": 100.0
+    },
+    {
+      "name": "dependencies",
+      "score": 100.0
+    },
+    {
+      "name": "project",
+      "score": 100.0
+    }
+  ]
+}
